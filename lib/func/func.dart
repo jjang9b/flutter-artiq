@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:artiq/page/contentPage.dart';
@@ -41,37 +42,47 @@ class Func {
                 openPage(context, post);
               },
               child: Container(
+                color: Colors.black,
                 width: MediaQuery.of(context).size.width * 0.7,
                 height: MediaQuery.of(context).size.height * 0.6,
-                decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(Radius.circular(5)),
-                    image: DecorationImage(
-                        image: NetworkImage(post.imageUrl), fit: BoxFit.cover)),
                 child: Column(
+                  mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.47,
+                      child: CachedNetworkImage(
+                        imageUrl: post.imageUrl,
+                        imageBuilder: (context, imageProvider) => Container(
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                                image: imageProvider, fit: BoxFit.cover),
+                          ),
+                        ),
+                      ),
+                    ),
                     Expanded(
                       child: Container(),
                     ),
                     Container(
-                      margin: const EdgeInsets.fromLTRB(25, 0, 20, 0),
+                      margin: EdgeInsets.only(left: 20, right: 20, bottom: 5),
                       alignment: originAlign,
                       child: Text(post.imageText,
                           style: TextStyle(
                               color: Colors.white,
-                              height: 1.6,
-                              fontSize: 20,
+                              height: 1.2,
+                              fontSize: 21,
                               fontFamily: 'UTOIMAGE')),
                     ),
                     Container(
-                      margin: const EdgeInsets.fromLTRB(25, 0, 20, 30),
+                      margin: EdgeInsets.only(left: 20, right: 20, bottom: 10),
                       alignment: originAlign,
                       child: Text(post.origin,
                           style: TextStyle(
                               color: Colors.white,
-                              height: 1.6,
-                              fontSize: 16,
+                              height: 1.3,
+                              fontSize: 14,
                               fontFamily: 'JSDongkang')),
-                    ),
+                    )
                   ],
                 ),
               ),

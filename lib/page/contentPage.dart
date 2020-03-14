@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:artiq/data.dart';
@@ -20,23 +21,22 @@ class Content {
                           height: MediaQuery.of(context).size.height * 0.35,
                           decoration: BoxDecoration(
                               image: DecorationImage(
-                                  image: NetworkImage(post.imageUrl),
+                                  image:
+                                      CachedNetworkImageProvider(post.imageUrl),
                                   fit: BoxFit.cover)),
                           child: Column(
                             children: <Widget>[
                               Container(
                                 alignment: Alignment.topLeft,
-                                margin: const EdgeInsets.fromLTRB(0, 10, 10, 0),
+                                margin: const EdgeInsets.only(top: 5),
                                 child: IconButton(
-                                    iconSize: 60,
+                                    padding: EdgeInsets.all(0.0),
+                                    iconSize: 55,
                                     icon: BackButton(
                                       color: Colors.white,
                                     ),
                                     onPressed: () =>
                                         Navigator.of(context).pop()),
-                              ),
-                              Expanded(
-                                child: Container(),
                               ),
                             ],
                           ),
@@ -84,6 +84,7 @@ class Content {
                                   color: Colors.black,
                                   height: 1,
                                   fontSize: 17,
+                                  fontWeight: FontWeight.bold,
                                   fontFamily: 'Arita'))
                         ],
                       ),

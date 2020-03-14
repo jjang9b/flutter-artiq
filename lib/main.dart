@@ -62,7 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           Positioned(
-            top: MediaQuery.of(context).size.height * 0.195,
+            top: MediaQuery.of(context).size.height * 0.20,
             left: 0,
             child: Container(
               width: 130,
@@ -71,14 +71,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 offset: Offset(-50, -50),
                 child: Container(
                   decoration: BoxDecoration(
-                      color: Color(0xff4A148C), shape: BoxShape.circle),
+                      color: Color(0xffef0078), shape: BoxShape.circle),
                 ),
               ),
             ),
           ),
           SafeArea(
             child: Container(
-              margin: EdgeInsets.only(top: 25, left: 25),
+              margin: EdgeInsets.only(top: 20, left: 25),
               height: MediaQuery.of(context).size.height * 0.1,
               child: Row(
                 children: <Widget>[
@@ -112,11 +112,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Container(),
                   ),
                   Container(
-                    margin: EdgeInsets.only(right: 25),
+                    margin: EdgeInsets.only(right: 10),
                     child: Container(
                       alignment: Alignment.topLeft,
                       width: 40,
-                      child: Icon(Icons.scatter_plot, size: 30),
+                      child: Icon(Icons.music_note, size: 30),
                     ),
                   ),
                 ],
@@ -180,7 +180,7 @@ class _MyHomePageState extends State<MyHomePage> {
             left: 0,
             child: Container(
               margin: EdgeInsets.fromLTRB(
-                  25, MediaQuery.of(context).size.height * 0.1, 25, 20),
+                  30, MediaQuery.of(context).size.height * 0.1, 25, 20),
               height: MediaQuery.of(context).size.height * 0.08,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -192,7 +192,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Icon(Icons.perm_identity,
-                              color: Colors.black87, size: 18),
+                              color: Colors.black87, size: 23),
                           Text("내정보",
                               style: TextStyle(
                                   color: Colors.black87,
@@ -208,7 +208,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Icon(Icons.favorite, color: Colors.black87, size: 18),
+                          Icon(Icons.favorite, color: Colors.black87, size: 23),
                           Text("공유",
                               style: TextStyle(
                                   color: Colors.black87,
