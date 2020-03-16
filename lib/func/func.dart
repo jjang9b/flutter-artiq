@@ -1,30 +1,95 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:artiq/page/contentPage.dart';
 import 'package:artiq/data.dart';
 
 class Func {
+  Fetch fetch;
+  Future<List<Post>> futureData;
+  ContentPage contentPage = new ContentPage();
+  double _categoryPage = 0;
   double _page = 0;
-  bool isStart = false;
 
-  setPage(double page) {
+  Func() {
+    fetch = new Fetch();
+    futureData = fetch.fetchPost('art');
+  }
+
+  Future<List<Post>> getData() {
+    return futureData;
+  }
+
+  void setData(String type) {
+    this.futureData = fetch.fetchPost(type);
+  }
+
+  void setCategoryPage(double categoryPage) {
+    this._categoryPage = categoryPage;
+  }
+
+  void setPage(double page) {
     this._page = page;
   }
 
-  _getScale(int position) {
+  double getScale(int position) {
     double scale = 1 - (_page - position).abs();
 
     return (scale < 0.8) ? 0.8 : scale;
   }
 
+  void categoryTab(
+      PageController _categoryController, String type, int categoryIdx) {
+    futureData = fetch.fetchPost(type);
+    _categoryController.jumpToPage(categoryIdx);
+    setPage(0);
+  }
+
   void openPage(BuildContext context, Post post) {
     Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) {
-      return new Content().contentPage(context, post);
+      return contentPage.goContent(context, post);
     }));
   }
 
-  Center getContent(BuildContext context, int position, Post post) {
+  InkWell getCategory(
+      PageController _categoryController, String type, String title, int idx) {
+    return InkWell(
+      onTap: () {
+        categoryTab(_categoryController, type, idx);
+      },
+      child: Container(
+        width: 70,
+        margin: EdgeInsets.all(10),
+        child: Column(
+          children: <Widget>[
+            Text(
+              title,
+              style: TextStyle(
+                  color: Colors.black87,
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Arita'),
+            ),
+            Visibility(
+              visible: (_categoryPage == idx),
+              child: Container(
+                width: 20,
+                height: 5,
+                margin: EdgeInsets.only(top: 10),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(3)),
+                    color: Color(0xffef0078),
+                    shape: BoxShape.rectangle),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Center getContent(BuildContext context, int length, int position, Post post) {
     Alignment originAlign = Alignment.bottomLeft;
 
     if (position % 2 == 0) {
@@ -33,18 +98,20 @@ class Func {
 
     return Center(
       child: Transform.scale(
-        scale: _getScale(position),
-        child: Stack(
-          overflow: Overflow.visible,
+        scale: getScale(position),
+        child: Column(
           children: <Widget>[
             InkWell(
               onTap: () {
                 openPage(context, post);
               },
               child: Container(
-                color: Colors.black,
-                width: MediaQuery.of(context).size.width * 0.7,
+                width: MediaQuery.of(context).size.width * 0.68,
                 height: MediaQuery.of(context).size.height * 0.6,
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.all(Radius.circular(3)),
+                ),
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
@@ -56,6 +123,7 @@ class Func {
                           decoration: BoxDecoration(
                             image: DecorationImage(
                                 image: imageProvider, fit: BoxFit.cover),
+                            borderRadius: BorderRadius.all(Radius.circular(3)),
                           ),
                         ),
                       ),
@@ -87,6 +155,21 @@ class Func {
                 ),
               ),
             ),
+            Container(
+              alignment: Alignment.bottomCenter,
+              margin: EdgeInsets.only(top: 8),
+              child: DotsIndicator(
+                dotsCount: length,
+                position: _page.abs(),
+                decorator: DotsDecorator(
+                  activeSize: Size.fromRadius(5),
+                  activeShape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0)),
+                  color: Colors.black26,
+                  activeColor: Colors.black87,
+                ),
+              ),
+            )
           ],
         ),
       ),

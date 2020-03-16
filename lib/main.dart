@@ -1,9 +1,9 @@
+import 'package:artiq/data.dart';
+import 'package:artiq/func/func.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:artiq/data.dart';
-import 'package:artiq/func/func.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -14,7 +14,11 @@ void main() {
     statusBarBrightness: Brightness.light,
   ));
 
-  runApp(MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((_) {
+    runApp(MyApp());
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -35,23 +39,23 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  Func func;
-  Future<List<Post>> futureStory;
+  PageController _categoryController;
   PageController _pageController;
+  Fetch fetch;
+  Func func;
 
   @override
   void initState() {
     super.initState();
 
     func = new Func();
-    futureStory = fetchStory();
+    fetch = new Fetch();
+    _categoryController = PageController();
     _pageController = PageController(viewportFraction: 0.7);
   }
 
   @override
   Widget build(BuildContext context) {
-    double contentTop = MediaQuery.of(context).size.height * 0.15;
-
     return Scaffold(
       body: Stack(
         children: <Widget>[
@@ -61,62 +65,38 @@ class _MyHomePageState extends State<MyHomePage> {
               color: Colors.white,
             ),
           ),
-          Positioned(
-            top: MediaQuery.of(context).size.height * 0.20,
-            left: 0,
-            child: Container(
-              width: 130,
-              height: 130,
-              child: Transform.translate(
-                offset: Offset(-50, -50),
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: Color(0xffef0078), shape: BoxShape.circle),
-                ),
-              ),
-            ),
-          ),
           SafeArea(
             child: Container(
-              margin: EdgeInsets.only(top: 20, left: 25),
-              height: MediaQuery.of(context).size.height * 0.1,
-              child: Row(
+              height: MediaQuery.of(context).size.height * 0.15,
+              child: Stack(
                 children: <Widget>[
                   Container(
+                    alignment: Alignment.topCenter,
+                    margin: EdgeInsets.only(top: 30),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
                         Container(
+                          alignment: Alignment.topCenter,
+                          margin: EdgeInsets.only(bottom: 6),
                           width: MediaQuery.of(context).size.width * 0.6,
                           child: Text(
-                            "아티크",
+                            "ArtiQ",
                             style: TextStyle(
                                 color: Colors.black,
-                                fontSize: 20,
+                                fontSize: 28,
                                 fontWeight: FontWeight.bold,
-                                fontFamily: 'JSDongkang'),
+                                fontFamily: 'UTOIMAGE'),
                           ),
                         ),
                         Container(
+                          alignment: Alignment.topCenter,
                           width: MediaQuery.of(context).size.width * 0.6,
                           child: Text(
                             "cultural and artistic post",
-                            style: TextStyle(
-                                fontSize: 14, fontFamily: 'JSDongkang'),
+                            style: TextStyle(fontSize: 18, fontFamily: 'Arita'),
                           ),
                         )
                       ],
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(right: 10),
-                    child: Container(
-                      alignment: Alignment.topLeft,
-                      width: 40,
-                      child: Icon(Icons.music_note, size: 30),
                     ),
                   ),
                 ],
@@ -125,99 +105,76 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           SafeArea(
             child: Container(
-              height: MediaQuery.of(context).size.height * 0.6,
-              margin: EdgeInsets.fromLTRB(0, contentTop, 0, 20),
-              child: FutureBuilder<List<Post>>(
-                future: futureStory,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return NotificationListener<ScrollNotification>(
-                        onNotification: (scrollNotification) {
-                          setState(() {
-                            func.setPage(_pageController.page);
-                          });
+              height: MediaQuery.of(context).size.height * 0.67,
+              margin: EdgeInsets.fromLTRB(
+                  0, MediaQuery.of(context).size.height * 0.19, 0, 20),
+              child: Container(
+                child: NotificationListener<ScrollNotification>(
+                  onNotification: (scrollNotification) {
+                    setState(() {
+                      func.setCategoryPage(_categoryController.page);
+                    });
 
-                          return true;
-                        },
-                        child: PageView.builder(
-                          controller: _pageController,
-                          itemBuilder: (context, position) {
-                            return func.getContent(
-                                context, position, snapshot.data[position]);
-                          },
-                          itemCount: snapshot.data.length,
-                        ));
-                  }
+                    return true;
+                  },
+                  child: PageView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      controller: _categoryController,
+                      itemBuilder: (context, position) {
+                        return Container(
+                          height: MediaQuery.of(context).size.height * 0.7,
+                          child: FutureBuilder<List<Post>>(
+                            future: func.getData(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                return NotificationListener<ScrollNotification>(
+                                    onNotification: (scrollNotification) {
+                                      setState(() {
+                                        func.setPage(_pageController.page);
+                                      });
 
-                  return Center(
-                    child: CircularProgressIndicator(
-                      backgroundColor: Colors.black,
-                      valueColor:
-                          new AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 0,
-            right: 0,
-            child: Container(
-              width: 170,
-              height: 170,
-              child: Transform.translate(
-                offset: Offset(50, 50),
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: Color(0xff4A148C), shape: BoxShape.circle),
+                                      return true;
+                                    },
+                                    child: PageView.builder(
+                                      controller: _pageController,
+                                      itemBuilder: (context, position) {
+                                        return func.getContent(
+                                            context,
+                                            snapshot.data.length,
+                                            position,
+                                            snapshot.data[position]);
+                                      },
+                                      itemCount: snapshot.data.length,
+                                    ));
+                              }
+
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  backgroundColor: Colors.black,
+                                  valueColor: new AlwaysStoppedAnimation<Color>(
+                                      Colors.white),
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      },
+                      itemCount: 2),
                 ),
               ),
             ),
           ),
-          Positioned(
-            bottom: 0,
-            left: 0,
+          SafeArea(
             child: Container(
               margin: EdgeInsets.fromLTRB(
-                  30, MediaQuery.of(context).size.height * 0.1, 25, 20),
-              height: MediaQuery.of(context).size.height * 0.08,
+                  10, MediaQuery.of(context).size.height * 0.11, 10, 20),
+              height: MediaQuery.of(context).size.height * 0.07,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.only(right: 30),
-                    child: InkWell(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Icon(Icons.perm_identity,
-                              color: Colors.black87, size: 23),
-                          Text("내정보",
-                              style: TextStyle(
-                                  color: Colors.black87,
-                                  fontSize: 13,
-                                  fontFamily: 'UTOIMAGE'))
-                        ],
-                      ),
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(right: 30),
-                    child: InkWell(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Icon(Icons.favorite, color: Colors.black87, size: 23),
-                          Text("공유",
-                              style: TextStyle(
-                                  color: Colors.black87,
-                                  fontSize: 13,
-                                  fontFamily: 'UTOIMAGE'))
-                        ],
-                      ),
-                    ),
-                  ),
+                  func.getCategory(_categoryController, 'art', 'ART', 0),
+                  func.getCategory(_categoryController, 'music', 'MUSIC', 1),
                 ],
               ),
             ),

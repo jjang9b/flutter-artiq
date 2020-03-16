@@ -1,10 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:artiq/data.dart';
 
-class Content {
-  Scaffold contentPage(BuildContext context, Post post) {
+class ContentPage {
+  YoutubePlayerController _youtubueController;
+
+  Scaffold goContent(BuildContext context, Post post) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -67,12 +70,7 @@ class Content {
                     Container(
                       margin: const EdgeInsets.all(30),
                       alignment: Alignment.topLeft,
-                      child: Text(post.content,
-                          style: TextStyle(
-                              color: Color(0xff313131),
-                              height: 1.5,
-                              fontSize: 17,
-                              fontFamily: 'JSDongkang')),
+                      child: getContentList(post.content),
                     ),
                     Container(
                       margin: const EdgeInsets.fromLTRB(30, 10, 30, 30),
@@ -96,5 +94,75 @@ class Content {
         ),
       ),
     );
+  }
+
+  Column getContentList(List<Content> contentList) {
+    List<Container> conContentList = contentList.map((content) {
+      if (content.type == "text-title") {
+        return Container(
+          margin: EdgeInsets.only(top: 30, bottom: 10),
+          alignment: Alignment.topLeft,
+          child: Text(content.data,
+              style: TextStyle(
+                  color: Color(0xff313131),
+                  height: 1.5,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'JSDongkang')),
+        );
+      }
+
+      if (content.type == "image") {
+        return Container(
+          margin: EdgeInsets.only(top: 20, bottom: 40),
+          child: Column(
+            children: <Widget>[
+              CachedNetworkImage(
+                imageUrl: content.data,
+                fit: BoxFit.cover,
+              ),
+              Text(content.desc,
+                  style: TextStyle(
+                      color: Color(0xff313131),
+                      height: 1.5,
+                      fontSize: 13,
+                      fontFamily: 'JSDongkang'))
+            ],
+          ),
+        );
+      }
+
+      if (content.type == "youtube") {
+        _youtubueController = YoutubePlayerController(
+          initialVideoId: content.data,
+          flags: YoutubePlayerFlags(autoPlay: true, loop: true),
+        );
+
+        return Container(
+          margin: EdgeInsets.only(top: 20, bottom: 40),
+          child: YoutubePlayer(
+            controller: _youtubueController,
+            showVideoProgressIndicator: false,
+            bottomActions: <Widget>[
+              PlayPauseButton(),
+              ProgressBar(isExpanded: true)
+            ],
+          ),
+        );
+      }
+
+      return Container(
+        margin: EdgeInsets.only(bottom: 20),
+        alignment: Alignment.topLeft,
+        child: Text(content.data,
+            style: TextStyle(
+                color: Color(0xff313131),
+                height: 1.5,
+                fontSize: 17,
+                fontFamily: 'JSDongkang')),
+      );
+    }).toList();
+
+    return Column(children: conContentList);
   }
 }
