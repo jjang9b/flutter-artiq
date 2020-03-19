@@ -1,34 +1,21 @@
 import 'dart:async';
-import 'dart:collection';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-class FutureMap {
-  Map<String, List<Post>> futureMap;
+final Map<String, List<Post>> futureMap = new Map<String, List<Post>>();
 
-  FutureMap() {
-    futureMap = new HashMap();
-  }
+class ArtiqData {
+  static bool isMusicAuto = false;
 
-  void setFutureMap(String key, List<Post> futureList) {
-    futureMap[key] = futureList;
-  }
-
-  List<Post> getFutureMap(String key) {
-    return futureMap[key];
+  static List<Post> getPostList(String type) {
+    return futureMap[type];
   }
 }
 
 class Fetch {
-  FutureMap futureMap;
-
-  Fetch() {
-    futureMap = new FutureMap();
-  }
-
   Future<List<Post>> fetchPost(String type) async {
-    List<Post> cacheMap = futureMap.getFutureMap(type);
+    List<Post> cacheMap = futureMap[type];
     if (cacheMap != null) {
       return cacheMap;
     }
@@ -52,7 +39,7 @@ class Fetch {
 
       List<Post> result = postList.map((post) => Post.fromJson(post)).toList();
 
-      futureMap.setFutureMap(type, result);
+      futureMap[type] = result;
 
       return result;
     } else {
@@ -64,11 +51,18 @@ class Fetch {
 class Post {
   final String imageUrl;
   final String imageText;
+  final String backBtnType;
   final List<Content> content;
   final String origin;
   final String date;
 
-  Post({this.imageUrl, this.imageText, this.content, this.origin, this.date});
+  Post(
+      {this.imageUrl,
+      this.imageText,
+      this.backBtnType,
+      this.content,
+      this.origin,
+      this.date});
 
   factory Post.fromJson(Map<String, dynamic> json) {
     var contentList = json['content'] as List;
@@ -76,6 +70,7 @@ class Post {
     return Post(
       imageUrl: json['image'],
       imageText: json['imageText'],
+      backBtnType: json['backBtnType'],
       content: contentList.map((content) => Content.fromJson(content)).toList(),
       origin: json['origin'],
       date: json['date'],

@@ -1,24 +1,32 @@
+import 'package:artiq/data.dart';
+import 'package:artiq/main.dart';
+import 'package:artiq/page/contentPage.dart';
+import 'package:artiq/page/morePage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:artiq/page/contentPage.dart';
-import 'package:artiq/data.dart';
 
 class Func {
-  Fetch fetch;
+  Fetch fetch = new Fetch();
   Future<List<Post>> futureData;
-  ContentPage contentPage = new ContentPage();
   double _categoryPage = 0;
   double _page = 0;
 
   Func() {
-    fetch = new Fetch();
     futureData = fetch.fetchPost('art');
   }
 
   Future<List<Post>> getData() {
     return futureData;
+  }
+
+  Post getNextPost(String type, Post post) {
+    List<Post> postList = ArtiqData.getPostList(type);
+
+    int next = postList.indexOf(post) + 1;
+
+    return postList[next];
   }
 
   void setData(String type) {
@@ -41,20 +49,26 @@ class Func {
 
   void categoryTab(
       PageController _categoryController, String type, int categoryIdx) {
-    futureData = fetch.fetchPost(type);
+    setData(type);
     _categoryController.jumpToPage(categoryIdx);
     setPage(0);
   }
 
-  void openPage(BuildContext context, Post post) {
+  void goContentPage(BuildContext context, Post post) {
     Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) {
-      return contentPage.goContent(context, post);
+      return new ContentPage(post);
     }));
+  }
+
+  void goPage(BuildContext context, String routeName) {
+    Navigator.pushNamed(context, routeName);
   }
 
   InkWell getCategory(
       PageController _categoryController, String type, String title, int idx) {
     return InkWell(
+      highlightColor: Colors.transparent,
+      splashColor: Colors.transparent,
       onTap: () {
         categoryTab(_categoryController, type, idx);
       },
@@ -102,8 +116,10 @@ class Func {
         child: Column(
           children: <Widget>[
             InkWell(
+              highlightColor: Colors.transparent,
+              splashColor: Colors.transparent,
               onTap: () {
-                openPage(context, post);
+                goContentPage(context, post);
               },
               child: Container(
                 width: MediaQuery.of(context).size.width * 0.68,
@@ -157,6 +173,7 @@ class Func {
             ),
             Container(
               alignment: Alignment.bottomCenter,
+              width: MediaQuery.of(context).size.width * 0.68,
               margin: EdgeInsets.only(top: 8),
               child: DotsIndicator(
                 dotsCount: length,
@@ -172,6 +189,59 @@ class Func {
             )
           ],
         ),
+      ),
+    );
+  }
+
+  Container getNavigator(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.fromLTRB(50, 0, 50, 10),
+      height: MediaQuery.of(context).size.height * 0.05,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          InkWell(
+            highlightColor: Colors.transparent,
+            splashColor: Colors.transparent,
+            onTap: () {
+              goPage(context, PostPage.routeName);
+            },
+            child: Container(
+              width: 45,
+              height: 60,
+              margin: EdgeInsets.only(left: 20, top: 6, right: 20),
+              child: Column(
+                children: <Widget>[
+                  Icon(
+                    Icons.wallpaper,
+                    size: 27,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          InkWell(
+            highlightColor: Colors.transparent,
+            splashColor: Colors.transparent,
+            onTap: () {
+              goPage(context, MorePage.routeName);
+            },
+            child: Container(
+              width: 45,
+              height: 60,
+              margin: EdgeInsets.only(top: 6),
+              child: Column(
+                children: <Widget>[
+                  Icon(
+                    Icons.more_horiz,
+                    size: 27,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
