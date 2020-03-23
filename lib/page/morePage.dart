@@ -53,9 +53,9 @@ class _MorePageState extends State<MorePage> {
                         child: Row(
                           children: <Widget>[
                             Container(
-                              child: Text("v 1.0.0",
+                              child: Text("v ${ArtiqData.version}",
                                   style: TextStyle(
-                                      fontSize: 18, fontFamily: "Arita")),
+                                      fontSize: 16, fontFamily: "Arita")),
                             ),
                           ],
                         ),
@@ -76,7 +76,7 @@ class _MorePageState extends State<MorePage> {
                             Container(
                               child: Text("MUSIC탭 다음 포스트 자동 재생",
                                   style: TextStyle(
-                                      fontSize: 18, fontFamily: "Arita")),
+                                      fontSize: 16, fontFamily: "Arita")),
                             ),
                             Container(
                               width: 60,
@@ -89,7 +89,7 @@ class _MorePageState extends State<MorePage> {
                                   });
                                 },
                                 inactiveTrackColor: Colors.black54,
-                                activeColor: Color(0xffef0078),
+                                activeColor: Colors.red,
                               ),
                             ),
                           ],
@@ -121,7 +121,7 @@ class _MorePageState extends State<MorePage> {
                               Container(
                                 child: Text("bbplayworld@gmail.com",
                                     style: TextStyle(
-                                        fontSize: 18, fontFamily: "Arita")),
+                                        fontSize: 16, fontFamily: "Arita")),
                               ),
                               Container(
                                 margin: EdgeInsets.only(left: 10),

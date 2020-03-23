@@ -6,7 +6,10 @@ import 'package:http/http.dart' as http;
 final Map<String, List<Post>> futureMap = new Map<String, List<Post>>();
 
 class ArtiqData {
+  static String category = "music";
+  static int categoryIdx = 0;
   static bool isMusicAuto = false;
+  static String version = "1.0.0";
 
   static List<Post> getPostList(String type) {
     return futureMap[type];
@@ -14,21 +17,37 @@ class ArtiqData {
 }
 
 class Fetch {
-  Future<List<Post>> fetchPost(String type) async {
-    List<Post> cacheMap = futureMap[type];
+  Future<List<Guide>> fetchGuide() async {
+    var uri =
+        Uri.parse("https://asia-northeast1-artiq-api.cloudfunctions.net/guide");
+
+    final response = await http.get(uri);
+
+    if (response.statusCode == 200) {
+      List list = json.decode(response.body);
+
+      return list.map((post) => Guide.fromJson(post)).toList();
+    } else {
+      return null;
+    }
+  }
+
+  Future<List<Post>> fetchPost(String category) async {
+    List<Post> cacheMap = futureMap[category];
     if (cacheMap != null) {
       return cacheMap;
     }
 
     var uri;
 
-    switch (type) {
+    switch (category) {
       case "art":
-        uri = Uri.parse("https://us-central1-artiq-api.cloudfunctions.net/art");
+        uri = Uri.parse(
+            "https://asia-northeast1-artiq-api.cloudfunctions.net/art");
         break;
       case "music":
-        uri =
-            Uri.parse("https://us-central1-artiq-api.cloudfunctions.net/music");
+        uri = Uri.parse(
+            "https://asia-northeast1-artiq-api.cloudfunctions.net/music");
         break;
     }
 
@@ -39,11 +58,11 @@ class Fetch {
 
       List<Post> result = postList.map((post) => Post.fromJson(post)).toList();
 
-      futureMap[type] = result;
+      futureMap[category] = result;
 
       return result;
     } else {
-      throw Exception('Failed to load album');
+      return null;
     }
   }
 }
@@ -90,6 +109,22 @@ class Content {
       type: json['type'],
       data: json['data'],
       desc: json['desc'],
+    );
+  }
+}
+
+class Guide {
+  final String image;
+  final String title;
+  final String text;
+
+  Guide({this.image, this.title, this.text});
+
+  factory Guide.fromJson(Map<String, dynamic> json) {
+    return Guide(
+      image: json['image'],
+      title: json['title'],
+      text: json['text'],
     );
   }
 }

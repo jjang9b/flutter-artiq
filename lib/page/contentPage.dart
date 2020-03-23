@@ -1,13 +1,12 @@
-import 'dart:async';
 import 'dart:ui';
 
 import 'package:artiq/data.dart';
 import 'package:artiq/func/func.dart';
-import 'package:artiq/main.dart';
+import 'package:artiq/page/postPage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:flutter_youtube_view/flutter_youtube_view.dart';
 
 class ContentPage extends StatefulWidget {
   static const routeName = '/content';
@@ -19,114 +18,142 @@ class ContentPage extends StatefulWidget {
   _ContentPageState createState() => _ContentPageState();
 }
 
-class _ContentPageState extends State<ContentPage> {
+class _ContentPageState extends State<ContentPage>
+    implements YouTubePlayerListener {
   Func func = new Func();
-  YoutubePlayerController _youtubueController;
   ScrollController _contentScrollController = new ScrollController();
+  FlutterYoutubeViewController _youtubeController;
+  Post cuPost;
   double nowOffset = 0;
-  bool isYoutubeTimer = false;
-  bool isYoutubeLoad = false;
+  bool isMoveBtn = true;
 
-  void runYoutubeTimer() {
-    Timer.periodic(const Duration(milliseconds: 3000), (timer) {
-      if (isYoutubeLoad) {
-        timer.cancel();
-        return;
-      }
+  @override
+  void onReady() {}
 
-      _youtubueController.reload();
-    });
-  }
-
-  Column getContentList(Post post) {
-    List<Content> contentList = post.content;
-    List<Container> conContentList = contentList.map((content) {
-      if (content.type == "text-title") {
-        return Container(
-          margin: EdgeInsets.only(top: 30, bottom: 10),
-          alignment: Alignment.topLeft,
-          child: Text(content.data,
-              style: TextStyle(
-                  color: Color(0xff313131),
-                  height: 1.5,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'JSDongkang')),
-        );
-      }
-
-      if (content.type == "image") {
-        return Container(
-          margin: EdgeInsets.only(top: 20, bottom: 40),
-          child: Column(
-            children: <Widget>[
-              CachedNetworkImage(
-                imageUrl: content.data,
-                fit: BoxFit.cover,
-              ),
-              Text(content.desc,
-                  style: TextStyle(
-                      color: Color(0xff313131),
-                      height: 1.5,
-                      fontSize: 13,
-                      fontFamily: 'JSDongkang'))
-            ],
-          ),
-        );
-      }
-
-      if (content.type == "youtube") {
-        _youtubueController = YoutubePlayerController(
-          initialVideoId: content.data,
-          flags: YoutubePlayerFlags(autoPlay: true, loop: true),
-        );
-
-        if (!isYoutubeTimer) {
-          isYoutubeTimer = true;
-          runYoutubeTimer();
+  @override
+  void onStateChange(String state) {
+    switch (state) {
+      case "PLAYING":
+        setState(() {
+          isMoveBtn = true;
+        });
+        break;
+      case "ENDED":
+        if (ArtiqData.isMusicAuto) {
+          return goNextContent();
         }
 
-        return Container(
-          margin: EdgeInsets.only(top: 20, bottom: 40),
-          child: YoutubePlayer(
-            onReady: () {
-              setState(() {
-                isYoutubeLoad = true;
-              });
-            },
-            onEnded: (metaData) {
-              if (ArtiqData.isMusicAuto) {
-                setState(() {
-                  _youtubueController.pause();
-                });
+        _youtubeController.play();
+        break;
+      default:
+        break;
+    }
+  }
 
-                Navigator.pop(context);
-                Post nextPost = func.getNextPost("music", post);
-                func.goContentPage(context, nextPost);
-              }
-            },
-            controller: _youtubueController,
-            showVideoProgressIndicator: false,
-            progressColors: ProgressBarColors(playedColor: Colors.red),
-            bottomActions: <Widget>[
-              PlayPauseButton(bufferIndicator: Container()),
-              ProgressBar(isExpanded: true),
-              RemainingDuration(),
-            ],
-          ),
-        );
+  @override
+  void onError(String error) {
+  }
+
+  @override
+  void onVideoDuration(double duration) {}
+
+  @override
+  void onCurrentSecond(double second) {}
+
+  void goBeforeContent() {
+    if (_youtubeController != null) {
+      _youtubeController.pause();
+    }
+
+    Post befPost = func.getBeforePost(ArtiqData.category, cuPost);
+
+    func.goContentPage(context, befPost);
+  }
+
+  void goNextContent() {
+    if (_youtubeController != null) {
+      _youtubeController.pause();
+    }
+
+    Post nextPost = func.getNextPost(ArtiqData.category, cuPost);
+
+    func.goContentPage(context, nextPost);
+  }
+
+  Column getContentList(BuildContext context, Post post) {
+    cuPost = post;
+
+    List<Content> contentList = post.content;
+    List<Widget> conContentList = contentList.map((content) {
+      switch(content.type) {
+        case "text-title":
+          return Container(
+            margin: EdgeInsets.only(top: 30, bottom: 10),
+            alignment: Alignment.topLeft,
+            child: Text(content.data,
+                style: TextStyle(
+                    color: Color(0xff313131),
+                    height: 1.5,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'JSDongkang')),
+          );
+          break;
+        case "image":
+          return Container(
+            margin: EdgeInsets.only(top: 20, bottom: 40),
+            child: Column(
+              children: <Widget>[
+                CachedNetworkImage(
+                  imageUrl: content.data,
+                  fit: BoxFit.cover,
+                ),
+                Text(content.desc,
+                    style: TextStyle(
+                        color: Color(0xff313131),
+                        height: 1.5,
+                        fontSize: 13,
+                        fontFamily: 'JSDongkang'))
+              ],
+            ),
+          );
+          break;
+        case "youtube":
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.55,
+            margin: EdgeInsets.only(top: 20, bottom: 40),
+            child: new FlutterYoutubeView(
+                onViewCreated: (controller) {
+                  setState(() {
+                    _youtubeController = controller;
+                    isMoveBtn = false;
+                  });
+                },
+                listener: this,
+                scaleMode: YoutubeScaleMode.none,
+                params: YoutubeParam(
+                    videoId: content.data,
+                    showUI: true,
+                    startSeconds: 0.0,
+                    autoPlay: true,
+                    showFullScreen: false,
+                    showYoutube: false) // <option>
+            ),
+          );
+          break;
+        default:
+          return Container(
+            margin: EdgeInsets.only(bottom: 20),
+            alignment: Alignment.topLeft,
+            child: Text(content.data,
+                style: TextStyle(
+                    color: Color(0xff313131),
+                    height: 1.5,
+                    fontSize: 17,
+                    fontFamily: 'JSDongkang')),
+          );
+          break;
       }
-
-      return Container(
-        margin: EdgeInsets.only(bottom: 20),
-        alignment: Alignment.topLeft,
-        child: Text(content.data,
-            style: TextStyle(
-                color: Color(0xff313131),
-                height: 1.5,
-                fontSize: 17,
-                fontFamily: 'JSDongkang')),
-      );
     }).toList();
 
     return Column(children: conContentList);
@@ -211,7 +238,7 @@ class _ContentPageState extends State<ContentPage> {
                           Container(
                             margin: const EdgeInsets.fromLTRB(30, 30, 30, 10),
                             alignment: Alignment.topLeft,
-                            child: getContentList(widget.post),
+                            child: getContentList(context, widget.post),
                           ),
                           Container(
                             margin: const EdgeInsets.fromLTRB(30, 0, 30, 30),
@@ -244,8 +271,8 @@ class _ContentPageState extends State<ContentPage> {
                   heroTag: null,
                   backgroundColor: Color(0xff212121),
                   onPressed: () {
-                    Navigator.pop(context);
-                    func.goPage(context, PostPage.routeName);
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, PostPage.routeName, (_) => false);
                   },
                   child: Container(
                     child: Icon(
@@ -259,6 +286,48 @@ class _ContentPageState extends State<ContentPage> {
             Positioned(
               bottom: 20,
               right: 70,
+              child: Visibility(
+                visible: isMoveBtn,
+                child: new FloatingActionButton(
+                  mini: true,
+                  heroTag: null,
+                  backgroundColor: Color(0xff212121),
+                  onPressed: () {
+                    goNextContent();
+                  },
+                  child: Container(
+                    child: Icon(
+                      Icons.navigate_next,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: 20,
+              right: 120,
+              child: Visibility(
+                visible: isMoveBtn,
+                child: new FloatingActionButton(
+                  mini: true,
+                  heroTag: null,
+                  backgroundColor: Color(0xff212121),
+                  onPressed: () {
+                    goBeforeContent();
+                  },
+                  child: Container(
+                    child: Icon(
+                      Icons.navigate_before,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: 20,
+              right: 170,
               child: Visibility(
                 visible: (nowOffset > 100),
                 child: new FloatingActionButton(
