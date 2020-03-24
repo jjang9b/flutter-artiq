@@ -41,10 +41,32 @@ class _GuidePageState extends State<GuidePage> {
                 child: PageView.builder(
                   controller: _guideController,
                   itemBuilder: (context, position) {
+                    double con1;
+                    double con2;
+                    double con3;
+
+                    switch (position) {
+                      case 0:
+                        con1 = 0.4;
+                        con2 = 0.05;
+                        con3 = 0.3;
+                        break;
+                      case 1:
+                        con1 = 0.55;
+                        con2 = 0.05;
+                        con3 = 0.2;
+                        break;
+                      default:
+                        con1 = 0.45;
+                        con2 = 0.05;
+                        con3 = 0.2;
+                        break;
+                    }
+
                     return Column(
                       children: <Widget>[
                         Container(
-                          height: MediaQuery.of(context).size.height * 0.5,
+                          height: MediaQuery.of(context).size.height * con1,
                           child: CachedNetworkImage(
                             imageUrl: snapshot.data[position].image,
                             imageBuilder: (context, imageProvider) => Container(
@@ -57,7 +79,7 @@ class _GuidePageState extends State<GuidePage> {
                         ),
                         Container(
                           margin: EdgeInsets.only(top: 30),
-                          height: MediaQuery.of(context).size.height * 0.05,
+                          height: MediaQuery.of(context).size.height * con2,
                           child: Text(
                             snapshot.data[position].title,
                             style: TextStyle(
@@ -66,7 +88,7 @@ class _GuidePageState extends State<GuidePage> {
                         ),
                         Container(
                           margin: EdgeInsets.fromLTRB(30, 10, 30, 10),
-                          height: MediaQuery.of(context).size.height * 0.15,
+                          height: MediaQuery.of(context).size.height * con3,
                           child: Text(
                             snapshot.data[position].text,
                             style: TextStyle(

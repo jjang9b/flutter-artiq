@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:artiq/data.dart';
 import 'package:artiq/page/contentPage.dart';
 import 'package:artiq/page/morePage.dart';
@@ -25,6 +27,24 @@ class Func {
 
   Future<List<Post>> getPostList() {
     return futureData;
+  }
+
+  Post getRandomPost(String category, Post post) {
+    List<Post> postList = ArtiqData.getPostList(category);
+
+    var random = new Random();
+    var ran = random.nextInt(postList.length);
+    var now = postList.indexOf(post);
+
+    while (ran == now) {
+      ran = random.nextInt(postList.length);
+
+      if (ran < 0 || ran >= postList.length) {
+        break;
+      }
+    }
+
+    return postList[ran];
   }
 
   Post getBeforePost(String category, Post post) {

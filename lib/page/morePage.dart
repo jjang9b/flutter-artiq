@@ -13,8 +13,7 @@ class MorePage extends StatefulWidget {
 
 class _MorePageState extends State<MorePage> {
   Func func = new Func();
-  EdgeInsets moreMargin = EdgeInsets.fromLTRB(28, 10, 15, 10);
-  double moreHeight = 30;
+  EdgeInsets moreMargin = const EdgeInsets.only(left: 30, right: 15);
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +27,7 @@ class _MorePageState extends State<MorePage> {
                 Container(
                   height: MediaQuery.of(context).size.height * 0.09,
                   child: Container(
-                    margin: EdgeInsets.fromLTRB(28, 20, 0, 0),
+                    margin: EdgeInsets.fromLTRB(30, 20, 0, 0),
                     alignment: Alignment.topLeft,
                     child: Text("더보기",
                         style: TextStyle(fontSize: 23, fontFamily: "UTOIMAGE")),
@@ -36,20 +35,17 @@ class _MorePageState extends State<MorePage> {
                 ),
                 Container(
                   height: MediaQuery.of(context).size.height * 0.78,
-                  margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
                   child: Column(
                     children: <Widget>[
                       Container(
                         alignment: Alignment.centerLeft,
-                        margin: moreMargin,
+                        margin: EdgeInsets.fromLTRB(30, 0, 30, 5),
                         child: Text("버전",
                             style: TextStyle(
                                 fontSize: 18, fontFamily: "UTOIMAGE")),
                       ),
                       Container(
-                        height: moreHeight,
-                        margin: moreMargin,
-                        alignment: Alignment.centerLeft,
+                        margin: EdgeInsets.fromLTRB(30, 5, 30, 5),
                         child: Row(
                           children: <Widget>[
                             Container(
@@ -62,24 +58,23 @@ class _MorePageState extends State<MorePage> {
                       ),
                       Container(
                         alignment: Alignment.centerLeft,
-                        margin: moreMargin,
+                        margin: EdgeInsets.fromLTRB(30, 30, 30, 5),
                         child: Text("설정",
                             style: TextStyle(
                                 fontSize: 18, fontFamily: "UTOIMAGE")),
                       ),
                       Container(
-                        height: moreHeight,
-                        margin: moreMargin,
-                        alignment: Alignment.centerLeft,
+                        margin: const EdgeInsets.fromLTRB(30, 0, 30, 0),
                         child: Row(
                           children: <Widget>[
                             Container(
-                              child: Text("MUSIC탭 다음 포스트 자동 재생",
+                              child: Text("MUSIC탭 - 다음 포스트 자동 재생",
                                   style: TextStyle(
                                       fontSize: 16, fontFamily: "Arita")),
                             ),
                             Container(
                               width: 60,
+                              height: 40,
                               margin: EdgeInsets.only(left: 20),
                               child: Switch(
                                 value: ArtiqData.isMusicAuto,
@@ -96,16 +91,41 @@ class _MorePageState extends State<MorePage> {
                         ),
                       ),
                       Container(
+                        margin: const EdgeInsets.fromLTRB(30, 0, 30, 0),
+                        child: Row(
+                          children: <Widget>[
+                            Container(
+                              child: Text("MUSIC탭 - 다음 포스트 랜덤 재생",
+                                  style: TextStyle(
+                                      fontSize: 16, fontFamily: "Arita")),
+                            ),
+                            Container(
+                              width: 60,
+                              height: 40,
+                              margin: EdgeInsets.only(left: 20),
+                              child: Switch(
+                                value: ArtiqData.isMusicRandom,
+                                onChanged: (value) {
+                                  setState(() {
+                                    ArtiqData.isMusicRandom = value;
+                                  });
+                                },
+                                inactiveTrackColor: Colors.black54,
+                                activeColor: Colors.red,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
                         alignment: Alignment.centerLeft,
-                        margin: moreMargin,
+                        margin: EdgeInsets.fromLTRB(30, 30, 30, 5),
                         child: Text("포스트 추천 및 문의",
                             style: TextStyle(
                                 fontSize: 18, fontFamily: "UTOIMAGE")),
                       ),
                       Container(
-                        height: moreHeight,
-                        margin: moreMargin,
-                        alignment: Alignment.centerLeft,
+                        margin: const EdgeInsets.fromLTRB(30, 10, 30, 10),
                         child: InkWell(
                           onTap: () {
                             Email email = Email(
@@ -130,7 +150,7 @@ class _MorePageState extends State<MorePage> {
                                     children: <Widget>[
                                       Icon(
                                         Icons.email,
-                                        size: 27,
+                                        size: 20,
                                       ),
                                     ],
                                   ),

@@ -9,6 +9,7 @@ class ArtiqData {
   static String category = "music";
   static int categoryIdx = 0;
   static bool isMusicAuto = false;
+  static bool isMusicRandom = false;
   static String version = "1.0.0";
 
   static List<Post> getPostList(String type) {

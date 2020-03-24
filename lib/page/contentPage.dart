@@ -40,6 +40,10 @@ class _ContentPageState extends State<ContentPage>
         break;
       case "ENDED":
         if (ArtiqData.isMusicAuto) {
+          if (ArtiqData.isMusicRandom) {
+            return goRandomContent();
+          }
+
           return goNextContent();
         }
 
@@ -51,8 +55,7 @@ class _ContentPageState extends State<ContentPage>
   }
 
   @override
-  void onError(String error) {
-  }
+  void onError(String error) {}
 
   @override
   void onVideoDuration(double duration) {}
@@ -70,6 +73,16 @@ class _ContentPageState extends State<ContentPage>
     func.goContentPage(context, befPost);
   }
 
+  void goRandomContent() {
+    if (_youtubeController != null) {
+      _youtubeController.pause();
+    }
+
+    Post nextPost = func.getRandomPost(ArtiqData.category, cuPost);
+
+    func.goContentPage(context, nextPost);
+  }
+
   void goNextContent() {
     if (_youtubeController != null) {
       _youtubeController.pause();
@@ -85,7 +98,7 @@ class _ContentPageState extends State<ContentPage>
 
     List<Content> contentList = post.content;
     List<Widget> conContentList = contentList.map((content) {
-      switch(content.type) {
+      switch (content.type) {
         case "text-title":
           return Container(
             margin: EdgeInsets.only(top: 30, bottom: 10),
@@ -138,7 +151,7 @@ class _ContentPageState extends State<ContentPage>
                     autoPlay: true,
                     showFullScreen: false,
                     showYoutube: false) // <option>
-            ),
+                ),
           );
           break;
         default:
