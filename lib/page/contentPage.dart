@@ -232,7 +232,7 @@ class _ContentPageState extends State<ContentPage>
                             alignment: Alignment.bottomCenter,
                             child: Text(widget.post.origin,
                                 style: TextStyle(
-                                    color: Color(0xffFF0266),
+                                    color: Colors.red,
                                     height: 1.5,
                                     fontSize: 17,
                                     fontWeight: FontWeight.bold,

@@ -1,7 +1,10 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:artiq/data.dart';
 import 'package:artiq/func/func.dart';
+import 'package:artiq/sql/artiqDb.dart';
+import 'package:artiq/sql/sqlLite.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -17,6 +20,7 @@ class _PostPageState extends State<PostPage> {
   PageController _pageController = new PageController();
   Fetch fetch = new Fetch();
   Func func = new Func();
+  bool isRefresh = true;
 
   @override
   void initState() {
@@ -136,20 +140,17 @@ class _PostPageState extends State<PostPage> {
                                 builder: (context, snapshot) {
                                   if (snapshot.hasData) {
                                     return NotificationListener<
-                                        ScrollNotification>(
-                                        onNotification:
-                                            (scrollNotification) {
+                                            ScrollNotification>(
+                                        onNotification: (scrollNotification) {
                                           setState(() {
-                                            func.setPage(
-                                                _pageController.page);
+                                            func.setPage(_pageController.page);
                                           });
 
                                           return true;
                                         },
                                         child: PageView.builder(
                                           controller: _pageController,
-                                          itemBuilder:
-                                              (context, position) {
+                                          itemBuilder: (context, position) {
                                             return func.getContent(
                                                 context,
                                                 snapshot.data.length,
@@ -164,8 +165,8 @@ class _PostPageState extends State<PostPage> {
                                     child: CircularProgressIndicator(
                                       backgroundColor: Colors.black,
                                       valueColor:
-                                      new AlwaysStoppedAnimation<
-                                          Color>(Colors.white),
+                                          new AlwaysStoppedAnimation<Color>(
+                                              Colors.white),
                                     ),
                                   );
                                 },

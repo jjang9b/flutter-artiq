@@ -29,6 +29,11 @@ class Func {
     return futureData;
   }
 
+  void setPostList(String category) {
+    ArtiqData.isPostCache = false;
+    this.futureData = fetch.fetchPost(category);
+  }
+
   Post getRandomPost(String category, Post post) {
     List<Post> postList = ArtiqData.getPostList(category);
 
@@ -215,7 +220,7 @@ class Func {
               width: MediaQuery.of(context).size.width * 0.68,
               margin: EdgeInsets.only(top: 8),
               child: DotsIndicator(
-                dotsCount: length,
+                dotsCount: (length > 0) ? length : 0,
                 position: _page.abs(),
                 decorator: DotsDecorator(
                   activeSize: Size.fromRadius(5),

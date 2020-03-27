@@ -6,8 +6,11 @@ import 'package:http/http.dart' as http;
 final Map<String, List<Post>> futureMap = new Map<String, List<Post>>();
 
 class ArtiqData {
+  static var dbIdMap = {"guide": 1, "refresh": 2};
   static String category = "music";
   static int categoryIdx = 0;
+  static bool isRefresh = true;
+  static bool isPostCache = true;
   static bool isMusicAuto = false;
   static bool isMusicRandom = false;
   static String version = "1.0.0";
@@ -35,8 +38,11 @@ class Fetch {
 
   Future<List<Post>> fetchPost(String category) async {
     List<Post> cacheMap = futureMap[category];
-    if (cacheMap != null) {
-      return cacheMap;
+
+    if (ArtiqData.isPostCache) {
+      if (cacheMap != null) {
+        return cacheMap;
+      }
     }
 
     var uri;
@@ -60,6 +66,7 @@ class Fetch {
       List<Post> result = postList.map((post) => Post.fromJson(post)).toList();
 
       futureMap[category] = result;
+      ArtiqData.isPostCache = true;
 
       return result;
     } else {

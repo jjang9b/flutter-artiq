@@ -4,8 +4,10 @@ import 'package:artiq/page/postPage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
 
-void main() {
+void main() async {
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     systemNavigationBarColor: Colors.white,
     statusBarColor: Colors.white,
@@ -30,6 +32,8 @@ class MyApp extends StatelessWidget {
       home: GuidePage(),
       onGenerateRoute: (settings) {
         switch (settings.name) {
+          case GuidePage.routeName:
+            return PageRouteBuilder(pageBuilder: (_, a1, a2) => GuidePage());
           case PostPage.routeName:
             return PageRouteBuilder(pageBuilder: (_, a1, a2) => PostPage());
           case MorePage.routeName:
