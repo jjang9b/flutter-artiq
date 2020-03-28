@@ -1,10 +1,7 @@
-import 'dart:async';
 import 'dart:ui';
 
 import 'package:artiq/data.dart';
 import 'package:artiq/func/func.dart';
-import 'package:artiq/sql/artiqDb.dart';
-import 'package:artiq/sql/sqlLite.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -18,17 +15,19 @@ class PostPage extends StatefulWidget {
 class _PostPageState extends State<PostPage> {
   PageController _categoryController = new PageController();
   PageController _pageController = new PageController();
-  Fetch fetch = new Fetch();
-  Func func = new Func();
   bool isRefresh = true;
 
   @override
   void initState() {
     super.initState();
 
+    Func.setPostPage(0);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      func.categoryTab(
-          _categoryController, ArtiqData.category, ArtiqData.categoryIdx);
+      if (ArtiqData.category != ArtiqData.firstCategory) {
+        Func.categoryTab(
+            _categoryController, ArtiqData.category, ArtiqData.categoryIdx);
+      }
     });
   }
 
@@ -111,9 +110,9 @@ class _PostPageState extends State<PostPage> {
                     height: MediaQuery.of(context).size.height * 0.08,
                     child: Row(
                       children: <Widget>[
-                        func.getCategory(
+                        Func.getCategory(
                             _categoryController, 'music', 'MUSIC', 0),
-                        func.getCategory(_categoryController, 'art', 'ART', 1),
+                        Func.getCategory(_categoryController, 'art', 'ART', 1),
                       ],
                     ),
                   ),
@@ -125,7 +124,7 @@ class _PostPageState extends State<PostPage> {
                     child: NotificationListener<ScrollNotification>(
                       onNotification: (scrollNotification) {
                         setState(() {
-                          func.setCategoryPage(_categoryController.page);
+                          Func.setCategoryPage(_categoryController.page);
                         });
 
                         return true;
@@ -136,14 +135,15 @@ class _PostPageState extends State<PostPage> {
                           itemBuilder: (context, position) {
                             return Container(
                               child: FutureBuilder<List<Post>>(
-                                future: func.getPostList(),
+                                future: Func.getPostList(),
                                 builder: (context, snapshot) {
                                   if (snapshot.hasData) {
                                     return NotificationListener<
                                             ScrollNotification>(
                                         onNotification: (scrollNotification) {
                                           setState(() {
-                                            func.setPage(_pageController.page);
+                                            Func.setPostPage(
+                                                _pageController.page);
                                           });
 
                                           return true;
@@ -151,7 +151,7 @@ class _PostPageState extends State<PostPage> {
                                         child: PageView.builder(
                                           controller: _pageController,
                                           itemBuilder: (context, position) {
-                                            return func.getContent(
+                                            return Func.getContent(
                                                 context,
                                                 snapshot.data.length,
                                                 position,
@@ -177,7 +177,7 @@ class _PostPageState extends State<PostPage> {
                     ),
                   ),
                 ),
-                func.getNavigator(context)
+                Func.getNavigator(context)
               ],
             )
           ],

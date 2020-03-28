@@ -7,6 +7,7 @@ final Map<String, List<Post>> futureMap = new Map<String, List<Post>>();
 
 class ArtiqData {
   static var dbIdMap = {"guide": 1, "refresh": 2};
+  static String firstCategory = "music";
   static String category = "music";
   static int categoryIdx = 0;
   static bool isRefresh = true;

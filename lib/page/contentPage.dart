@@ -20,7 +20,6 @@ class ContentPage extends StatefulWidget {
 
 class _ContentPageState extends State<ContentPage>
     implements YouTubePlayerListener {
-  Func func = new Func();
   ScrollController _contentScrollController = new ScrollController();
   FlutterYoutubeViewController _youtubeController;
   Post cuPost;
@@ -68,9 +67,9 @@ class _ContentPageState extends State<ContentPage>
       _youtubeController.pause();
     }
 
-    Post befPost = func.getBeforePost(ArtiqData.category, cuPost);
+    Post befPost = Func.getBeforePost(ArtiqData.category, cuPost);
 
-    func.goContentPage(context, befPost);
+    Func.goContentPage(context, befPost);
   }
 
   void goRandomContent() {
@@ -78,9 +77,9 @@ class _ContentPageState extends State<ContentPage>
       _youtubeController.pause();
     }
 
-    Post nextPost = func.getRandomPost(ArtiqData.category, cuPost);
+    Post nextPost = Func.getRandomPost(ArtiqData.category, cuPost);
 
-    func.goContentPage(context, nextPost);
+    Func.goContentPage(context, nextPost);
   }
 
   void goNextContent() {
@@ -88,9 +87,9 @@ class _ContentPageState extends State<ContentPage>
       _youtubeController.pause();
     }
 
-    Post nextPost = func.getNextPost(ArtiqData.category, cuPost);
+    Post nextPost = Func.getNextPost(ArtiqData.category, cuPost);
 
-    func.goContentPage(context, nextPost);
+    Func.goContentPage(context, nextPost);
   }
 
   Column getContentList(BuildContext context, Post post) {

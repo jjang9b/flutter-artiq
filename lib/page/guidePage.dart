@@ -16,7 +16,6 @@ class GuidePage extends StatefulWidget {
 }
 
 class _GuidePageState extends State<GuidePage> {
-  Func func = new Func();
   PageController _guideController = new PageController();
   double idx = 0;
 
@@ -50,7 +49,7 @@ class _GuidePageState extends State<GuidePage> {
       backgroundColor: Colors.white,
       body: SafeArea(
           child: FutureBuilder<List<Guide>>(
-        future: func.getGuideList(),
+        future: Func.getGuideList(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return NotificationListener<ScrollNotification>(

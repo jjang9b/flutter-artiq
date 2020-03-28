@@ -10,31 +10,21 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Func {
-  Fetch fetch = new Fetch();
-  Future<List<Guide>> futureGuideList;
-  Future<List<Post>> futureData;
-  double _categoryPage = 0;
-  double _page = 0;
+  static Fetch fetch = new Fetch();
+  static Future<List<Guide>> futureGuideList = fetch.fetchGuide();
+  static Future<List<Post>> futureData = fetch.fetchPost('music');
+  static double _categoryPage = 0;
+  static double _postPage = 0;
 
-  Func() {
-    futureGuideList = fetch.fetchGuide();
-    futureData = fetch.fetchPost('music');
-  }
-
-  Future<List<Guide>> getGuideList() {
+  static Future<List<Guide>> getGuideList() {
     return futureGuideList;
   }
 
-  Future<List<Post>> getPostList() {
+  static Future<List<Post>> getPostList() {
     return futureData;
   }
 
-  void setPostList(String category) {
-    ArtiqData.isPostCache = false;
-    this.futureData = fetch.fetchPost(category);
-  }
-
-  Post getRandomPost(String category, Post post) {
+  static Post getRandomPost(String category, Post post) {
     List<Post> postList = ArtiqData.getPostList(category);
 
     var random = new Random();
@@ -52,7 +42,7 @@ class Func {
     return postList[ran];
   }
 
-  Post getBeforePost(String category, Post post) {
+  static Post getBeforePost(String category, Post post) {
     List<Post> postList = ArtiqData.getPostList(category);
 
     int bef = postList.indexOf(post) - 1;
@@ -63,7 +53,7 @@ class Func {
     return postList[bef];
   }
 
-  Post getNextPost(String category, Post post) {
+  static Post getNextPost(String category, Post post) {
     List<Post> postList = ArtiqData.getPostList(category);
 
     int next = postList.indexOf(post) + 1;
@@ -74,48 +64,43 @@ class Func {
     return postList[next];
   }
 
-  void setData(String category, int categoryIdx) {
+  static void setData(String category, int categoryIdx) {
     ArtiqData.category = category;
     ArtiqData.categoryIdx = categoryIdx;
-    this.futureData = fetch.fetchPost(category);
+    Func.futureData = fetch.fetchPost(category);
   }
 
-  void setCategoryPage(double categoryPage) {
-    this._categoryPage = categoryPage;
+  static void setCategoryPage(double categoryPage) {
+    Func._categoryPage = categoryPage;
   }
 
-  void setPage(double page) {
-    this._page = page;
+  static void setPostPage(double page) {
+    Func._postPage = page;
   }
 
-  double getScale(int position) {
+  static double getScale(int position) {
     return 1;
-    /*
-    double scale = 1 - (_page - position).abs();
-
-    return (scale < 0.8) ? 0.8 : scale;
-     */
   }
 
-  void categoryTab(
+  static void categoryTab(
       PageController _categoryController, String category, int categoryIdx) {
     setData(category, categoryIdx);
     _categoryController.jumpToPage(categoryIdx);
-    setPage(0);
+    setPostPage(0);
   }
 
-  void goContentPage(BuildContext context, Post post) {
+  static void goContentPage(BuildContext context, Post post) {
     Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) {
       return new ContentPage(post);
     }));
   }
 
-  void goPage(BuildContext context, String routeName) {
+  static void goPage(BuildContext context, String routeName) {
     Navigator.pushNamed(context, routeName);
   }
 
-  InkWell getCategory(PageController _categoryController, String category,
-      String title, int idx) {
+  static InkWell getCategory(PageController _categoryController,
+      String category, String title, int idx) {
     return InkWell(
       highlightColor: Colors.transparent,
       splashColor: Colors.transparent,
@@ -152,7 +137,7 @@ class Func {
     );
   }
 
-  Container getContent(
+  static Container getContent(
       BuildContext context, int length, int position, Post post) {
     Alignment originAlign = Alignment.bottomLeft;
 
@@ -220,8 +205,8 @@ class Func {
               width: MediaQuery.of(context).size.width * 0.68,
               margin: EdgeInsets.only(top: 8),
               child: DotsIndicator(
-                dotsCount: (length > 0) ? length : 0,
-                position: _page.abs(),
+                dotsCount: (length >= 0) ? length : 0,
+                position: Func._postPage.abs(),
                 decorator: DotsDecorator(
                   activeSize: Size.fromRadius(5),
                   activeShape: RoundedRectangleBorder(
@@ -237,7 +222,7 @@ class Func {
     );
   }
 
-  Container getNavigator(BuildContext context) {
+  static Container getNavigator(BuildContext context) {
     return Container(
       margin: EdgeInsets.fromLTRB(50, 0, 50, 10),
       height: MediaQuery.of(context).size.height * 0.05,

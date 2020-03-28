@@ -14,7 +14,6 @@ class MorePage extends StatefulWidget {
 }
 
 class _MorePageState extends State<MorePage> {
-  Func func = new Func();
   EdgeInsets moreMargin = const EdgeInsets.only(left: 30, right: 15);
 
   @override
@@ -223,7 +222,7 @@ class _MorePageState extends State<MorePage> {
                             ],
                           ),
                         ),
-                        func.getNavigator(context)
+                        Func.getNavigator(context)
                       ],
                     );
                   },
