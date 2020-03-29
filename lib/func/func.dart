@@ -74,6 +74,10 @@ class Func {
     Func._categoryPage = categoryPage;
   }
 
+  static double getPostPage() {
+    return _postPage.abs();
+  }
+
   static void setPostPage(double page) {
     Func._postPage = page;
   }
@@ -206,7 +210,7 @@ class Func {
               margin: EdgeInsets.only(top: 8),
               child: DotsIndicator(
                 dotsCount: (length >= 0) ? length : 0,
-                position: Func._postPage.abs(),
+                position: getPostPage(),
                 decorator: DotsDecorator(
                   activeSize: Size.fromRadius(5),
                   activeShape: RoundedRectangleBorder(
@@ -234,6 +238,10 @@ class Func {
             highlightColor: Colors.transparent,
             splashColor: Colors.transparent,
             onTap: () {
+              if (ArtiqData.isPostScrolling) {
+                return;
+              }
+
               goPage(context, PostPage.routeName);
             },
             child: Container(

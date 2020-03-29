@@ -4,16 +4,16 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 final Map<String, List<Post>> futureMap = new Map<String, List<Post>>();
+final Map<String, bool> isFetchMap = new Map<String, bool>();
 
 class ArtiqData {
   static var dbIdMap = {"guide": 1, "refresh": 2};
   static String firstCategory = "music";
   static String category = "music";
   static int categoryIdx = 0;
-  static bool isRefresh = true;
-  static bool isPostCache = true;
   static bool isMusicAuto = false;
   static bool isMusicRandom = false;
+  static bool isPostScrolling = false;
   static String version = "1.0.0";
 
   static List<Post> getPostList(String type) {
@@ -40,10 +40,8 @@ class Fetch {
   Future<List<Post>> fetchPost(String category) async {
     List<Post> cacheMap = futureMap[category];
 
-    if (ArtiqData.isPostCache) {
-      if (cacheMap != null) {
-        return cacheMap;
-      }
+    if (cacheMap != null) {
+      return cacheMap;
     }
 
     var uri;
@@ -66,8 +64,11 @@ class Fetch {
 
       List<Post> result = postList.map((post) => Post.fromJson(post)).toList();
 
+      if (futureMap[category] != null) {
+        return futureMap[category];
+      }
+
       futureMap[category] = result;
-      ArtiqData.isPostCache = true;
 
       return result;
     } else {

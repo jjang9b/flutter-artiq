@@ -15,7 +15,6 @@ class PostPage extends StatefulWidget {
 class _PostPageState extends State<PostPage> {
   PageController _categoryController = new PageController();
   PageController _pageController = new PageController();
-  bool isRefresh = true;
 
   @override
   void initState() {
@@ -24,10 +23,8 @@ class _PostPageState extends State<PostPage> {
     Func.setPostPage(0);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (ArtiqData.category != ArtiqData.firstCategory) {
-        Func.categoryTab(
-            _categoryController, ArtiqData.category, ArtiqData.categoryIdx);
-      }
+      Func.categoryTab(
+          _categoryController, ArtiqData.category, ArtiqData.categoryIdx);
     });
   }
 
@@ -104,8 +101,7 @@ class _PostPageState extends State<PostPage> {
                 height: MediaQuery.of(context).size.height * 0.08,
                 child: Row(
                   children: <Widget>[
-                    Func.getCategory(
-                        _categoryController, 'music', 'MUSIC', 0),
+                    Func.getCategory(_categoryController, 'music', 'MUSIC', 0),
                     Func.getCategory(_categoryController, 'art', 'ART', 1),
                   ],
                 ),
@@ -132,12 +128,18 @@ class _PostPageState extends State<PostPage> {
                             future: Func.getPostList(),
                             builder: (context, snapshot) {
                               if (snapshot.hasData) {
-                                return NotificationListener<
-                                    ScrollNotification>(
+                                return NotificationListener<ScrollNotification>(
                                     onNotification: (scrollNotification) {
+                                      if (scrollNotification
+                                          is ScrollStartNotification) {
+                                        ArtiqData.isPostScrolling = true;
+                                      } else if (scrollNotification
+                                          is ScrollEndNotification) {
+                                        ArtiqData.isPostScrolling = false;
+                                      }
+
                                       setState(() {
-                                        Func.setPostPage(
-                                            _pageController.page);
+                                        Func.setPostPage(_pageController.page);
                                       });
 
                                       return true;
@@ -158,8 +160,7 @@ class _PostPageState extends State<PostPage> {
                               return Center(
                                 child: CircularProgressIndicator(
                                   backgroundColor: Colors.black,
-                                  valueColor:
-                                  new AlwaysStoppedAnimation<Color>(
+                                  valueColor: new AlwaysStoppedAnimation<Color>(
                                       Colors.white),
                                 ),
                               );
