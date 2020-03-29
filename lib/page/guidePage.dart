@@ -66,43 +66,48 @@ class _GuidePageState extends State<GuidePage> {
                     double con1;
                     double con2;
                     double con3;
+                    BoxFit boxFit;
 
                     switch (position) {
                       case 0:
                         con1 = 0.4;
                         con2 = 0.05;
                         con3 = 0.3;
+                        boxFit = BoxFit.cover;
                         break;
                       case 1:
                         con1 = 0.55;
                         con2 = 0.05;
-                        con3 = 0.15;
+                        con3 = 0.09;
+                        boxFit = BoxFit.cover;
                         break;
                       default:
                         con1 = 0.35;
                         con2 = 0.05;
                         con3 = 0.2;
+                        boxFit = BoxFit.cover;
                         break;
                     }
 
                     return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Container(
-                          margin: EdgeInsets.only(top: 20),
                           height: MediaQuery.of(context).size.height * con1,
+                          margin: EdgeInsets.fromLTRB(30, 20, 0, 10),
                           child: CachedNetworkImage(
                             imageUrl: snapshot.data[position].image,
                             imageBuilder: (context, imageProvider) => Container(
                               decoration: BoxDecoration(
                                 image: DecorationImage(
-                                    image: imageProvider, fit: BoxFit.contain),
+                                    image: imageProvider, fit: boxFit),
                               ),
                             ),
                           ),
                         ),
                         Container(
-                          margin: EdgeInsets.only(top: 30),
                           height: MediaQuery.of(context).size.height * con2,
+                          margin: EdgeInsets.fromLTRB(30, 30, 30, 10),
                           child: Text(
                             snapshot.data[position].title,
                             style: TextStyle(
@@ -110,8 +115,8 @@ class _GuidePageState extends State<GuidePage> {
                           ),
                         ),
                         Container(
-                          margin: EdgeInsets.fromLTRB(30, 10, 30, 10),
                           height: MediaQuery.of(context).size.height * con3,
+                          margin: EdgeInsets.fromLTRB(30, 10, 30, 10),
                           child: Text(
                             snapshot.data[position].text,
                             style: TextStyle(
@@ -121,9 +126,8 @@ class _GuidePageState extends State<GuidePage> {
                           ),
                         ),
                         Container(
-                          alignment: Alignment.bottomCenter,
-                          width: MediaQuery.of(context).size.width * 0.68,
-                          margin: EdgeInsets.only(top: 8),
+                          margin: EdgeInsets.fromLTRB(30, 0, 30, 10),
+                          alignment: Alignment.center,
                           child: DotsIndicator(
                             dotsCount: snapshot.data.length,
                             position: idx.abs(),
@@ -184,7 +188,7 @@ class _GuidePageState extends State<GuidePage> {
                                 margin: EdgeInsets.fromLTRB(50, 0, 50, 40),
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
-                                    color: Color(0xFFef0078),
+                                    color: Colors.black87,
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(30))),
                                 child: Text("들어가기",
