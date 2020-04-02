@@ -14,7 +14,7 @@ class ArtiqData {
   static bool isMusicAuto = false;
   static bool isMusicRandom = false;
   static bool isPostScrolling = false;
-  static String version = "1.0.0";
+  static String version = "1.0.1";
 
   static List<Post> getPostList(String type) {
     return futureMap[type];

@@ -75,7 +75,7 @@ class Func {
   }
 
   static double getPostPage() {
-    return _postPage.abs();
+    return Func._postPage.abs();
   }
 
   static void setPostPage(double page) {
@@ -109,6 +109,10 @@ class Func {
       highlightColor: Colors.transparent,
       splashColor: Colors.transparent,
       onTap: () {
+        if (ArtiqData.isPostScrolling) {
+          return;
+        }
+
         categoryTab(_categoryController, category, idx);
       },
       child: Container(
@@ -262,6 +266,10 @@ class Func {
             highlightColor: Colors.transparent,
             splashColor: Colors.transparent,
             onTap: () {
+              if (ArtiqData.isPostScrolling) {
+                return;
+              }
+
               goPage(context, MorePage.routeName);
             },
             child: Container(
