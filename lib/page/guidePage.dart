@@ -3,7 +3,6 @@ import 'package:artiq/func/func.dart';
 import 'package:artiq/page/postPage.dart';
 import 'package:artiq/sql/artiqDb.dart';
 import 'package:artiq/sql/sqlLite.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/cupertino.dart';
@@ -121,15 +120,12 @@ class _GuidePageState extends State<GuidePage> {
                           height: MediaQuery.of(context).size.height * con3,
                           margin: EdgeInsets.fromLTRB(30, 10, 30, 10),
                           alignment: Alignment.center,
-                          child: AutoSizeText(
+                          child: Text(
                             snapshot.data[position].text,
                             style: TextStyle(
                                 fontSize: 16,
                                 height: 1.5,
                                 fontFamily: "JSDongkang"),
-                            minFontSize: 15,
-                            maxFontSize: 16,
-                            maxLines: 8,
                           ),
                         ),
                         Container(
