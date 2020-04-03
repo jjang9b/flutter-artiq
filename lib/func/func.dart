@@ -233,7 +233,7 @@ class Func {
   static Container getNavigator(BuildContext context) {
     return Container(
       margin: EdgeInsets.fromLTRB(50, 0, 50, 10),
-      height: MediaQuery.of(context).size.height * 0.05,
+      height: MediaQuery.of(context).size.height * 0.065,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -249,14 +249,13 @@ class Func {
               goPage(context, PostPage.routeName);
             },
             child: Container(
-              width: 45,
-              height: 60,
+              width: 50,
               margin: EdgeInsets.only(left: 20, top: 6, right: 20),
               child: Column(
                 children: <Widget>[
                   Icon(
                     Icons.wallpaper,
-                    size: 27,
+                    size: 30,
                   ),
                 ],
               ),
@@ -273,14 +272,13 @@ class Func {
               goPage(context, MorePage.routeName);
             },
             child: Container(
-              width: 45,
-              height: 60,
+              width: 50,
               margin: EdgeInsets.only(top: 6),
               child: Column(
                 children: <Widget>[
                   Icon(
                     Icons.more_horiz,
-                    size: 27,
+                    size: 30,
                   ),
                 ],
               ),

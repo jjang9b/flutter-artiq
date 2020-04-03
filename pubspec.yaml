@@ -30,6 +30,7 @@ dependencies:
   dots_indicator: ^1.0.0
   flutter_email_sender: ^2.2.2
   flutter_youtube_view: ^1.1.8
+  auto_size_text: ^2.1.0
 
 dev_dependencies:
   flutter_test:

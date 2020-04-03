@@ -89,7 +89,7 @@ class _MorePageState extends State<MorePage> {
                                     ),
                                     Container(
                                       width: 60,
-                                      height: 40,
+                                      height: 48,
                                       margin: EdgeInsets.only(left: 20),
                                       child: Switch(
                                         value: ArtiqData.isMusicAuto,
@@ -117,7 +117,7 @@ class _MorePageState extends State<MorePage> {
                                     ),
                                     Container(
                                       width: 60,
-                                      height: 40,
+                                      height: 48,
                                       margin: EdgeInsets.only(left: 20),
                                       child: Switch(
                                         value: ArtiqData.isMusicRandom,
@@ -141,6 +141,7 @@ class _MorePageState extends State<MorePage> {
                                         fontSize: 15, fontFamily: "UTOIMAGE")),
                               ),
                               Container(
+                                height: 48,
                                 margin: const EdgeInsets.fromLTRB(30, 0, 30, 0),
                                 child: InkWell(
                                   onTap: () {
@@ -158,7 +159,7 @@ class _MorePageState extends State<MorePage> {
                                                 fontFamily: "Arita")),
                                       ),
                                       Container(
-                                        margin: EdgeInsets.only(left: 10),
+                                        margin: EdgeInsets.only(left: 10, top: 13),
                                         child: Container(
                                           child: Column(
                                             children: <Widget>[
@@ -176,12 +177,13 @@ class _MorePageState extends State<MorePage> {
                               ),
                               Container(
                                 alignment: Alignment.centerLeft,
-                                margin: EdgeInsets.fromLTRB(30, 40, 30, 5),
+                                margin: EdgeInsets.fromLTRB(30, 30, 30, 5),
                                 child: Text("포스트 추천 및 문의",
                                     style: TextStyle(
                                         fontSize: 18, fontFamily: "UTOIMAGE")),
                               ),
                               Container(
+                                height: 48,
                                 margin:
                                     const EdgeInsets.fromLTRB(30, 10, 30, 10),
                                 child: InkWell(
@@ -203,7 +205,7 @@ class _MorePageState extends State<MorePage> {
                                                 fontFamily: "Arita")),
                                       ),
                                       Container(
-                                        margin: EdgeInsets.only(left: 10),
+                                        margin: EdgeInsets.only(left: 10, top: 12),
                                         child: Container(
                                           child: Column(
                                             children: <Widget>[

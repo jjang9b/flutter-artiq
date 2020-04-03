@@ -3,6 +3,7 @@ import 'package:artiq/func/func.dart';
 import 'package:artiq/page/postPage.dart';
 import 'package:artiq/sql/artiqDb.dart';
 import 'package:artiq/sql/sqlLite.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/cupertino.dart';
@@ -70,21 +71,22 @@ class _GuidePageState extends State<GuidePage> {
 
                     switch (position) {
                       case 0:
-                        con1 = 0.3;
-                        con2 = 0.05;
-                        con3 = 0.37;
-                        boxFit = BoxFit.cover;
-                        break;
                       case 1:
                         con1 = 0.55;
                         con2 = 0.05;
                         con3 = 0.09;
                         boxFit = BoxFit.cover;
                         break;
-                      default:
+                      case 2:
                         con1 = 0.35;
                         con2 = 0.05;
                         con3 = 0.2;
+                        boxFit = BoxFit.cover;
+                        break;
+                      default:
+                        con1 = 0.4;
+                        con2 = 0.05;
+                        con3 = 0.3;
                         boxFit = BoxFit.cover;
                         break;
                     }
@@ -94,7 +96,7 @@ class _GuidePageState extends State<GuidePage> {
                       children: <Widget>[
                         Container(
                           height: MediaQuery.of(context).size.height * con1,
-                          margin: EdgeInsets.fromLTRB(30, 20, 0, 10),
+                          margin: EdgeInsets.fromLTRB(30, 20, 30, 10),
                           child: CachedNetworkImage(
                             imageUrl: snapshot.data[position].image,
                             imageBuilder: (context, imageProvider) => Container(
@@ -108,6 +110,7 @@ class _GuidePageState extends State<GuidePage> {
                         Container(
                           height: MediaQuery.of(context).size.height * con2,
                           margin: EdgeInsets.fromLTRB(30, 30, 30, 10),
+                          alignment: Alignment.center,
                           child: Text(
                             snapshot.data[position].title,
                             style: TextStyle(
@@ -117,12 +120,16 @@ class _GuidePageState extends State<GuidePage> {
                         Container(
                           height: MediaQuery.of(context).size.height * con3,
                           margin: EdgeInsets.fromLTRB(30, 10, 30, 10),
-                          child: Text(
+                          alignment: Alignment.center,
+                          child: AutoSizeText(
                             snapshot.data[position].text,
                             style: TextStyle(
                                 fontSize: 16,
                                 height: 1.5,
                                 fontFamily: "JSDongkang"),
+                            minFontSize: 15,
+                            maxFontSize: 16,
+                            maxLines: 8,
                           ),
                         ),
                         Container(
