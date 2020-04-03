@@ -70,9 +70,9 @@ class _GuidePageState extends State<GuidePage> {
 
                     switch (position) {
                       case 0:
-                        con1 = 0.4;
+                        con1 = 0.3;
                         con2 = 0.05;
-                        con3 = 0.3;
+                        con3 = 0.37;
                         boxFit = BoxFit.cover;
                         break;
                       case 1:
