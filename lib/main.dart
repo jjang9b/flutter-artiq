@@ -1,9 +1,12 @@
+import 'package:artiq/func/AssetLoader.dart';
 import 'package:artiq/page/guidePage.dart';
 import 'package:artiq/page/morePage.dart';
 import 'package:artiq/page/postPage.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -17,7 +20,14 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
-    runApp(MyApp());
+    runApp(EasyLocalization(
+      supportedLocales: [Locale('ko'), Locale('en')],
+      path: 'res/languages',
+      saveLocale: false,
+      useOnlyLangCode: true,
+      assetLoader: FileAssetLoader(),
+      child: MyApp(),
+    ));
   });
 }
 
@@ -25,8 +35,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        EasyLocalization.of(context).delegate
+      ],
+      supportedLocales: EasyLocalization.of(context).supportedLocales,
+      locale: EasyLocalization.of(context).locale,
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(fontFamily: 'UTOIMAGE, JSDongkang, Arita'),
+      theme: ThemeData(fontFamily: 'UTOIMAGE'),
       home: GuidePage(),
       onGenerateRoute: (settings) {
         switch (settings.name) {

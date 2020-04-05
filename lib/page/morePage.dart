@@ -2,9 +2,11 @@ import 'package:artiq/data.dart';
 import 'package:artiq/func/func.dart';
 import 'package:artiq/page/guidePage.dart';
 import 'package:artiq/sql/sqlLite.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class MorePage extends StatefulWidget {
   static const routeName = '/more';
@@ -34,9 +36,10 @@ class _MorePageState extends State<MorePage> {
                           child: Container(
                             margin: EdgeInsets.fromLTRB(30, 20, 0, 0),
                             alignment: Alignment.topLeft,
-                            child: Text("더보기",
-                                style: TextStyle(
-                                    fontSize: 23, fontFamily: "UTOIMAGE")),
+                            child: Text("more.title",
+                                    style: TextStyle(
+                                        fontSize: 23, fontFamily: "UTOIMAGE"))
+                                .tr(),
                           ),
                         ),
                         Container(
@@ -46,34 +49,37 @@ class _MorePageState extends State<MorePage> {
                               Container(
                                 alignment: Alignment.centerLeft,
                                 margin: EdgeInsets.fromLTRB(30, 0, 30, 5),
-                                child: Text("버전",
-                                    style: TextStyle(
-                                        fontSize: 18, fontFamily: "UTOIMAGE")),
+                                child: Text("more.version",
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            fontFamily: "UTOIMAGE"))
+                                    .tr(),
                               ),
                               Container(
                                 margin: EdgeInsets.fromLTRB(30, 5, 30, 5),
                                 child: Row(
                                   children: <Widget>[
                                     Container(
-                                      child: Text("v ${ArtiqData.version}",
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontFamily: "Arita")),
-                                    ),
+                                        child: Text("v ${ArtiqData.version}",
+                                            style: GoogleFonts.notoSans(
+                                                textStyle:
+                                                    TextStyle(fontSize: 16)))),
                                   ],
                                 ),
                               ),
                               Container(
                                 alignment: Alignment.centerLeft,
                                 margin: EdgeInsets.fromLTRB(30, 30, 30, 5),
-                                child: Text("설정",
-                                    style: TextStyle(
-                                        fontSize: 18, fontFamily: "UTOIMAGE")),
+                                child: Text("more.settingTitle",
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            fontFamily: "UTOIMAGE"))
+                                    .tr(),
                               ),
                               Container(
                                 alignment: Alignment.centerLeft,
                                 margin: EdgeInsets.fromLTRB(30, 5, 30, 5),
-                                child: Text("MUSIC 탭",
+                                child: Text("MUSIC",
                                     style: TextStyle(
                                         fontSize: 15, fontFamily: "UTOIMAGE")),
                               ),
@@ -82,10 +88,11 @@ class _MorePageState extends State<MorePage> {
                                 child: Row(
                                   children: <Widget>[
                                     Container(
-                                      child: Text("다음 포스트 자동 재생",
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontFamily: "Arita")),
+                                      child: Text("more.settingNextAutoPlay",
+                                              style: GoogleFonts.notoSans(
+                                                  textStyle:
+                                                      TextStyle(fontSize: 16)))
+                                          .tr(),
                                     ),
                                     Container(
                                       width: 60,
@@ -110,10 +117,11 @@ class _MorePageState extends State<MorePage> {
                                 child: Row(
                                   children: <Widget>[
                                     Container(
-                                      child: Text("다음 포스트 랜덤 재생",
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontFamily: "Arita")),
+                                      child: Text("more.settingNextRandomPlay",
+                                              style: GoogleFonts.notoSans(
+                                                  textStyle:
+                                                      TextStyle(fontSize: 16)))
+                                          .tr(),
                                     ),
                                     Container(
                                       width: 60,
@@ -136,9 +144,11 @@ class _MorePageState extends State<MorePage> {
                               Container(
                                 alignment: Alignment.centerLeft,
                                 margin: EdgeInsets.fromLTRB(30, 10, 30, 5),
-                                child: Text("안내",
-                                    style: TextStyle(
-                                        fontSize: 15, fontFamily: "UTOIMAGE")),
+                                child: Text("more.guideTitle",
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            fontFamily: "UTOIMAGE"))
+                                    .tr(),
                               ),
                               Container(
                                 height: 48,
@@ -153,13 +163,14 @@ class _MorePageState extends State<MorePage> {
                                   child: Row(
                                     children: <Widget>[
                                       Container(
-                                        child: Text("오늘 하루 안내 보지 않기 초기화",
-                                            style: TextStyle(
-                                                fontSize: 16,
-                                                fontFamily: "Arita")),
-                                      ),
+                                          child: Text("more.guideInit",
+                                                  style: GoogleFonts.notoSans(
+                                                      textStyle: TextStyle(
+                                                          fontSize: 16)))
+                                              .tr()),
                                       Container(
-                                        margin: EdgeInsets.only(left: 10, top: 13),
+                                        margin:
+                                            EdgeInsets.only(left: 10, top: 13),
                                         child: Container(
                                           child: Column(
                                             children: <Widget>[
@@ -178,9 +189,11 @@ class _MorePageState extends State<MorePage> {
                               Container(
                                 alignment: Alignment.centerLeft,
                                 margin: EdgeInsets.fromLTRB(30, 30, 30, 5),
-                                child: Text("포스트 추천 및 문의",
-                                    style: TextStyle(
-                                        fontSize: 18, fontFamily: "UTOIMAGE")),
+                                child: Text("more.mailTitle",
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            fontFamily: "UTOIMAGE"))
+                                    .tr(),
                               ),
                               Container(
                                 height: 48,
@@ -189,7 +202,7 @@ class _MorePageState extends State<MorePage> {
                                 child: InkWell(
                                   onTap: () {
                                     Email email = Email(
-                                      subject: '[ArtiQ] 문의',
+                                      subject: "more.mailSubject".tr(),
                                       recipients: ['bbplayworld@gmail.com'],
                                       isHTML: false,
                                     );
@@ -199,13 +212,14 @@ class _MorePageState extends State<MorePage> {
                                   child: Row(
                                     children: <Widget>[
                                       Container(
-                                        child: Text("메일 보내기",
-                                            style: TextStyle(
-                                                fontSize: 16,
-                                                fontFamily: "Arita")),
-                                      ),
+                                          child: Text("more.mailSend",
+                                                  style: GoogleFonts.notoSans(
+                                                      textStyle: TextStyle(
+                                                          fontSize: 16)))
+                                              .tr()),
                                       Container(
-                                        margin: EdgeInsets.only(left: 10, top: 12),
+                                        margin:
+                                            EdgeInsets.only(left: 10, top: 12),
                                         child: Container(
                                           child: Column(
                                             children: <Widget>[

@@ -1,0 +1,18 @@
+{
+  "guide": {
+    "today": "Don't see me today",
+    "skip": "Skip"
+  },
+  "more": {
+    "title": "Details",
+    "version": "Version",
+    "settingTitle": "Setting",
+    "settingNextAutoPlay": "Next post auto play",
+    "settingNextRandomPlay": "Next post random play",
+    "guideTitle": "Guide",
+    "guideInit": "Initialize not to see today",
+    "mailTitle": "Post recommendations and inquiries",
+    "mailSubject": "[ArtiQ] Inquiries",
+    "mailSend": "Send mail"
+  }
+}

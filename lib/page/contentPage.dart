@@ -7,6 +7,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_youtube_view/flutter_youtube_view.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ContentPage extends StatefulWidget {
   static const routeName = '/content';
@@ -100,16 +101,17 @@ class _ContentPageState extends State<ContentPage>
       switch (content.type) {
         case "text-title":
           return Container(
-            margin: EdgeInsets.only(top: 30, bottom: 10),
-            alignment: Alignment.topLeft,
-            child: Text(content.data,
-                style: TextStyle(
-                    color: Color(0xff313131),
-                    height: 1.5,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'JSDongkang')),
-          );
+              margin: EdgeInsets.only(top: 30, bottom: 10),
+              alignment: Alignment.topLeft,
+              child: Text(
+                content.data,
+                style: GoogleFonts.notoSans(
+                    textStyle: TextStyle(
+                        color: Color(0xff313131),
+                        height: 1.5,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold)),
+              ));
           break;
         case "image":
           return Container(
@@ -121,11 +123,11 @@ class _ContentPageState extends State<ContentPage>
                   fit: BoxFit.cover,
                 ),
                 Text(content.desc,
-                    style: TextStyle(
-                        color: Color(0xff313131),
-                        height: 1.5,
-                        fontSize: 13,
-                        fontFamily: 'JSDongkang'))
+                    style: GoogleFonts.notoSans(
+                        textStyle: TextStyle(
+                            color: Color(0xff313131),
+                            height: 1.5,
+                            fontSize: 13)))
               ],
             ),
           );
@@ -158,11 +160,9 @@ class _ContentPageState extends State<ContentPage>
             margin: EdgeInsets.only(bottom: 20),
             alignment: Alignment.topLeft,
             child: Text(content.data,
-                style: TextStyle(
-                    color: Color(0xff313131),
-                    height: 1.5,
-                    fontSize: 17,
-                    fontFamily: 'JSDongkang')),
+                style: GoogleFonts.notoSans(
+                    textStyle: TextStyle(
+                        color: Color(0xff313131), height: 1.5, fontSize: 17))),
           );
           break;
       }
@@ -233,9 +233,8 @@ class _ContentPageState extends State<ContentPage>
                                 style: TextStyle(
                                     color: Colors.red,
                                     height: 1.5,
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'JSDongkang')),
+                                    fontSize: 18,
+                                    fontFamily: 'UTOIMAGE')),
                           ),
                           Container(
                             margin: const EdgeInsets.fromLTRB(30, 10, 30, 0),
@@ -259,12 +258,12 @@ class _ContentPageState extends State<ContentPage>
                             child: Row(
                               children: <Widget>[
                                 Text(widget.post.date,
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        height: 1,
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: 'Arita'))
+                                    style: GoogleFonts.notoSans(
+                                        textStyle: TextStyle(
+                                            color: Colors.black,
+                                            height: 1,
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.bold)))
                               ],
                             ),
                           ),

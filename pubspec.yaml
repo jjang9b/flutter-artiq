@@ -11,13 +11,15 @@ description: Artiq
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.3+4
+version: 1.0.5+7
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
   flutter:
+    sdk: flutter
+  flutter_localizations:
     sdk: flutter
   sqflite:
   path:
@@ -30,6 +32,8 @@ dependencies:
   dots_indicator: ^1.0.0
   flutter_email_sender: ^2.2.2
   flutter_youtube_view: ^1.1.8
+  google_fonts: ^0.3.10
+  easy_localization: ^2.1.0+0
 
 dev_dependencies:
   flutter_test:
@@ -43,13 +47,9 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
+  assets:
+    - res/languages/
   fonts:
     - family: UTOIMAGE
       fonts:
         - asset: res/fonts/UTOIMAGE.ttf
-    - family: JSDongkang
-      fonts:
-        - asset: res/fonts/JSDongkang-Regular.ttf
-    - family: Arita
-      fonts:
-        - asset: res/fonts/Arita4.0_M.otf

@@ -8,6 +8,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class Func {
   static Fetch fetch = new Fetch();
@@ -123,9 +124,8 @@ class Func {
               title,
               style: TextStyle(
                   color: Colors.black87,
-                  fontSize: 17,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Arita'),
+                  fontSize: 18,
+                  fontFamily: 'UTOIMAGE'),
             ),
             Visibility(
               visible: (_categoryPage == idx),
@@ -147,10 +147,10 @@ class Func {
 
   static Container getContent(
       BuildContext context, int length, int position, Post post) {
-    Alignment originAlign = Alignment.bottomLeft;
+    Alignment originAlign = Alignment.topLeft;
 
     if (position % 2 == 0) {
-      originAlign = Alignment.bottomRight;
+      originAlign = Alignment.topRight;
     }
 
     return Container(
@@ -166,7 +166,7 @@ class Func {
                 goContentPage(context, post);
               },
               child: Container(
-                height: MediaQuery.of(context).size.height * 0.6,
+                height: MediaQuery.of(context).size.height * 0.59,
                 child: Column(
                   children: <Widget>[
                     Container(
@@ -181,11 +181,8 @@ class Func {
                         ),
                       ),
                     ),
-                    Expanded(
-                      child: Container(),
-                    ),
                     Container(
-                      margin: EdgeInsets.only(left: 20, right: 20, bottom: 12),
+                      margin: EdgeInsets.fromLTRB(20, 30, 20, 12),
                       alignment: originAlign,
                       child: Text(post.imageText,
                           style: TextStyle(
@@ -195,14 +192,14 @@ class Func {
                               fontFamily: 'UTOIMAGE')),
                     ),
                     Container(
-                      margin: EdgeInsets.only(left: 20, right: 20, bottom: 35),
+                      margin: EdgeInsets.only(left: 20, right: 20, bottom: 0),
                       alignment: originAlign,
                       child: Text(post.origin,
-                          style: TextStyle(
-                              color: Colors.black,
-                              height: 1.3,
-                              fontSize: 14,
-                              fontFamily: 'JSDongkang')),
+                          style: GoogleFonts.notoSans(
+                              textStyle: TextStyle(
+                                  color: Colors.black,
+                                  height: 1.3,
+                                  fontSize: 15))),
                     )
                   ],
                 ),
@@ -211,7 +208,7 @@ class Func {
             Container(
               alignment: Alignment.bottomCenter,
               width: MediaQuery.of(context).size.width * 0.68,
-              margin: EdgeInsets.only(top: 8),
+              margin: EdgeInsets.only(top: 12),
               child: DotsIndicator(
                 dotsCount: (length >= 0) ? length : 0,
                 position: getPostPage(),

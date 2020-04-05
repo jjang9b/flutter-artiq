@@ -5,8 +5,10 @@ import 'package:artiq/sql/artiqDb.dart';
 import 'package:artiq/sql/sqlLite.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dots_indicator/dots_indicator.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class GuidePage extends StatefulWidget {
   static const routeName = '/guide';
@@ -108,29 +110,28 @@ class _GuidePageState extends State<GuidePage> {
                         ),
                         Container(
                           height: MediaQuery.of(context).size.height * con2,
-                          margin: EdgeInsets.fromLTRB(30, 30, 30, 10),
-                          alignment: Alignment.center,
+                          margin: EdgeInsets.fromLTRB(30, 20, 30, 10),
+                          alignment: Alignment.topCenter,
                           child: Text(
                             snapshot.data[position].title,
-                            style: TextStyle(
-                                fontSize: 20, fontFamily: "JSDongkang"),
+                            style: GoogleFonts.notoSans(
+                                textStyle: TextStyle(fontSize: 20)),
                           ),
                         ),
                         Container(
                           height: MediaQuery.of(context).size.height * con3,
                           margin: EdgeInsets.fromLTRB(30, 10, 30, 10),
-                          alignment: Alignment.center,
+                          alignment: Alignment.topCenter,
                           child: Text(
                             snapshot.data[position].text,
-                            style: TextStyle(
-                                fontSize: 16,
-                                height: 1.5,
-                                fontFamily: "JSDongkang"),
+                            style: GoogleFonts.notoSans(
+                                textStyle:
+                                    TextStyle(fontSize: 16, height: 1.5)),
                           ),
                         ),
                         Container(
                           margin: EdgeInsets.fromLTRB(30, 0, 30, 10),
-                          alignment: Alignment.center,
+                          alignment: Alignment.topCenter,
                           child: DotsIndicator(
                             dotsCount: snapshot.data.length,
                             position: idx.abs(),
@@ -169,11 +170,12 @@ class _GuidePageState extends State<GuidePage> {
                                     color: Colors.red,
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(30))),
-                                child: Text("오늘 하루 안내 보지 않기",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        fontFamily: "JSDongkang")),
+                                child: Text("guide.today",
+                                        style: GoogleFonts.notoSans(
+                                            textStyle: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 16)))
+                                    .tr(),
                               ),
                             ),
                           ),
@@ -188,18 +190,18 @@ class _GuidePageState extends State<GuidePage> {
                               width: MediaQuery.of(context).size.width,
                               height: MediaQuery.of(context).size.height * 0.09,
                               child: Container(
-                                margin: EdgeInsets.fromLTRB(50, 0, 50, 40),
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                    color: Colors.black87,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(30))),
-                                child: Text("들어가기",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        fontFamily: "JSDongkang")),
-                              ),
+                                  margin: EdgeInsets.fromLTRB(50, 0, 50, 40),
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                      color: Colors.black87,
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(30))),
+                                  child: Text("guide.skip",
+                                          style: GoogleFonts.notoSans(
+                                              textStyle: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 16)))
+                                      .tr()),
                             ),
                           ),
                         )
