@@ -3,6 +3,8 @@ import 'package:artiq/page/guidePage.dart';
 import 'package:artiq/page/morePage.dart';
 import 'package:artiq/page/postPage.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -34,11 +36,16 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    FirebaseAnalytics analytics = FirebaseAnalytics();
+
     return MaterialApp(
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         EasyLocalization.of(context).delegate
+      ],
+      navigatorObservers: [
+        FirebaseAnalyticsObserver(analytics: analytics),
       ],
       supportedLocales: EasyLocalization.of(context).supportedLocales,
       locale: EasyLocalization.of(context).locale,
@@ -48,14 +55,14 @@ class MyApp extends StatelessWidget {
       onGenerateRoute: (settings) {
         switch (settings.name) {
           case GuidePage.routeName:
-            return PageRouteBuilder(pageBuilder: (_, a1, a2) => GuidePage());
+            return PageRouteBuilder(pageBuilder: (_, a1, a2) => GuidePage(), settings: RouteSettings(name: GuidePage.routeName));
           case PostPage.routeName:
-            return PageRouteBuilder(pageBuilder: (_, a1, a2) => PostPage());
+            return PageRouteBuilder(pageBuilder: (_, a1, a2) => PostPage(), settings: RouteSettings(name: PostPage.routeName));
           case MorePage.routeName:
-            return PageRouteBuilder(pageBuilder: (_, a1, a2) => MorePage());
+            return PageRouteBuilder(pageBuilder: (_, a1, a2) => MorePage(), settings: RouteSettings(name: MorePage.routeName));
         }
 
-        return PageRouteBuilder(pageBuilder: (_, a1, a2) => PostPage());
+        return PageRouteBuilder(pageBuilder: (_, a1, a2) => PostPage(), settings: RouteSettings(name: PostPage.routeName));
       },
     );
   }

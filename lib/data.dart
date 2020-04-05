@@ -14,7 +14,7 @@ class ArtiqData {
   static bool isMusicAuto = false;
   static bool isMusicRandom = false;
   static bool isPostScrolling = false;
-  static String version = "1.0.5";
+  static String version = "1.0.6";
 
   static List<Post> getPostList(String type) {
     return futureMap[type];
@@ -24,7 +24,7 @@ class ArtiqData {
 class Fetch {
   Future<List<Guide>> fetchGuide() async {
     var uri =
-        Uri.parse("https://asia-northeast1-artiq-api.cloudfunctions.net/guide");
+        Uri.parse("https://asia-northeast1-artiq-api-7d81d.cloudfunctions.net/guide");
 
     final response = await http.get(uri);
 
@@ -49,11 +49,11 @@ class Fetch {
     switch (category) {
       case "art":
         uri = Uri.parse(
-            "https://asia-northeast1-artiq-api.cloudfunctions.net/art");
+            "https://asia-northeast1-artiq-api-7d81d.cloudfunctions.net/art");
         break;
       case "music":
         uri = Uri.parse(
-            "https://asia-northeast1-artiq-api.cloudfunctions.net/music");
+            "https://asia-northeast1-artiq-api-7d81d.cloudfunctions.net/music");
         break;
     }
 

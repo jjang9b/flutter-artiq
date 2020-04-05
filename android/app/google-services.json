@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "516823003488",
+    "firebase_url": "https://artiq-api-7d81d.firebaseio.com",
+    "project_id": "artiq-api-7d81d",
+    "storage_bucket": "artiq-api-7d81d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:516823003488:android:cac098f9f971db80bd2e05",
+        "android_client_info": {
+          "package_name": "com.bbplayworld.artiq"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "516823003488-c7coo2hn2t1i82cs9554fqlng7vkk7s3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUaJvGC4gfpLbXzL3PK9WYc6lgHGNXQAs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "516823003488-c7coo2hn2t1i82cs9554fqlng7vkk7s3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
