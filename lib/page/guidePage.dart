@@ -27,10 +27,23 @@ class _GuidePageState extends State<GuidePage> {
     super.initState();
   }
 
+  insertToday() async {
+    await SqlLite().upsert(ArtiqDb(
+        key: "guide",
+        data: "1",
+        date: new DateTime.now().add(new Duration(days: 1)).toString()));
+
+    goPostPage();
+  }
+
   goPostPage() {
-    Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) {
-      return new PostPage();
-    }));
+    Navigator.push(
+        context,
+        CupertinoPageRoute(
+            builder: (BuildContext context) {
+              return new PostPage();
+            },
+            settings: RouteSettings(name: PostPage.routeName)));
   }
 
   getGuideDb() async {
@@ -151,14 +164,7 @@ class _GuidePageState extends State<GuidePage> {
                           visible: (position == snapshot.data.length - 1),
                           child: InkWell(
                             onTap: () {
-                              SqlLite().upsert(ArtiqDb(
-                                  key: "guide",
-                                  data: "1",
-                                  date: new DateTime.now()
-                                      .add(new Duration(days: 1))
-                                      .toString()));
-
-                              goPostPage();
+                              insertToday();
                             },
                             child: Container(
                               width: MediaQuery.of(context).size.width,

@@ -97,7 +97,7 @@ class Func {
   static void goContentPage(BuildContext context, Post post) {
     Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) {
       return new ContentPage(post);
-    }));
+    }, settings: RouteSettings(name: ContentPage.routeName)));
   }
 
   static void goPage(BuildContext context, String routeName) {
