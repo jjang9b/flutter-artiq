@@ -11,10 +11,11 @@ class ArtiqData {
   static String firstCategory = "music";
   static String category = "music";
   static int categoryIdx = 0;
+  static bool isPostLoad = false;
   static bool isMusicAuto = false;
   static bool isMusicRandom = false;
   static bool isPostScrolling = false;
-  static String version = "1.0.7";
+  static String version = "1.0.8";
 
   static List<Post> getPostList(String type) {
     return futureMap[type];
@@ -69,6 +70,7 @@ class Fetch {
       }
 
       futureMap[category] = result;
+      ArtiqData.isPostLoad = true;
 
       return result;
     } else {

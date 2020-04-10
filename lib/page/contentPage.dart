@@ -4,6 +4,7 @@ import 'package:artiq/data.dart';
 import 'package:artiq/func/func.dart';
 import 'package:artiq/page/postPage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_youtube_view/flutter_youtube_view.dart';
@@ -21,6 +22,7 @@ class ContentPage extends StatefulWidget {
 
 class _ContentPageState extends State<ContentPage>
     implements YouTubePlayerListener {
+  FirebaseAnalytics analytics = FirebaseAnalytics();
   ScrollController _contentScrollController = new ScrollController();
   FlutterYoutubeViewController _youtubeController;
   Post cuPost;
@@ -93,7 +95,14 @@ class _ContentPageState extends State<ContentPage>
     Func.goContentPage(context, nextPost);
   }
 
+  void sendAnalyticsEvent(Post post) async {
+    await analytics.logEvent(name: "post_name", parameters: <String, dynamic>{
+      'string': post.imageText
+    });
+  }
+
   Column getContentList(BuildContext context, Post post) {
+    sendAnalyticsEvent(post);
     cuPost = post;
 
     List<Content> contentList = post.content;

@@ -5,9 +5,9 @@ import 'package:artiq/page/contentPage.dart';
 import 'package:artiq/page/morePage.dart';
 import 'package:artiq/page/postPage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class Func {
@@ -95,9 +95,13 @@ class Func {
   }
 
   static void goContentPage(BuildContext context, Post post) {
-    Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) {
-      return new ContentPage(post);
-    }, settings: RouteSettings(name: ContentPage.routeName)));
+    Navigator.push(
+        context,
+        CupertinoPageRoute(
+            builder: (BuildContext context) {
+              return new ContentPage(post);
+            },
+            settings: RouteSettings(name: ContentPage.routeName)));
   }
 
   static void goPage(BuildContext context, String routeName) {
@@ -123,9 +127,7 @@ class Func {
             Text(
               title,
               style: TextStyle(
-                  color: Colors.black87,
-                  fontSize: 18,
-                  fontFamily: 'UTOIMAGE'),
+                  color: Colors.black87, fontSize: 18, fontFamily: 'UTOIMAGE'),
             ),
             Visibility(
               visible: (_categoryPage == idx),
@@ -166,7 +168,6 @@ class Func {
                 goContentPage(context, post);
               },
               child: Container(
-                height: MediaQuery.of(context).size.height * 0.59,
                 child: Column(
                   children: <Widget>[
                     Container(
@@ -205,22 +206,6 @@ class Func {
                 ),
               ),
             ),
-            Container(
-              alignment: Alignment.bottomCenter,
-              width: MediaQuery.of(context).size.width * 0.68,
-              margin: EdgeInsets.only(top: 12),
-              child: DotsIndicator(
-                dotsCount: (length >= 0) ? length : 0,
-                position: getPostPage(),
-                decorator: DotsDecorator(
-                  activeSize: Size.fromRadius(5),
-                  activeShape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0)),
-                  color: Colors.black26,
-                  activeColor: Colors.black87,
-                ),
-              ),
-            )
           ],
         ),
       ),

@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:artiq/data.dart';
 import 'package:artiq/func/func.dart';
+import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -128,33 +129,63 @@ class _PostPageState extends State<PostPage> {
                             future: Func.getPostList(),
                             builder: (context, snapshot) {
                               if (snapshot.hasData) {
-                                return NotificationListener<ScrollNotification>(
-                                    onNotification: (scrollNotification) {
-                                      if (scrollNotification
-                                          is ScrollStartNotification) {
-                                        ArtiqData.isPostScrolling = true;
-                                      } else if (scrollNotification
-                                          is ScrollEndNotification) {
-                                        ArtiqData.isPostScrolling = false;
-                                      }
+                                return SizedBox(
+                                  child: Column(
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: NotificationListener<
+                                            ScrollNotification>(
+                                          onNotification: (scrollNotification) {
+                                            if (scrollNotification
+                                                is ScrollStartNotification) {
+                                              ArtiqData.isPostScrolling = true;
+                                            } else if (scrollNotification
+                                                is ScrollEndNotification) {
+                                              ArtiqData.isPostScrolling = false;
+                                            }
 
-                                      setState(() {
-                                        Func.setPostPage(_pageController.page);
-                                      });
+                                            setState(() {
+                                              Func.setPostPage(
+                                                  _pageController.page);
+                                            });
 
-                                      return true;
-                                    },
-                                    child: PageView.builder(
-                                      controller: _pageController,
-                                      itemBuilder: (context, position) {
-                                        return Func.getContent(
-                                            context,
-                                            snapshot.data.length,
-                                            position,
-                                            snapshot.data[position]);
-                                      },
-                                      itemCount: snapshot.data.length,
-                                    ));
+                                            return true;
+                                          },
+                                          child: PageView.builder(
+                                            controller: _pageController,
+                                            itemBuilder: (context, position) {
+                                              return Func.getContent(
+                                                  context,
+                                                  snapshot.data.length,
+                                                  position,
+                                                  snapshot.data[position]);
+                                            },
+                                            itemCount: snapshot.data.length,
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        alignment: Alignment.topCenter,
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.11,
+                                        child: DotsIndicator(
+                                          dotsCount: snapshot.data.length,
+                                          position: Func.getPostPage(),
+                                          decorator: DotsDecorator(
+                                            size: Size.fromRadius(4),
+                                            activeSize: Size.fromRadius(4),
+                                            activeShape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0)),
+                                            color: Colors.black26,
+                                            activeColor: Colors.black87,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
                               }
 
                               return Center(

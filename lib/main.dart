@@ -55,14 +55,22 @@ class MyApp extends StatelessWidget {
       onGenerateRoute: (settings) {
         switch (settings.name) {
           case GuidePage.routeName:
-            return PageRouteBuilder(pageBuilder: (_, a1, a2) => GuidePage(), settings: RouteSettings(name: GuidePage.routeName));
+            return PageRouteBuilder(
+                pageBuilder: (_, a1, a2) => GuidePage(),
+                settings: RouteSettings(name: GuidePage.routeName));
           case PostPage.routeName:
-            return PageRouteBuilder(pageBuilder: (_, a1, a2) => PostPage(), settings: RouteSettings(name: PostPage.routeName));
+            return PageRouteBuilder(
+                pageBuilder: (_, a1, a2) => PostPage(),
+                settings: RouteSettings(name: PostPage.routeName));
           case MorePage.routeName:
-            return PageRouteBuilder(pageBuilder: (_, a1, a2) => MorePage(), settings: RouteSettings(name: MorePage.routeName));
+            return PageRouteBuilder(
+                pageBuilder: (_, a1, a2) => MorePage(),
+                settings: RouteSettings(name: MorePage.routeName));
         }
 
-        return PageRouteBuilder(pageBuilder: (_, a1, a2) => PostPage(), settings: RouteSettings(name: PostPage.routeName));
+        return PageRouteBuilder(
+            pageBuilder: (_, a1, a2) => PostPage(),
+            settings: RouteSettings(name: PostPage.routeName));
       },
     );
   }
