@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:artiq/data.dart';
@@ -14,8 +15,30 @@ class PostPage extends StatefulWidget {
 }
 
 class _PostPageState extends State<PostPage> {
-  PageController _categoryController = new PageController();
-  PageController _pageController = new PageController();
+  PageController _categoryController;
+  PageController _pageController;
+
+  bool isRefresh() {
+    if (ArtiqData.refreshSec > 0) {
+      return false;
+    }
+
+    return true;
+  }
+
+  void refreshTimer() {
+    ArtiqData.refreshTimer =
+        Timer.periodic(Duration(milliseconds: 5000), (timer) {
+      setState(() {
+        ArtiqData.refreshSec -= 5;
+      });
+
+      if (ArtiqData.refreshSec <= 0) {
+        ArtiqData.refreshColor = Colors.black;
+        timer.cancel();
+      }
+    });
+  }
 
   @override
   void initState() {
@@ -24,13 +47,28 @@ class _PostPageState extends State<PostPage> {
     Func.setPostPage(0);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Func.categoryTab(
-          _categoryController, ArtiqData.category, ArtiqData.categoryIdx);
+      if (ArtiqData.isOnload) {
+        Func.categoryTab(
+            _categoryController, ArtiqData.category, ArtiqData.categoryIdx);
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    _categoryController = new PageController()
+      ..addListener(() {
+        setState(() {
+          Func.setCategoryPage(_categoryController.page);
+        });
+      });
+    _pageController = new PageController()
+      ..addListener(() {
+        setState(() {
+          Func.setPostPage(_pageController.page);
+        });
+      });
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -98,109 +136,153 @@ class _PostPageState extends State<PostPage> {
             ),
             Container(
               margin: EdgeInsets.only(left: 30),
+              height: MediaQuery.of(context).size.height * 0.79,
               child: Container(
-                height: MediaQuery.of(context).size.height * 0.08,
-                child: Row(
-                  children: <Widget>[
-                    Func.getCategory(_categoryController, 'music', 'MUSIC', 0),
-                    Func.getCategory(_categoryController, 'art', 'ART', 1),
-                  ],
-                ),
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(left: 30),
-              height: MediaQuery.of(context).size.height * 0.71,
-              child: Container(
-                child: NotificationListener<ScrollNotification>(
-                  onNotification: (scrollNotification) {
-                    setState(() {
-                      Func.setCategoryPage(_categoryController.page);
-                    });
+                child: PageView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    controller: _categoryController,
+                    itemBuilder: (context, position) {
+                      return Container(
+                        child: FutureBuilder<List<Post>>(
+                          future: Func.getPostList(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return SizedBox(
+                                child: Column(
+                                  children: <Widget>[
+                                    Container(
+                                      child: Stack(
+                                        children: <Widget>[
+                                          Container(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.08,
+                                            child: Row(
+                                              children: <Widget>[
+                                                Func.getCategory(
+                                                    _categoryController,
+                                                    'music',
+                                                    'MUSIC',
+                                                    0),
+                                                Func.getCategory(
+                                                    _categoryController,
+                                                    'art',
+                                                    'ART',
+                                                    1),
+                                              ],
+                                            ),
+                                          ),
+                                          Positioned(
+                                            right: 17,
+                                            top: 5,
+                                            child: InkWell(
+                                              highlightColor:
+                                                  Colors.transparent,
+                                              splashColor: Colors.transparent,
+                                              onTap: () {
+                                                if (ArtiqData.isPostScrolling) {
+                                                  return;
+                                                }
 
-                    return true;
-                  },
-                  child: PageView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      controller: _categoryController,
-                      itemBuilder: (context, position) {
-                        return Container(
-                          child: FutureBuilder<List<Post>>(
-                            future: Func.getPostList(),
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData) {
-                                return SizedBox(
-                                  child: Column(
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: NotificationListener<
-                                            ScrollNotification>(
-                                          onNotification: (scrollNotification) {
-                                            if (scrollNotification
-                                                is ScrollStartNotification) {
-                                              ArtiqData.isPostScrolling = true;
-                                            } else if (scrollNotification
-                                                is ScrollEndNotification) {
-                                              ArtiqData.isPostScrolling = false;
-                                            }
+                                                if (!isRefresh()) {
+                                                  return;
+                                                }
 
-                                            setState(() {
-                                              Func.setPostPage(
-                                                  _pageController.page);
-                                            });
+                                                refreshTimer();
+                                                Func.refreshPost(context, _pageController);
+                                                setState(() {});
+                                              },
+                                              child: Container(
+                                                  width: 38,
+                                                  height: 50,
+                                                  child: Column(
+                                                    children: <Widget>[
+                                                      Icon(
+                                                        Icons.fiber_new,
+                                                        size: 28,
+                                                        color: ArtiqData
+                                                            .refreshColor,
+                                                      ),
+                                                      Text(
+                                                        "${ArtiqData.refreshSec}s",
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.black87,
+                                                            fontSize: 12,
+                                                            fontFamily:
+                                                                'UTOIMAGE'),
+                                                      )
+                                                    ],
+                                                  )),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: NotificationListener<
+                                          ScrollNotification>(
+                                        onNotification: (scrollNotification) {
+                                          if (scrollNotification
+                                              is ScrollStartNotification) {
+                                            ArtiqData.isPostScrolling = true;
+                                          } else if (scrollNotification
+                                              is ScrollEndNotification) {
+                                            ArtiqData.isPostScrolling = false;
+                                          }
 
-                                            return true;
+                                          return true;
+                                        },
+                                        child: PageView.builder(
+                                          controller: _pageController,
+                                          itemBuilder: (context, position) {
+                                            return Func.getContent(
+                                                context,
+                                                snapshot.data.length,
+                                                position,
+                                                snapshot.data[position]);
                                           },
-                                          child: PageView.builder(
-                                            controller: _pageController,
-                                            itemBuilder: (context, position) {
-                                              return Func.getContent(
-                                                  context,
-                                                  snapshot.data.length,
-                                                  position,
-                                                  snapshot.data[position]);
-                                            },
-                                            itemCount: snapshot.data.length,
-                                          ),
+                                          itemCount: snapshot.data.length,
                                         ),
                                       ),
-                                      Container(
-                                        alignment: Alignment.topCenter,
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.11,
-                                        child: DotsIndicator(
-                                          dotsCount: snapshot.data.length,
-                                          position: Func.getPostPage(),
-                                          decorator: DotsDecorator(
-                                            size: Size.fromRadius(4),
-                                            activeSize: Size.fromRadius(4),
-                                            activeShape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(8.0)),
-                                            color: Colors.black26,
-                                            activeColor: Colors.black87,
-                                          ),
+                                    ),
+                                    Container(
+                                      alignment: Alignment.topCenter,
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.11,
+                                      child: DotsIndicator(
+                                        dotsCount: snapshot.data.length,
+                                        position: Func.getPostPage(),
+                                        decorator: DotsDecorator(
+                                          size: Size.fromRadius(4),
+                                          activeSize: Size.fromRadius(4),
+                                          activeShape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0)),
+                                          color: Colors.black26,
+                                          activeColor: Colors.black87,
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                );
-                              }
-
-                              return Center(
-                                child: CircularProgressIndicator(
-                                  backgroundColor: Colors.black,
-                                  valueColor: new AlwaysStoppedAnimation<Color>(
-                                      Colors.white),
+                                    ),
+                                  ],
                                 ),
                               );
-                            },
-                          ),
-                        );
-                      },
-                      itemCount: 2),
-                ),
+                            }
+
+                            return Center(
+                              child: CircularProgressIndicator(
+                                backgroundColor: Colors.black,
+                                valueColor: new AlwaysStoppedAnimation<Color>(
+                                    Colors.white),
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                    itemCount: 2),
               ),
             ),
             Func.getNavigator(context)

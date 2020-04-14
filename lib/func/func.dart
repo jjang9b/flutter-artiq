@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:artiq/data.dart';
@@ -23,6 +24,27 @@ class Func {
 
   static Future<List<Post>> getPostList() {
     return futureData;
+  }
+
+  static void refreshInit() {
+    if (ArtiqData.refreshTimer != null) {
+      ArtiqData.refreshTimer.cancel();
+    }
+
+    ArtiqData.refreshSec = 0;
+    ArtiqData.refreshColor = Colors.black;
+  }
+
+  static void refreshPost(
+      BuildContext context, PageController _pageController) async {
+    ArtiqData.refreshColor = Colors.red;
+    ArtiqData.refreshSec = ArtiqData.refreshPerSec;
+
+    ArtiqData.emptyFutureMap(ArtiqData.category);
+    Func.futureData = fetch.fetchPost(ArtiqData.category);
+
+    _pageController.jumpToPage(0);
+    setPostPage(0);
   }
 
   static Post getRandomPost(String category, Post post) {
@@ -94,17 +116,33 @@ class Func {
     setPostPage(0);
   }
 
-  static void goContentPage(BuildContext context, Post post) {
+  static void goPostPage(BuildContext context) {
     Navigator.push(
         context,
         CupertinoPageRoute(
             builder: (BuildContext context) {
-              return new ContentPage(post);
+              return PostPage();
+            },
+            settings: RouteSettings(name: PostPage.routeName)));
+  }
+
+  static void goContentPage(BuildContext context, Post post) {
+    Func.refreshInit();
+
+    Navigator.push(
+        context,
+        CupertinoPageRoute(
+            builder: (BuildContext context) {
+              return ContentPage(post);
             },
             settings: RouteSettings(name: ContentPage.routeName)));
   }
 
   static void goPage(BuildContext context, String routeName) {
+    if (routeName != PostPage.routeName) {
+      Func.refreshInit();
+    }
+
     Navigator.pushNamed(context, routeName);
   }
 

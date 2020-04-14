@@ -1,31 +1,42 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-final Map<String, List<Post>> futureMap = new Map<String, List<Post>>();
-final Map<String, bool> isFetchMap = new Map<String, bool>();
+Map<String, List<Post>> futureMap = new Map<String, List<Post>>();
 
 class ArtiqData {
-  static var dbIdMap = {"guide": 1, "refresh": 2};
-  static String firstCategory = "music";
-  static String category = "music";
+  static String categoryMusic = "music";
+  static String categoryArt = "art";
+  static String category = categoryMusic;
   static int categoryIdx = 0;
-  static bool isPostLoad = false;
-  static bool isMusicAuto = false;
-  static bool isMusicRandom = false;
+  static var musicNextStateIcon = [Icons.repeat_one, Icons.repeat, Icons.shuffle];
+  static var musicNextStateArr = ["repeat", "auto", "shuffle"];
+  static int musicNextStateIdx = 0;
+  static String musicNextState = musicNextStateArr[0];
+  static bool isOnload = false;
   static bool isPostScrolling = false;
-  static String version = "1.0.8";
+  static String version = "1.0.9";
+
+  static Timer refreshTimer;
+  static int refreshPerSec = 20;
+  static int refreshSec = 0;
+  static Color refreshColor = Colors.black;
 
   static List<Post> getPostList(String type) {
     return futureMap[type];
+  }
+
+  static void emptyFutureMap(String category) {
+    futureMap[category] = null;
   }
 }
 
 class Fetch {
   Future<List<Guide>> fetchGuide() async {
-    var uri =
-        Uri.parse("https://asia-northeast1-artiq-api-7d81d.cloudfunctions.net/guide");
+    var uri = Uri.parse(
+        "https://asia-northeast1-artiq-api-7d81d.cloudfunctions.net/guide");
 
     final response = await http.get(uri);
 
@@ -64,13 +75,11 @@ class Fetch {
       List postList = json.decode(response.body);
 
       List<Post> result = postList.map((post) => Post.fromJson(post)).toList();
-
-      if (futureMap[category] != null) {
-        return futureMap[category];
-      }
-
       futureMap[category] = result;
-      ArtiqData.isPostLoad = true;
+
+      if (!ArtiqData.isOnload) {
+        ArtiqData.isOnload = true;
+      }
 
       return result;
     } else {

@@ -78,71 +78,6 @@ class _MorePageState extends State<MorePage> {
                               ),
                               Container(
                                 alignment: Alignment.centerLeft,
-                                margin: EdgeInsets.fromLTRB(30, 5, 30, 5),
-                                child: Text("MUSIC",
-                                    style: TextStyle(
-                                        fontSize: 15, fontFamily: "UTOIMAGE")),
-                              ),
-                              Container(
-                                margin: const EdgeInsets.fromLTRB(30, 0, 30, 0),
-                                child: Row(
-                                  children: <Widget>[
-                                    Container(
-                                      child: Text("more.settingNextAutoPlay",
-                                              style: GoogleFonts.notoSans(
-                                                  textStyle:
-                                                      TextStyle(fontSize: 16)))
-                                          .tr(),
-                                    ),
-                                    Container(
-                                      width: 60,
-                                      height: 48,
-                                      margin: EdgeInsets.only(left: 20),
-                                      child: Switch(
-                                        value: ArtiqData.isMusicAuto,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            ArtiqData.isMusicAuto = value;
-                                          });
-                                        },
-                                        inactiveTrackColor: Colors.black54,
-                                        activeColor: Colors.red,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                margin: const EdgeInsets.fromLTRB(30, 0, 30, 0),
-                                child: Row(
-                                  children: <Widget>[
-                                    Container(
-                                      child: Text("more.settingNextRandomPlay",
-                                              style: GoogleFonts.notoSans(
-                                                  textStyle:
-                                                      TextStyle(fontSize: 16)))
-                                          .tr(),
-                                    ),
-                                    Container(
-                                      width: 60,
-                                      height: 48,
-                                      margin: EdgeInsets.only(left: 20),
-                                      child: Switch(
-                                        value: ArtiqData.isMusicRandom,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            ArtiqData.isMusicRandom = value;
-                                          });
-                                        },
-                                        inactiveTrackColor: Colors.black54,
-                                        activeColor: Colors.red,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                alignment: Alignment.centerLeft,
                                 margin: EdgeInsets.fromLTRB(30, 10, 30, 5),
                                 child: Text("more.guideTitle",
                                         style: TextStyle(
@@ -155,6 +90,7 @@ class _MorePageState extends State<MorePage> {
                                 margin: const EdgeInsets.fromLTRB(30, 0, 30, 0),
                                 child: InkWell(
                                   onTap: () {
+                                    Func.refreshInit();
                                     SqlLite().delete("guide");
 
                                     Navigator.pushNamedAndRemoveUntil(context,
@@ -175,7 +111,7 @@ class _MorePageState extends State<MorePage> {
                                           child: Column(
                                             children: <Widget>[
                                               Icon(
-                                                Icons.refresh,
+                                                Icons.restore_page,
                                                 size: 20,
                                               ),
                                             ],
@@ -224,7 +160,7 @@ class _MorePageState extends State<MorePage> {
                                           child: Column(
                                             children: <Widget>[
                                               Icon(
-                                                Icons.email,
+                                                Icons.contact_mail,
                                                 size: 20,
                                               ),
                                             ],

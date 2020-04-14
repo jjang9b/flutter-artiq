@@ -1,6 +1,5 @@
 import 'package:artiq/data.dart';
 import 'package:artiq/func/func.dart';
-import 'package:artiq/page/postPage.dart';
 import 'package:artiq/sql/artiqDb.dart';
 import 'package:artiq/sql/sqlLite.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -28,22 +27,14 @@ class _GuidePageState extends State<GuidePage> {
   }
 
   insertToday() async {
+    await SqlLite().delete("guide");
+
     await SqlLite().upsert(ArtiqDb(
         key: "guide",
         data: "1",
         date: new DateTime.now().add(new Duration(days: 1)).toString()));
 
-    goPostPage();
-  }
-
-  goPostPage() {
-    Navigator.push(
-        context,
-        CupertinoPageRoute(
-            builder: (BuildContext context) {
-              return new PostPage();
-            },
-            settings: RouteSettings(name: PostPage.routeName)));
+    Func.goPostPage(context);
   }
 
   getGuideDb() async {
@@ -53,7 +44,7 @@ class _GuidePageState extends State<GuidePage> {
       DateTime guideDate = DateTime.parse(artiqDb.date);
 
       if (DateTime.now().compareTo(guideDate) < 0) {
-        goPostPage();
+        Func.goPostPage(context);
       }
     }
   }
@@ -190,7 +181,7 @@ class _GuidePageState extends State<GuidePage> {
                           visible: (position == snapshot.data.length - 1),
                           child: InkWell(
                             onTap: () {
-                              goPostPage();
+                              Func.goPostPage(context);
                             },
                             child: Container(
                               width: MediaQuery.of(context).size.width,

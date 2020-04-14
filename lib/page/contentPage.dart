@@ -41,15 +41,17 @@ class _ContentPageState extends State<ContentPage>
         });
         break;
       case "ENDED":
-        if (ArtiqData.isMusicAuto) {
-          if (ArtiqData.isMusicRandom) {
+        switch (ArtiqData.musicNextState) {
+          case "shuffle":
             return goRandomContent();
-          }
-
-          return goNextContent();
+            break;
+          case "auto":
+            return goNextContent();
+            break;
+          default:
+            _youtubeController.play();
+            break;
         }
-
-        _youtubeController.play();
         break;
       default:
         break;
@@ -96,9 +98,9 @@ class _ContentPageState extends State<ContentPage>
   }
 
   void sendAnalyticsEvent(Post post) async {
-    await analytics.logEvent(name: "post_name", parameters: <String, dynamic>{
-      'string': post.imageText
-    });
+    await analytics.logEvent(
+        name: "post_name",
+        parameters: <String, dynamic>{'string': post.imageText});
   }
 
   Column getContentList(BuildContext context, Post post) {
@@ -283,10 +285,40 @@ class _ContentPageState extends State<ContentPage>
               ),
             ),
             Positioned(
-              bottom: 20,
+              bottom: 70,
+              right: 70,
+              child: Visibility(
+                visible: (ArtiqData.category == ArtiqData.categoryMusic &&
+                    isMoveBtn),
+                child: FloatingActionButton(
+                  mini: true,
+                  heroTag: null,
+                  backgroundColor: Colors.red,
+                  onPressed: () {
+                    setState(() {
+                      if (ArtiqData.musicNextStateIdx + 1 >= ArtiqData.musicNextStateArr.length) {
+                        ArtiqData.musicNextStateIdx = 0;
+                      } else {
+                        ArtiqData.musicNextStateIdx += 1;
+                      }
+
+                      return ArtiqData.musicNextState = ArtiqData.musicNextStateArr[ArtiqData.musicNextStateIdx];
+                    });
+                  },
+                  child: Container(
+                    child: Icon(
+                      ArtiqData.musicNextStateIcon[ArtiqData.musicNextStateIdx],
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: 70,
               right: 20,
               child: Visibility(
-                child: new FloatingActionButton(
+                child: FloatingActionButton(
                   mini: true,
                   heroTag: null,
                   backgroundColor: Color(0xff212121),
@@ -305,10 +337,10 @@ class _ContentPageState extends State<ContentPage>
             ),
             Positioned(
               bottom: 20,
-              right: 70,
+              right: 20,
               child: Visibility(
                 visible: isMoveBtn,
-                child: new FloatingActionButton(
+                child: FloatingActionButton(
                   mini: true,
                   heroTag: null,
                   backgroundColor: Color(0xff212121),
@@ -326,10 +358,10 @@ class _ContentPageState extends State<ContentPage>
             ),
             Positioned(
               bottom: 20,
-              right: 120,
+              right: 70,
               child: Visibility(
                 visible: isMoveBtn,
-                child: new FloatingActionButton(
+                child: FloatingActionButton(
                   mini: true,
                   heroTag: null,
                   backgroundColor: Color(0xff212121),
@@ -347,10 +379,10 @@ class _ContentPageState extends State<ContentPage>
             ),
             Positioned(
               bottom: 20,
-              right: 170,
+              right: 120,
               child: Visibility(
                 visible: (nowOffset > 100),
-                child: new FloatingActionButton(
+                child: FloatingActionButton(
                   mini: true,
                   heroTag: null,
                   backgroundColor: Color(0xff212121),
