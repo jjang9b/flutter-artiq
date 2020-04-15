@@ -24,33 +24,25 @@ class SqlLite {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, dbName);
     return await openDatabase(path, version: 1, onCreate: (db, version) async {
-      await db.execute(
-          "CREATE TABLE ${table}(id INTEGER PRIMARY KEY, key TEXT, data TEXT, date TEXT)");
+      await db.execute("CREATE TABLE ${table}(id INTEGER PRIMARY KEY, key TEXT, data TEXT, date TEXT)");
     }, onOpen: (db) async {
-      await db.execute(
-          "CREATE TABLE IF NOT EXISTS ${table}(id INTEGER PRIMARY KEY, key TEXT, data TEXT, date TEXT)");
+      await db.execute("CREATE TABLE IF NOT EXISTS ${table}(id INTEGER PRIMARY KEY, key TEXT, data TEXT, date TEXT)");
     });
   }
 
   get(String key) async {
     final db = await database;
-    final List<Map<String, dynamic>> maps =
-        await db.query(table, where: 'key = ?', whereArgs: [key]);
+    final List<Map<String, dynamic>> maps = await db.query(table, where: 'key = ?', whereArgs: [key]);
     if (maps.length == 0) {
       return null;
     }
 
-    return ArtiqDb(
-        id: maps[0]['id'],
-        key: maps[0]['key'],
-        data: maps[0]['data'],
-        date: maps[0]['date']);
+    return ArtiqDb(id: maps[0]['id'], key: maps[0]['key'], data: maps[0]['data'], date: maps[0]['date']);
   }
 
   upsert(ArtiqDb artiqDb) async {
     final db = await database;
-    var res = await db.insert(table, artiqDb.toMap(),
-        conflictAlgorithm: ConflictAlgorithm.replace);
+    var res = await db.insert(table, artiqDb.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
     return res;
   }
 

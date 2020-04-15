@@ -20,8 +20,7 @@ class ContentPage extends StatefulWidget {
   _ContentPageState createState() => _ContentPageState();
 }
 
-class _ContentPageState extends State<ContentPage>
-    implements YouTubePlayerListener {
+class _ContentPageState extends State<ContentPage> implements YouTubePlayerListener {
   FirebaseAnalytics analytics = FirebaseAnalytics();
   ScrollController _contentScrollController = new ScrollController();
   FlutterYoutubeViewController _youtubeController;
@@ -98,9 +97,7 @@ class _ContentPageState extends State<ContentPage>
   }
 
   void sendAnalyticsEvent(Post post) async {
-    await analytics.logEvent(
-        name: "post_name",
-        parameters: <String, dynamic>{'string': post.imageText});
+    await analytics.logEvent(name: "post_name", parameters: <String, dynamic>{'string': post.imageText});
   }
 
   Column getContentList(BuildContext context, Post post) {
@@ -116,12 +113,7 @@ class _ContentPageState extends State<ContentPage>
               alignment: Alignment.topLeft,
               child: Text(
                 content.data,
-                style: GoogleFonts.notoSans(
-                    textStyle: TextStyle(
-                        color: Color(0xff313131),
-                        height: 1.5,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold)),
+                style: GoogleFonts.notoSans(textStyle: TextStyle(color: Color(0xff313131), height: 1.5, fontSize: 18, fontWeight: FontWeight.bold)),
               ));
           break;
         case "image":
@@ -133,12 +125,7 @@ class _ContentPageState extends State<ContentPage>
                   imageUrl: content.data,
                   fit: BoxFit.cover,
                 ),
-                Text(content.desc,
-                    style: GoogleFonts.notoSans(
-                        textStyle: TextStyle(
-                            color: Color(0xff313131),
-                            height: 1.5,
-                            fontSize: 13)))
+                Text(content.desc, style: GoogleFonts.notoSans(textStyle: TextStyle(color: Color(0xff313131), height: 1.5, fontSize: 13)))
               ],
             ),
           );
@@ -157,12 +144,7 @@ class _ContentPageState extends State<ContentPage>
                 listener: this,
                 scaleMode: YoutubeScaleMode.none,
                 params: YoutubeParam(
-                    videoId: content.data,
-                    showUI: true,
-                    startSeconds: 0.0,
-                    autoPlay: true,
-                    showFullScreen: false,
-                    showYoutube: false) // <option>
+                    videoId: content.data, showUI: true, startSeconds: 0.0, autoPlay: true, showFullScreen: false, showYoutube: false) // <option>
                 ),
           );
           break;
@@ -170,10 +152,7 @@ class _ContentPageState extends State<ContentPage>
           return Container(
             margin: EdgeInsets.only(bottom: 20),
             alignment: Alignment.topLeft,
-            child: Text(content.data,
-                style: GoogleFonts.notoSans(
-                    textStyle: TextStyle(
-                        color: Color(0xff313131), height: 1.5, fontSize: 17))),
+            child: Text(content.data, style: GoogleFonts.notoSans(textStyle: TextStyle(color: Color(0xff313131), height: 1.5, fontSize: 17))),
           );
           break;
       }
@@ -208,13 +187,9 @@ class _ContentPageState extends State<ContentPage>
                             children: <Widget>[
                               Container(
                                 width: MediaQuery.of(context).size.width,
-                                height:
-                                    MediaQuery.of(context).size.height * 0.35,
-                                decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                        image: CachedNetworkImageProvider(
-                                            widget.post.imageUrl),
-                                        fit: BoxFit.cover)),
+                                height: MediaQuery.of(context).size.height * 0.35,
+                                decoration:
+                                    BoxDecoration(image: DecorationImage(image: CachedNetworkImageProvider(widget.post.imageUrl), fit: BoxFit.cover)),
                                 child: Column(
                                   children: <Widget>[
                                     Container(
@@ -224,13 +199,9 @@ class _ContentPageState extends State<ContentPage>
                                           padding: EdgeInsets.all(0.0),
                                           iconSize: 55,
                                           icon: BackButton(
-                                            color:
-                                                (widget.post.backBtnType == 'w')
-                                                    ? Colors.white
-                                                    : Colors.black,
+                                            color: (widget.post.backBtnType == 'w') ? Colors.white : Colors.black,
                                           ),
-                                          onPressed: () =>
-                                              Navigator.of(context).pop()),
+                                          onPressed: () => Navigator.of(context).pop()),
                                     ),
                                   ],
                                 ),
@@ -240,22 +211,13 @@ class _ContentPageState extends State<ContentPage>
                           Container(
                             margin: const EdgeInsets.fromLTRB(30, 15, 30, 0),
                             alignment: Alignment.bottomCenter,
-                            child: Text(widget.post.origin,
-                                style: TextStyle(
-                                    color: Colors.red,
-                                    height: 1.5,
-                                    fontSize: 18,
-                                    fontFamily: 'UTOIMAGE')),
+                            child: Text(widget.post.origin, style: TextStyle(color: Colors.red, height: 1.5, fontSize: 18, fontFamily: 'UTOIMAGE')),
                           ),
                           Container(
                             margin: const EdgeInsets.fromLTRB(30, 10, 30, 0),
                             alignment: Alignment.bottomCenter,
-                            child: Text(widget.post.imageText,
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    height: 1.3,
-                                    fontSize: 22,
-                                    fontFamily: 'UTOIMAGE')),
+                            child:
+                                Text(widget.post.imageText, style: TextStyle(color: Colors.black, height: 1.3, fontSize: 22, fontFamily: 'UTOIMAGE')),
                           ),
                           Container(
                             margin: const EdgeInsets.fromLTRB(30, 30, 30, 10),
@@ -270,11 +232,7 @@ class _ContentPageState extends State<ContentPage>
                               children: <Widget>[
                                 Text(widget.post.date,
                                     style: GoogleFonts.notoSans(
-                                        textStyle: TextStyle(
-                                            color: Colors.black,
-                                            height: 1,
-                                            fontSize: 17,
-                                            fontWeight: FontWeight.bold)))
+                                        textStyle: TextStyle(color: Colors.black, height: 1, fontSize: 17, fontWeight: FontWeight.bold)))
                               ],
                             ),
                           ),
@@ -288,8 +246,7 @@ class _ContentPageState extends State<ContentPage>
               bottom: 70,
               right: 70,
               child: Visibility(
-                visible: (ArtiqData.category == ArtiqData.categoryMusic &&
-                    isMoveBtn),
+                visible: (ArtiqData.category == ArtiqData.categoryMusic && isMoveBtn),
                 child: FloatingActionButton(
                   mini: true,
                   heroTag: null,
@@ -323,8 +280,7 @@ class _ContentPageState extends State<ContentPage>
                   heroTag: null,
                   backgroundColor: Color(0xff212121),
                   onPressed: () {
-                    Navigator.pushNamedAndRemoveUntil(
-                        context, PostPage.routeName, (_) => false);
+                    Navigator.pushNamedAndRemoveUntil(context, PostPage.routeName, (_) => false);
                   },
                   child: Container(
                     child: Icon(
@@ -387,9 +343,7 @@ class _ContentPageState extends State<ContentPage>
                   heroTag: null,
                   backgroundColor: Color(0xff212121),
                   onPressed: () {
-                    _contentScrollController.animateTo(0.0,
-                        duration: Duration(milliseconds: 300),
-                        curve: Curves.ease);
+                    _contentScrollController.animateTo(0.0, duration: Duration(milliseconds: 300), curve: Curves.ease);
                   },
                   child: Container(
                     child: Icon(

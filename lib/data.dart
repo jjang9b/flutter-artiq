@@ -17,7 +17,7 @@ class ArtiqData {
   static String musicNextState = musicNextStateArr[0];
   static bool isOnload = false;
   static bool isPostScrolling = false;
-  static String version = "1.0.9";
+  static String version = "1.0.10";
 
   static Timer refreshTimer;
   static int refreshPerSec = 20;
@@ -35,8 +35,7 @@ class ArtiqData {
 
 class Fetch {
   Future<List<Guide>> fetchGuide() async {
-    var uri = Uri.parse(
-        "https://asia-northeast1-artiq-api-7d81d.cloudfunctions.net/guide");
+    var uri = Uri.parse("https://asia-northeast1-artiq-api-7d81d.cloudfunctions.net/guide");
 
     final response = await http.get(uri);
 
@@ -60,12 +59,10 @@ class Fetch {
 
     switch (category) {
       case "art":
-        uri = Uri.parse(
-            "https://asia-northeast1-artiq-api-7d81d.cloudfunctions.net/art");
+        uri = Uri.parse("https://asia-northeast1-artiq-api-7d81d.cloudfunctions.net/art");
         break;
       case "music":
-        uri = Uri.parse(
-            "https://asia-northeast1-artiq-api-7d81d.cloudfunctions.net/music");
+        uri = Uri.parse("https://asia-northeast1-artiq-api-7d81d.cloudfunctions.net/music");
         break;
     }
 
@@ -96,13 +93,7 @@ class Post {
   final String origin;
   final String date;
 
-  Post(
-      {this.imageUrl,
-      this.imageText,
-      this.backBtnType,
-      this.content,
-      this.origin,
-      this.date});
+  Post({this.imageUrl, this.imageText, this.backBtnType, this.content, this.origin, this.date});
 
   factory Post.fromJson(Map<String, dynamic> json) {
     var contentList = json['content'] as List;

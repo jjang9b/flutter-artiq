@@ -1,7 +1,7 @@
 name: artiq
 description: Artiq
 
-version: 1.0.9+11
+version: 1.0.10+12
 
 environment:
   sdk: ">=2.1.0 <3.0.0"

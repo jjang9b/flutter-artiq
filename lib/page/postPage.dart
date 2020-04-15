@@ -6,6 +6,7 @@ import 'package:artiq/func/func.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class PostPage extends StatefulWidget {
   static const routeName = '/post';
@@ -27,8 +28,7 @@ class _PostPageState extends State<PostPage> {
   }
 
   void refreshTimer() {
-    ArtiqData.refreshTimer =
-        Timer.periodic(Duration(milliseconds: 5000), (timer) {
+    ArtiqData.refreshTimer = Timer.periodic(Duration(milliseconds: 5000), (timer) {
       setState(() {
         ArtiqData.refreshSec -= 5;
       });
@@ -48,8 +48,7 @@ class _PostPageState extends State<PostPage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (ArtiqData.isOnload) {
-        Func.categoryTab(
-            _categoryController, ArtiqData.category, ArtiqData.categoryIdx);
+        Func.categoryTab(_categoryController, ArtiqData.category, ArtiqData.categoryIdx);
       }
     });
   }
@@ -89,43 +88,23 @@ class _PostPageState extends State<PostPage> {
                         children: <Widget>[
                           Text(
                             "A",
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 28,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'UTOIMAGE'),
+                            style: TextStyle(color: Colors.black, fontSize: 28, fontWeight: FontWeight.bold, fontFamily: 'UTOIMAGE'),
                           ),
                           Text(
                             "r",
-                            style: TextStyle(
-                                color: Color(0xffffd54f),
-                                fontSize: 28,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'UTOIMAGE'),
+                            style: TextStyle(color: Color(0xffffd54f), fontSize: 28, fontWeight: FontWeight.bold, fontFamily: 'UTOIMAGE'),
                           ),
                           Text(
                             "t",
-                            style: TextStyle(
-                                color: Color(0xff455a64),
-                                fontSize: 28,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'UTOIMAGE'),
+                            style: TextStyle(color: Color(0xff455a64), fontSize: 28, fontWeight: FontWeight.bold, fontFamily: 'UTOIMAGE'),
                           ),
                           Text(
                             "i",
-                            style: TextStyle(
-                                color: Color(0xffef0078),
-                                fontSize: 28,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'UTOIMAGE'),
+                            style: TextStyle(color: Color(0xffef0078), fontSize: 28, fontWeight: FontWeight.bold, fontFamily: 'UTOIMAGE'),
                           ),
                           Text(
                             "Q",
-                            style: TextStyle(
-                                color: Colors.red,
-                                fontSize: 28,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'UTOIMAGE'),
+                            style: TextStyle(color: Colors.red, fontSize: 28, fontWeight: FontWeight.bold, fontFamily: 'UTOIMAGE'),
                           ),
                         ],
                       ),
@@ -154,81 +133,71 @@ class _PostPageState extends State<PostPage> {
                                       child: Stack(
                                         children: <Widget>[
                                           Container(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.08,
+                                            height: MediaQuery.of(context).size.height * 0.08,
                                             child: Row(
                                               children: <Widget>[
-                                                Func.getCategory(
-                                                    _categoryController,
-                                                    'music',
-                                                    'MUSIC',
-                                                    0),
-                                                Func.getCategory(
-                                                    _categoryController,
-                                                    'art',
-                                                    'ART',
-                                                    1),
+                                                Func.getCategory(_categoryController, 'music', 'MUSIC', 0),
+                                                Func.getCategory(_categoryController, 'art', 'ART', 1),
                                               ],
                                             ),
                                           ),
                                           Positioned(
                                             right: 17,
-                                            top: 5,
-                                            child: InkWell(
-                                              highlightColor:
-                                                  Colors.transparent,
-                                              splashColor: Colors.transparent,
-                                              onTap: () {
-                                                if (ArtiqData.isPostScrolling) {
-                                                  return;
-                                                }
+                                            top: 1,
+                                            child: Container(
+                                                width: 38,
+                                                child: Column(
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  children: <Widget>[
+                                                    Container(
+                                                      child: FloatingActionButton(
+                                                        mini: true,
+                                                        heroTag: null,
+                                                        backgroundColor: (ArtiqData.refreshSec > 0) ? Colors.red : Color(0xff212121),
+                                                        onPressed: () {
+                                                          if (ArtiqData.isPostScrolling) {
+                                                            return;
+                                                          }
 
-                                                if (!isRefresh()) {
-                                                  return;
-                                                }
+                                                          if (!isRefresh()) {
+                                                            return;
+                                                          }
 
-                                                refreshTimer();
-                                                Func.refreshPost(context, _pageController);
-                                                setState(() {});
-                                              },
-                                              child: Container(
-                                                  width: 38,
-                                                  height: 50,
-                                                  child: Column(
-                                                    children: <Widget>[
-                                                      Icon(
-                                                        Icons.fiber_new,
-                                                        size: 28,
-                                                        color: ArtiqData
-                                                            .refreshColor,
+                                                          refreshTimer();
+                                                          Func.refreshPost(context, _pageController);
+                                                          setState(() {});
+                                                        },
+                                                        child: Container(
+                                                          child: Icon(
+                                                            Icons.cached,
+                                                            color: Colors.white,
+                                                          ),
+                                                        ),
                                                       ),
-                                                      Text(
-                                                        "${ArtiqData.refreshSec}s",
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.black87,
-                                                            fontSize: 12,
-                                                            fontFamily:
-                                                                'UTOIMAGE'),
-                                                      )
-                                                    ],
-                                                  )),
-                                            ),
+                                                    ),
+                                                    Visibility(
+                                                      visible: (ArtiqData.refreshSec > 0),
+                                                      child: Container(
+                                                        child: Text(
+                                                          "${ArtiqData.refreshSec} sec",
+                                                          style: GoogleFonts.notoSans(
+                                                              textStyle: TextStyle(
+                                                                  color: Colors.black, height: 0.9, fontWeight: FontWeight.bold, fontSize: 11)),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                )),
                                           )
                                         ],
                                       ),
                                     ),
                                     Expanded(
-                                      child: NotificationListener<
-                                          ScrollNotification>(
+                                      child: NotificationListener<ScrollNotification>(
                                         onNotification: (scrollNotification) {
-                                          if (scrollNotification
-                                              is ScrollStartNotification) {
+                                          if (scrollNotification is ScrollStartNotification) {
                                             ArtiqData.isPostScrolling = true;
-                                          } else if (scrollNotification
-                                              is ScrollEndNotification) {
+                                          } else if (scrollNotification is ScrollEndNotification) {
                                             ArtiqData.isPostScrolling = false;
                                           }
 
@@ -237,11 +206,7 @@ class _PostPageState extends State<PostPage> {
                                         child: PageView.builder(
                                           controller: _pageController,
                                           itemBuilder: (context, position) {
-                                            return Func.getContent(
-                                                context,
-                                                snapshot.data.length,
-                                                position,
-                                                snapshot.data[position]);
+                                            return Func.getContent(context, snapshot.data.length, position, snapshot.data[position]);
                                           },
                                           itemCount: snapshot.data.length,
                                         ),
@@ -249,18 +214,14 @@ class _PostPageState extends State<PostPage> {
                                     ),
                                     Container(
                                       alignment: Alignment.topCenter,
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.11,
+                                      height: MediaQuery.of(context).size.height * 0.11,
                                       child: DotsIndicator(
                                         dotsCount: snapshot.data.length,
                                         position: Func.getPostPage(),
                                         decorator: DotsDecorator(
                                           size: Size.fromRadius(4),
                                           activeSize: Size.fromRadius(4),
-                                          activeShape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0)),
+                                          activeShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
                                           color: Colors.black26,
                                           activeColor: Colors.black87,
                                         ),
@@ -274,8 +235,7 @@ class _PostPageState extends State<PostPage> {
                             return Center(
                               child: CircularProgressIndicator(
                                 backgroundColor: Colors.black,
-                                valueColor: new AlwaysStoppedAnimation<Color>(
-                                    Colors.white),
+                                valueColor: new AlwaysStoppedAnimation<Color>(Colors.white),
                               ),
                             );
                           },

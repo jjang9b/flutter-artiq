@@ -35,8 +35,7 @@ class Func {
     ArtiqData.refreshColor = Colors.black;
   }
 
-  static void refreshPost(
-      BuildContext context, PageController _pageController) async {
+  static void refreshPost(BuildContext context, PageController _pageController) async {
     ArtiqData.refreshColor = Colors.red;
     ArtiqData.refreshSec = ArtiqData.refreshPerSec;
 
@@ -109,8 +108,7 @@ class Func {
     return 1;
   }
 
-  static void categoryTab(
-      PageController _categoryController, String category, int categoryIdx) {
+  static void categoryTab(PageController _categoryController, String category, int categoryIdx) {
     setData(category, categoryIdx);
     _categoryController.jumpToPage(categoryIdx);
     setPostPage(0);
@@ -146,8 +144,7 @@ class Func {
     Navigator.pushNamed(context, routeName);
   }
 
-  static InkWell getCategory(PageController _categoryController,
-      String category, String title, int idx) {
+  static InkWell getCategory(PageController _categoryController, String category, String title, int idx) {
     return InkWell(
       highlightColor: Colors.transparent,
       splashColor: Colors.transparent,
@@ -164,8 +161,7 @@ class Func {
           children: <Widget>[
             Text(
               title,
-              style: TextStyle(
-                  color: Colors.black87, fontSize: 18, fontFamily: 'UTOIMAGE'),
+              style: TextStyle(color: Colors.black87, fontSize: 18, fontFamily: 'UTOIMAGE'),
             ),
             Visibility(
               visible: (_categoryPage == idx),
@@ -173,10 +169,7 @@ class Func {
                 width: 20,
                 height: 5,
                 margin: EdgeInsets.only(top: 10),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(3)),
-                    color: Colors.red,
-                    shape: BoxShape.rectangle),
+                decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(3)), color: Colors.red, shape: BoxShape.rectangle),
               ),
             ),
           ],
@@ -185,8 +178,7 @@ class Func {
     );
   }
 
-  static Container getContent(
-      BuildContext context, int length, int position, Post post) {
+  static Container getContent(BuildContext context, int length, int position, Post post) {
     Alignment originAlign = Alignment.topLeft;
 
     if (position % 2 == 0) {
@@ -214,8 +206,7 @@ class Func {
                         imageUrl: post.imageUrl,
                         imageBuilder: (context, imageProvider) => Container(
                           decoration: BoxDecoration(
-                            image: DecorationImage(
-                                image: imageProvider, fit: BoxFit.cover),
+                            image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
                           ),
                         ),
                       ),
@@ -223,22 +214,12 @@ class Func {
                     Container(
                       margin: EdgeInsets.fromLTRB(20, 30, 20, 12),
                       alignment: originAlign,
-                      child: Text(post.imageText,
-                          style: TextStyle(
-                              color: Colors.black,
-                              height: 1.2,
-                              fontSize: 21,
-                              fontFamily: 'UTOIMAGE')),
+                      child: Text(post.imageText, style: TextStyle(color: Colors.black, height: 1.2, fontSize: 21, fontFamily: 'UTOIMAGE')),
                     ),
                     Container(
                       margin: EdgeInsets.only(left: 20, right: 20, bottom: 0),
                       alignment: originAlign,
-                      child: Text(post.origin,
-                          style: GoogleFonts.notoSans(
-                              textStyle: TextStyle(
-                                  color: Colors.black,
-                                  height: 1.3,
-                                  fontSize: 15))),
+                      child: Text(post.origin, style: GoogleFonts.notoSans(textStyle: TextStyle(color: Colors.black, height: 1.3, fontSize: 15))),
                     )
                   ],
                 ),
