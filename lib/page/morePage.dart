@@ -36,7 +36,7 @@ class _MorePageState extends State<MorePage> {
                           child: Container(
                             margin: EdgeInsets.fromLTRB(30, 20, 0, 0),
                             alignment: Alignment.topLeft,
-                            child: Text("more.title", style: TextStyle(fontSize: 23, fontFamily: "UTOIMAGE")).tr(),
+                            child: Text("more.title", style: TextStyle(fontSize: 18, fontFamily: "UTOIMAGE")).tr(),
                           ),
                         ),
                         Container(
@@ -46,92 +46,52 @@ class _MorePageState extends State<MorePage> {
                               Container(
                                 alignment: Alignment.centerLeft,
                                 margin: EdgeInsets.fromLTRB(30, 0, 30, 5),
-                                child: Text("more.version", style: TextStyle(fontSize: 18, fontFamily: "UTOIMAGE")).tr(),
+                                child: Text("more.version", style: TextStyle(fontSize: 16, fontFamily: "UTOIMAGE")).tr(),
                               ),
                               Container(
-                                margin: EdgeInsets.fromLTRB(30, 5, 30, 5),
+                                margin: EdgeInsets.fromLTRB(30, 5, 30, 10),
                                 child: Row(
                                   children: <Widget>[
                                     Container(child: Text("v ${ArtiqData.version}", style: GoogleFonts.notoSans(textStyle: TextStyle(fontSize: 16)))),
                                   ],
                                 ),
                               ),
-                              Container(
-                                alignment: Alignment.centerLeft,
-                                margin: EdgeInsets.fromLTRB(30, 30, 30, 5),
-                                child: Text("more.settingTitle", style: TextStyle(fontSize: 18, fontFamily: "UTOIMAGE")).tr(),
+                              Divider(
+                                indent: 30,
+                                endIndent: 30,
                               ),
                               Container(
                                 alignment: Alignment.centerLeft,
                                 margin: EdgeInsets.fromLTRB(30, 10, 30, 5),
-                                child: Text("more.guideTitle", style: TextStyle(fontSize: 15, fontFamily: "UTOIMAGE")).tr(),
+                                child: Text("more.mailTitle", style: TextStyle(fontSize: 16, fontFamily: "UTOIMAGE")).tr(),
                               ),
                               Container(
-                                height: 48,
-                                margin: const EdgeInsets.fromLTRB(30, 0, 30, 0),
-                                child: InkWell(
-                                  onTap: () {
-                                    Func.refreshInit();
-                                    SqlLite().delete("guide");
-
-                                    Navigator.pushNamedAndRemoveUntil(context, GuidePage.routeName, (_) => false);
-                                  },
-                                  child: Row(
-                                    children: <Widget>[
-                                      Container(child: Text("more.guideInit", style: GoogleFonts.notoSans(textStyle: TextStyle(fontSize: 16))).tr()),
-                                      Container(
-                                        margin: EdgeInsets.only(left: 10, top: 13),
-                                        child: Container(
-                                          child: Column(
-                                            children: <Widget>[
-                                              Icon(
-                                                Icons.restore_page,
-                                                size: 20,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                alignment: Alignment.centerLeft,
-                                margin: EdgeInsets.fromLTRB(30, 30, 30, 5),
-                                child: Text("more.mailTitle", style: TextStyle(fontSize: 18, fontFamily: "UTOIMAGE")).tr(),
-                              ),
-                              Container(
-                                height: 48,
+                                height: 40,
                                 margin: const EdgeInsets.fromLTRB(30, 10, 30, 10),
-                                child: InkWell(
-                                  onTap: () {
-                                    Email email = Email(
-                                      subject: "more.mailSubject".tr(),
-                                      recipients: ['bbplayworld@gmail.com'],
-                                      isHTML: false,
-                                    );
+                                child: Row(
+                                  children: <Widget>[
+                                    Container(child: Text("more.mailSend", style: GoogleFonts.notoSans(textStyle: TextStyle(fontSize: 16))).tr()),
+                                    Expanded(
+                                      child: Container(),
+                                    ),
+                                    Container(
+                                      child: InkWell(
+                                        onTap: () {
+                                          Email email = Email(
+                                            subject: "more.mailSubject".tr(),
+                                            recipients: ['bbplayworld@gmail.com'],
+                                            isHTML: false,
+                                          );
 
-                                    FlutterEmailSender.send(email);
-                                  },
-                                  child: Row(
-                                    children: <Widget>[
-                                      Container(child: Text("more.mailSend", style: GoogleFonts.notoSans(textStyle: TextStyle(fontSize: 16))).tr()),
-                                      Container(
-                                        margin: EdgeInsets.only(left: 10, top: 12),
-                                        child: Container(
-                                          child: Column(
-                                            children: <Widget>[
-                                              Icon(
-                                                Icons.contact_mail,
-                                                size: 20,
-                                              ),
-                                            ],
-                                          ),
+                                          FlutterEmailSender.send(email);
+                                        },
+                                        child: Icon(
+                                          Icons.mail_outline,
+                                          size: 26,
                                         ),
                                       ),
-                                    ],
-                                  ),
+                                    )
+                                  ],
                                 ),
                               ),
                             ],

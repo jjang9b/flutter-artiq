@@ -278,14 +278,14 @@ class _ContentPageState extends State<ContentPage> implements YouTubePlayerListe
                 child: FloatingActionButton(
                   mini: true,
                   heroTag: null,
-                  backgroundColor: Color(0xff212121),
+                  backgroundColor: Colors.white,
                   onPressed: () {
                     Navigator.pushNamedAndRemoveUntil(context, PostPage.routeName, (_) => false);
                   },
                   child: Container(
                     child: Icon(
                       Icons.wallpaper,
-                      color: Colors.white,
+                      color: Colors.black,
                     ),
                   ),
                 ),

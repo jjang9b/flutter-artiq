@@ -17,12 +17,12 @@ class ArtiqData {
   static String musicNextState = musicNextStateArr[0];
   static bool isOnload = false;
   static bool isPostScrolling = false;
-  static String version = "1.0.10";
+  static String version = "1.0.11";
 
   static Timer refreshTimer;
   static int refreshPerSec = 20;
   static int refreshSec = 0;
-  static Color refreshColor = Colors.black;
+  static Color refreshColor;
 
   static List<Post> getPostList(String type) {
     return futureMap[type];

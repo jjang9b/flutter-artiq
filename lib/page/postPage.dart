@@ -34,7 +34,7 @@ class _PostPageState extends State<PostPage> {
       });
 
       if (ArtiqData.refreshSec <= 0) {
-        ArtiqData.refreshColor = Colors.black;
+        ArtiqData.refreshColor = Colors.white;
         timer.cancel();
       }
     });
@@ -153,7 +153,7 @@ class _PostPageState extends State<PostPage> {
                                                       child: FloatingActionButton(
                                                         mini: true,
                                                         heroTag: null,
-                                                        backgroundColor: (ArtiqData.refreshSec > 0) ? Colors.red : Color(0xff212121),
+                                                        backgroundColor: (ArtiqData.refreshSec > 0) ? Colors.red : Colors.white,
                                                         onPressed: () {
                                                           if (ArtiqData.isPostScrolling) {
                                                             return;
@@ -170,7 +170,7 @@ class _PostPageState extends State<PostPage> {
                                                         child: Container(
                                                           child: Icon(
                                                             Icons.cached,
-                                                            color: Colors.white,
+                                                            color: (ArtiqData.refreshSec > 0) ? Colors.white : Colors.black,
                                                           ),
                                                         ),
                                                       ),

@@ -6,11 +6,6 @@
   "more": {
     "title": "더보기",
     "version": "버전",
-    "settingTitle": "설정",
-    "settingNextAutoPlay": "다음 포스트 자동 재생",
-    "settingNextRandomPlay": "다음 포스트 랜덤 재생",
-    "guideTitle": "가이드",
-    "guideInit": "오늘 하루 보지 않기 초기화",
     "mailTitle": "포스트 추천 및 문의",
     "mailSubject": "[ArtiQ] 문의",
     "mailSend": "메일 보내기"
