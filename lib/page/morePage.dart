@@ -31,13 +31,31 @@ class _MorePageState extends State<MorePage> {
                   itemBuilder: (context, position) {
                     return Column(
                       children: <Widget>[
-                        Container(
-                          height: MediaQuery.of(context).size.height * 0.09,
-                          child: Container(
-                            margin: EdgeInsets.fromLTRB(30, 20, 0, 0),
-                            alignment: Alignment.topLeft,
-                            child: Text("more.title", style: TextStyle(fontSize: 18, fontFamily: "UTOIMAGE")).tr(),
-                          ),
+                        Stack(
+                          children: <Widget>[
+                            Container(
+                              margin: EdgeInsets.fromLTRB(25, 15, 30, 5),
+                              child: InkWell(
+                                highlightColor: Colors.transparent,
+                                splashColor: Colors.transparent,
+                                onTap: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Icon(
+                                  Icons.arrow_back,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                            Container(
+                              height: MediaQuery.of(context).size.height * 0.09,
+                              child: Container(
+                                margin: EdgeInsets.fromLTRB(30, 20, 0, 0),
+                                alignment: Alignment.topCenter,
+                                child: Text("more.title", style: TextStyle(fontSize: 18, fontFamily: "UTOIMAGE")).tr(),
+                              ),
+                            ),
+                          ],
                         ),
                         Container(
                           height: MediaQuery.of(context).size.height * 0.78,
@@ -45,7 +63,7 @@ class _MorePageState extends State<MorePage> {
                             children: <Widget>[
                               Container(
                                 alignment: Alignment.centerLeft,
-                                margin: EdgeInsets.fromLTRB(30, 0, 30, 5),
+                                margin: EdgeInsets.fromLTRB(30, 10, 30, 5),
                                 child: Text("more.version", style: TextStyle(fontSize: 16, fontFamily: "UTOIMAGE")).tr(),
                               ),
                               Container(
@@ -97,7 +115,6 @@ class _MorePageState extends State<MorePage> {
                             ],
                           ),
                         ),
-                        Func.getNavigator(context)
                       ],
                     );
                   },

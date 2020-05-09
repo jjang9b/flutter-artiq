@@ -278,14 +278,14 @@ class _ContentPageState extends State<ContentPage> implements YouTubePlayerListe
                 child: FloatingActionButton(
                   mini: true,
                   heroTag: null,
-                  backgroundColor: Colors.white,
+                  backgroundColor: Colors.black,
                   onPressed: () {
                     Navigator.pushNamedAndRemoveUntil(context, PostPage.routeName, (_) => false);
                   },
                   child: Container(
                     child: Icon(
-                      Icons.wallpaper,
-                      color: Colors.black,
+                      Icons.home,
+                      color: Colors.white,
                     ),
                   ),
                 ),
@@ -299,7 +299,7 @@ class _ContentPageState extends State<ContentPage> implements YouTubePlayerListe
                 child: FloatingActionButton(
                   mini: true,
                   heroTag: null,
-                  backgroundColor: Color(0xff212121),
+                  backgroundColor: Colors.black,
                   onPressed: () {
                     goNextContent();
                   },
@@ -320,7 +320,7 @@ class _ContentPageState extends State<ContentPage> implements YouTubePlayerListe
                 child: FloatingActionButton(
                   mini: true,
                   heroTag: null,
-                  backgroundColor: Color(0xff212121),
+                  backgroundColor: Colors.black,
                   onPressed: () {
                     goBeforeContent();
                   },
@@ -341,7 +341,7 @@ class _ContentPageState extends State<ContentPage> implements YouTubePlayerListe
                 child: FloatingActionButton(
                   mini: true,
                   heroTag: null,
-                  backgroundColor: Color(0xff212121),
+                  backgroundColor: Colors.black,
                   onPressed: () {
                     _contentScrollController.animateTo(0.0, duration: Duration(milliseconds: 300), curve: Curves.ease);
                   },

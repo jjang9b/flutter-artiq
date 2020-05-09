@@ -17,7 +17,7 @@ class ArtiqData {
   static String musicNextState = musicNextStateArr[0];
   static bool isOnload = false;
   static bool isPostScrolling = false;
-  static String version = "1.0.11";
+  static String version = "1.0.12";
 
   static Timer refreshTimer;
   static int refreshPerSec = 20;

@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:artiq/data.dart';
 import 'package:artiq/func/func.dart';
+import 'package:artiq/page/morePage.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -78,11 +79,11 @@ class _PostPageState extends State<PostPage> {
               height: MediaQuery.of(context).size.height * 0.08,
               child: Container(
                 alignment: Alignment.topLeft,
-                margin: EdgeInsets.only(top: 25),
-                child: Column(
+                margin: EdgeInsets.only(top: 15),
+                child: Row(
                   children: <Widget>[
                     Container(
-                      width: MediaQuery.of(context).size.width * 0.6,
+                      width: MediaQuery.of(context).size.width * 0.78,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
@@ -109,143 +110,154 @@ class _PostPageState extends State<PostPage> {
                         ],
                       ),
                     ),
+                    Container(
+                      margin: EdgeInsets.only(top: 5),
+                      child: InkWell(
+                        highlightColor: Colors.transparent,
+                        splashColor: Colors.transparent,
+                        onTap: () {
+                          if (ArtiqData.isPostScrolling) {
+                            return;
+                          }
+
+                          Func.goPage(context, MorePage.routeName);
+                        },
+                        child: Container(
+                          width: 50,
+                          child: Column(
+                            children: <Widget>[
+                              Icon(
+                                Icons.more_horiz,
+                                size: 30,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
             ),
-            Container(
-              margin: EdgeInsets.only(left: 30),
-              height: MediaQuery.of(context).size.height * 0.79,
-              child: Container(
-                child: PageView.builder(
-                    physics: NeverScrollableScrollPhysics(),
-                    controller: _categoryController,
-                    itemBuilder: (context, position) {
-                      return Container(
-                        child: FutureBuilder<List<Post>>(
-                          future: Func.getPostList(),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              return SizedBox(
-                                child: Column(
-                                  children: <Widget>[
-                                    Container(
-                                      child: Stack(
-                                        children: <Widget>[
-                                          Container(
-                                            height: MediaQuery.of(context).size.height * 0.08,
-                                            child: Row(
-                                              children: <Widget>[
-                                                Func.getCategory(_categoryController, 'music', 'MUSIC', 0),
-                                                Func.getCategory(_categoryController, 'art', 'ART', 1),
-                                              ],
+            Stack(
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.only(top: 20, left: 20, right: 20),
+                  height: MediaQuery.of(context).size.height * 0.77,
+                  child: Container(
+                    child: PageView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        controller: _categoryController,
+                        itemBuilder: (context, position) {
+                          return Container(
+                            child: FutureBuilder<List<Post>>(
+                              future: Func.getPostList(),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  return SizedBox(
+                                    child: Column(
+                                      children: <Widget>[
+                                        Container(
+                                          height: MediaQuery.of(context).size.height * 0.77,
+                                          child: NotificationListener<ScrollNotification>(
+                                            onNotification: (scrollNotification) {
+                                              if (scrollNotification is ScrollStartNotification) {
+                                                ArtiqData.isPostScrolling = true;
+                                              } else if (scrollNotification is ScrollEndNotification) {
+                                                ArtiqData.isPostScrolling = false;
+                                              }
+
+                                              return true;
+                                            },
+                                            child: ListView.builder(
+                                              controller: _pageController,
+                                              itemBuilder: (context, position) {
+                                                return Func.getContent(context, snapshot.data.length, position, snapshot.data[position]);
+                                              },
+                                              itemCount: snapshot.data.length,
                                             ),
                                           ),
-                                          Positioned(
-                                            right: 17,
-                                            top: 1,
-                                            child: Container(
-                                                width: 38,
-                                                child: Column(
-                                                  mainAxisAlignment: MainAxisAlignment.start,
-                                                  children: <Widget>[
-                                                    Container(
-                                                      child: FloatingActionButton(
-                                                        mini: true,
-                                                        heroTag: null,
-                                                        backgroundColor: (ArtiqData.refreshSec > 0) ? Colors.red : Colors.white,
-                                                        onPressed: () {
-                                                          if (ArtiqData.isPostScrolling) {
-                                                            return;
-                                                          }
-
-                                                          if (!isRefresh()) {
-                                                            return;
-                                                          }
-
-                                                          refreshTimer();
-                                                          Func.refreshPost(context, _pageController);
-                                                          setState(() {});
-                                                        },
-                                                        child: Container(
-                                                          child: Icon(
-                                                            Icons.cached,
-                                                            color: (ArtiqData.refreshSec > 0) ? Colors.white : Colors.black,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Visibility(
-                                                      visible: (ArtiqData.refreshSec > 0),
-                                                      child: Container(
-                                                        child: Text(
-                                                          "${ArtiqData.refreshSec} sec",
-                                                          style: GoogleFonts.notoSans(
-                                                              textStyle: TextStyle(
-                                                                  color: Colors.black, height: 0.9, fontWeight: FontWeight.bold, fontSize: 11)),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                )),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: NotificationListener<ScrollNotification>(
-                                        onNotification: (scrollNotification) {
-                                          if (scrollNotification is ScrollStartNotification) {
-                                            ArtiqData.isPostScrolling = true;
-                                          } else if (scrollNotification is ScrollEndNotification) {
-                                            ArtiqData.isPostScrolling = false;
-                                          }
-
-                                          return true;
-                                        },
-                                        child: PageView.builder(
-                                          controller: _pageController,
-                                          itemBuilder: (context, position) {
-                                            return Func.getContent(context, snapshot.data.length, position, snapshot.data[position]);
-                                          },
-                                          itemCount: snapshot.data.length,
                                         ),
-                                      ),
+                                      ],
                                     ),
-                                    Container(
-                                      alignment: Alignment.topCenter,
-                                      height: MediaQuery.of(context).size.height * 0.11,
-                                      child: DotsIndicator(
-                                        dotsCount: snapshot.data.length,
-                                        position: Func.getPostPage(),
-                                        decorator: DotsDecorator(
-                                          size: Size.fromRadius(4),
-                                          activeSize: Size.fromRadius(4),
-                                          activeShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-                                          color: Colors.black26,
-                                          activeColor: Colors.black87,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                                  );
+                                }
+
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    backgroundColor: Colors.black,
+                                    valueColor: new AlwaysStoppedAnimation<Color>(Colors.white),
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                        },
+                        itemCount: 2),
+                  ),
+                ),
+                Positioned(
+                  right: 20,
+                  bottom: 0,
+                  child: Container(
+                      width: 38,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                            child: FloatingActionButton(
+                              mini: true,
+                              heroTag: null,
+                              backgroundColor: (ArtiqData.refreshSec > 0) ? Colors.red : Colors.white,
+                              onPressed: () {
+                                if (ArtiqData.isPostScrolling) {
+                                  return;
+                                }
+
+                                if (!isRefresh()) {
+                                  return;
+                                }
+
+                                refreshTimer();
+                                Func.refreshPost(context, _pageController);
+                                setState(() {});
+                              },
+                              child: Container(
+                                child: Icon(
+                                  Icons.cached,
+                                  color: (ArtiqData.refreshSec > 0) ? Colors.white : Colors.black,
                                 ),
-                              );
-                            }
-
-                            return Center(
-                              child: CircularProgressIndicator(
-                                backgroundColor: Colors.black,
-                                valueColor: new AlwaysStoppedAnimation<Color>(Colors.white),
                               ),
-                            );
-                          },
-                        ),
-                      );
-                    },
-                    itemCount: 2),
-              ),
+                            ),
+                          ),
+                          Visibility(
+                            visible: (ArtiqData.refreshSec > 0),
+                            child: Container(
+                              child: Text(
+                                "${ArtiqData.refreshSec} sec",
+                                style: GoogleFonts.notoSans(
+                                    textStyle: TextStyle(color: Colors.black, height: 0.9, fontWeight: FontWeight.bold, fontSize: 11)),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )),
+                )
+              ],
             ),
-            Func.getNavigator(context)
+            Container(
+              child: Container(
+                height: MediaQuery.of(context).size.height * 0.06,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Func.getCategory(_categoryController, 'music', 'MUSIC', 0),
+                    Func.getCategory(_categoryController, 'art', 'ART', 1),
+                  ],
+                ),
+              ),
+            )
           ],
         ),
       ),

@@ -156,12 +156,12 @@ class Func {
         categoryTab(_categoryController, category, idx);
       },
       child: Container(
-        margin: EdgeInsets.only(top: 10, right: 20),
+        margin: EdgeInsets.only(top: 15, left: 20, right: 20),
         child: Column(
           children: <Widget>[
             Text(
               title,
-              style: TextStyle(color: Colors.black87, fontSize: 18, fontFamily: 'UTOIMAGE'),
+              style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'UTOIMAGE'),
             ),
             Visibility(
               visible: (_categoryPage == idx),
@@ -178,111 +178,53 @@ class Func {
     );
   }
 
-  static Container getContent(BuildContext context, int length, int position, Post post) {
-    Alignment originAlign = Alignment.topLeft;
-
-    if (position % 2 == 0) {
-      originAlign = Alignment.topRight;
-    }
-
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      child: Transform.scale(
-        scale: getScale(position),
-        child: Column(
-          children: <Widget>[
-            InkWell(
-              highlightColor: Colors.transparent,
-              splashColor: Colors.transparent,
-              onTap: () {
-                goContentPage(context, post);
-              },
-              child: Container(
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      height: MediaQuery.of(context).size.height * 0.4,
-                      child: CachedNetworkImage(
-                        imageUrl: post.imageUrl,
-                        imageBuilder: (context, imageProvider) => Container(
-                          decoration: BoxDecoration(
-                            image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
-                          ),
-                        ),
+  static InkWell getContent(BuildContext context, int length, int position, Post post) {
+    return InkWell(
+      highlightColor: Colors.transparent,
+      splashColor: Colors.transparent,
+      onTap: () {
+        goContentPage(context, post);
+      },
+      child: Stack(
+        children: <Widget>[
+          Container(
+            height: MediaQuery.of(context).size.height * 0.13,
+            margin: EdgeInsets.only(top: 5, left: 5, bottom: 20),
+            child: Row(
+              children: <Widget>[
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.23,
+                  child: CachedNetworkImage(
+                    imageUrl: post.imageUrl,
+                    imageBuilder: (context, imageProvider) => Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black87),
+                        borderRadius: BorderRadius.all(Radius.circular(5)),
+                        image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
                       ),
                     ),
-                    Container(
-                      margin: EdgeInsets.fromLTRB(20, 30, 20, 12),
-                      alignment: originAlign,
-                      child: Text(post.imageText, style: TextStyle(color: Colors.black, height: 1.2, fontSize: 21, fontFamily: 'UTOIMAGE')),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(left: 20, right: 20, bottom: 0),
-                      alignment: originAlign,
-                      child: Text(post.origin, style: GoogleFonts.notoSans(textStyle: TextStyle(color: Colors.black, height: 1.3, fontSize: 15))),
-                    )
-                  ],
+                  ),
                 ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  static Container getNavigator(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.fromLTRB(50, 0, 50, 10),
-      height: MediaQuery.of(context).size.height * 0.065,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          InkWell(
-            highlightColor: Colors.transparent,
-            splashColor: Colors.transparent,
-            onTap: () {
-              if (ArtiqData.isPostScrolling) {
-                return;
-              }
-
-              goPage(context, PostPage.routeName);
-            },
-            child: Container(
-              width: 50,
-              margin: EdgeInsets.only(left: 20, top: 6, right: 20),
-              child: Column(
-                children: <Widget>[
-                  Icon(
-                    Icons.wallpaper,
-                    size: 30,
+                Container(
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        alignment: Alignment.topLeft,
+                        width: MediaQuery.of(context).size.width * 0.57,
+                        margin: EdgeInsets.only(top: 6, left: 20, right: 15),
+                        child: Text(post.imageText,
+                            overflow: TextOverflow.visible, style: TextStyle(color: Colors.black, height: 1.2, fontSize: 15, fontFamily: 'UTOIMAGE')),
+                      ),
+                      Container(
+                        alignment: Alignment.topLeft,
+                        width: MediaQuery.of(context).size.width * 0.57,
+                        margin: EdgeInsets.only(top: 20, left: 20, right: 15),
+                        child: Text(post.origin, style: GoogleFonts.notoSans(textStyle: TextStyle(color: Colors.black, height: 1.3, fontSize: 15))),
+                      )
+                    ],
                   ),
-                ],
-              ),
-            ),
-          ),
-          InkWell(
-            highlightColor: Colors.transparent,
-            splashColor: Colors.transparent,
-            onTap: () {
-              if (ArtiqData.isPostScrolling) {
-                return;
-              }
-
-              goPage(context, MorePage.routeName);
-            },
-            child: Container(
-              width: 50,
-              margin: EdgeInsets.only(top: 6),
-              child: Column(
-                children: <Widget>[
-                  Icon(
-                    Icons.more_horiz,
-                    size: 30,
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ],
