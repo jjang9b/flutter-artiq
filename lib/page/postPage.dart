@@ -105,11 +105,11 @@ class _PostPageState extends State<PostPage> {
                           children: <Widget>[
                             Text(
                               "A",
-                              style: TextStyle(color: Colors.black, fontSize: 28, fontWeight: FontWeight.bold, fontFamily: 'UTOIMAGE'),
+                              style: TextStyle(color: Color(0xff26A69A), fontSize: 28, fontWeight: FontWeight.bold, fontFamily: 'UTOIMAGE'),
                             ),
                             Text(
                               "r",
-                              style: TextStyle(color: Color(0xffffd54f), fontSize: 28, fontWeight: FontWeight.bold, fontFamily: 'UTOIMAGE'),
+                              style: TextStyle(color: Color(0xffffdd40), fontSize: 28, fontWeight: FontWeight.bold, fontFamily: 'UTOIMAGE'),
                             ),
                             Text(
                               "t",

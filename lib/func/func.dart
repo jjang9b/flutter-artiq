@@ -125,6 +125,12 @@ class Func {
   static void goPage(BuildContext context, String routeName) {
     Func.refreshInit();
 
+    Navigator.pushNamed(context, routeName);
+  }
+
+  static void goPageRemove(BuildContext context, String routeName) {
+    Func.refreshInit();
+
     Navigator.pushNamedAndRemoveUntil(context, routeName, (_) => false);
   }
 
@@ -153,7 +159,7 @@ class Func {
                 width: 20,
                 height: 5,
                 margin: EdgeInsets.only(top: 10),
-                decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(3)), color: Colors.red, shape: BoxShape.rectangle),
+                decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(3)), color: Color(0xff26A69A), shape: BoxShape.rectangle),
               ),
             ),
           ],
