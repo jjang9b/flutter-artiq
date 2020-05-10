@@ -3,7 +3,6 @@ import 'dart:math';
 
 import 'package:artiq/data.dart';
 import 'package:artiq/page/contentPage.dart';
-import 'package:artiq/page/morePage.dart';
 import 'package:artiq/page/postPage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -16,7 +15,6 @@ class Func {
   static Future<List<Guide>> futureGuideList = fetch.fetchGuide();
   static Future<List<Post>> futureData = fetch.fetchPost('music');
   static double _categoryPage = 0;
-  static double _postPage = 0;
 
   static Future<List<Guide>> getGuideList() {
     return futureGuideList;
@@ -43,7 +41,6 @@ class Func {
     Func.futureData = fetch.fetchPost(ArtiqData.category);
 
     _pageController.jumpToPage(0);
-    setPostPage(0);
   }
 
   static Post getRandomPost(String category, Post post) {
@@ -96,25 +93,14 @@ class Func {
     Func._categoryPage = categoryPage;
   }
 
-  static double getPostPage() {
-    return Func._postPage.abs();
-  }
-
-  static void setPostPage(double page) {
-    Func._postPage = page;
-  }
-
-  static double getScale(int position) {
-    return 1;
-  }
-
   static void categoryTab(PageController _categoryController, String category, int categoryIdx) {
     setData(category, categoryIdx);
     _categoryController.jumpToPage(categoryIdx);
-    setPostPage(0);
   }
 
   static void goPostPage(BuildContext context) {
+    Func.refreshInit();
+
     Navigator.push(
         context,
         CupertinoPageRoute(
@@ -137,11 +123,9 @@ class Func {
   }
 
   static void goPage(BuildContext context, String routeName) {
-    if (routeName != PostPage.routeName) {
-      Func.refreshInit();
-    }
+    Func.refreshInit();
 
-    Navigator.pushNamed(context, routeName);
+    Navigator.pushNamedAndRemoveUntil(context, routeName, (_) => false);
   }
 
   static InkWell getCategory(PageController _categoryController, String category, String title, int idx) {

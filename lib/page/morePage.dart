@@ -1,7 +1,6 @@
 import 'package:artiq/data.dart';
 import 'package:artiq/func/func.dart';
-import 'package:artiq/page/guidePage.dart';
-import 'package:artiq/sql/sqlLite.dart';
+import 'package:artiq/page/postPage.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +38,7 @@ class _MorePageState extends State<MorePage> {
                                 highlightColor: Colors.transparent,
                                 splashColor: Colors.transparent,
                                 onTap: () {
-                                  Navigator.of(context).pop();
+                                  Func.goPage(context, PostPage.routeName);
                                 },
                                 child: Icon(
                                   Icons.arrow_back,

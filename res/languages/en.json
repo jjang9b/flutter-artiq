@@ -1,4 +1,7 @@
 {
+  "post": {
+    "exit": "Press the Back button one more time to exit."
+  },
   "guide": {
     "today": "Don't see me today",
     "skip": "Skip"
