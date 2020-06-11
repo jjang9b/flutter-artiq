@@ -17,9 +17,12 @@ class ArtiqData {
   static String musicNextState = musicNextStateArr[0];
   static bool isOnload = false;
   static bool isPostScrolling = false;
-  static String version = "1.0.13";
+  static String version = "1.0.14";
+
+  static String likeGenre = "";
 
   static Timer refreshTimer;
+  static Timer playLikeTimer;
   static int refreshPerSec = 20;
   static int refreshSec = 0;
   static Color refreshColor;
@@ -48,6 +51,27 @@ class Fetch {
     }
   }
 
+  Future<Ads> fetchAds(String category) async {
+    var uri;
+
+    switch (category) {
+      case "art":
+        uri = Uri.parse("https://asia-northeast1-artiq-api-7d81d.cloudfunctions.net/adart");
+        break;
+      case "music":
+        uri = Uri.parse("https://asia-northeast1-artiq-api-7d81d.cloudfunctions.net/admusic");
+        break;
+    }
+
+    final response = await http.get(uri);
+
+    if (response.statusCode == 200) {
+      return Ads.fromJson(json.decode(response.body));
+    } else {
+      return null;
+    }
+  }
+
   Future<List<Post>> fetchPost(String category) async {
     List<Post> cacheMap = futureMap[category];
 
@@ -62,7 +86,7 @@ class Fetch {
         uri = Uri.parse("https://asia-northeast1-artiq-api-7d81d.cloudfunctions.net/art");
         break;
       case "music":
-        uri = Uri.parse("https://asia-northeast1-artiq-api-7d81d.cloudfunctions.net/music");
+        uri = Uri.parse("https://asia-northeast1-artiq-api-7d81d.cloudfunctions.net/musiclike?genre=" + ArtiqData.likeGenre);
         break;
     }
 
@@ -89,11 +113,12 @@ class Post {
   final String imageUrl;
   final String imageText;
   final String backBtnType;
+  final String genre;
   final List<Content> content;
   final String origin;
   final String date;
 
-  Post({this.imageUrl, this.imageText, this.backBtnType, this.content, this.origin, this.date});
+  Post({this.imageUrl, this.imageText, this.backBtnType, this.genre, this.content, this.origin, this.date});
 
   factory Post.fromJson(Map<String, dynamic> json) {
     var contentList = json['content'] as List;
@@ -102,6 +127,7 @@ class Post {
       imageUrl: json['image'],
       imageText: json['imageText'],
       backBtnType: json['backBtnType'],
+      genre: (json.containsKey("genre")) ? json['genre'] : "",
       content: contentList.map((content) => Content.fromJson(content)).toList(),
       origin: json['origin'],
       date: json['date'],
@@ -129,14 +155,32 @@ class Guide {
   final String image;
   final String title;
   final String text;
+  final double con1;
+  final double con2;
+  final double con3;
 
-  Guide({this.image, this.title, this.text});
+  Guide({this.image, this.title, this.text, this.con1, this.con2, this.con3});
 
   factory Guide.fromJson(Map<String, dynamic> json) {
     return Guide(
       image: json['image'],
       title: json['title'],
       text: json['text'],
+      con1: (json['con1'] != null) ? double.parse(json['con1']) : null,
+      con2: (json['con2'] != null) ? double.parse(json['con2']) : null,
+      con3: (json['con3'] != null) ? double.parse(json['con3']) : null,
+    );
+  }
+}
+
+class Ads {
+  final String url;
+
+  Ads({this.url});
+
+  factory Ads.fromJson(Map<String, dynamic> json) {
+    return Ads(
+      url: json['url'],
     );
   }
 }

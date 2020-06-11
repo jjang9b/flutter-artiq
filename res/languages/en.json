@@ -1,5 +1,6 @@
 {
   "post": {
+    "musicRecommend": "user-friendly music",
     "exit": "Press the Back button one more time to exit."
   },
   "guide": {
@@ -9,7 +10,7 @@
   "more": {
     "title": "Details",
     "version": "Version",
-    "mailTitle": "Post recommendations and inquiries",
+    "mailTitle": "Contact",
     "mailSubject": "[ArtiQ] Inquiries",
     "mailSend": "Send mail"
   }

@@ -29,7 +29,7 @@ class _GuidePageState extends State<GuidePage> {
   insertToday() async {
     await SqlLite().delete("guide");
 
-    await SqlLite().upsert(ArtiqDb(key: "guide", data: "1", date: new DateTime.now().add(new Duration(days: 1)).toString()));
+    await SqlLite().insert(ArtiqDb(key: "guide", data: "1", date: new DateTime.now().add(new Duration(days: 1)).toString()));
 
     Func.goPostPage(context);
   }
@@ -66,31 +66,32 @@ class _GuidePageState extends State<GuidePage> {
                 child: PageView.builder(
                   controller: _guideController,
                   itemBuilder: (context, position) {
-                    double con1;
-                    double con2;
-                    double con3;
-                    BoxFit boxFit;
+                    double con1 = 0.55;
+                    double con2 = 0.05;
+                    double con3 = 0.09;
+                    BoxFit boxFit = BoxFit.cover;
 
-                    switch (position) {
-                      case 0:
-                      case 1:
-                        con1 = 0.55;
-                        con2 = 0.05;
-                        con3 = 0.09;
-                        boxFit = BoxFit.cover;
-                        break;
-                      case 2:
-                        con1 = 0.35;
-                        con2 = 0.05;
-                        con3 = 0.2;
-                        boxFit = BoxFit.cover;
-                        break;
-                      default:
-                        con1 = 0.4;
-                        con2 = 0.05;
-                        con3 = 0.3;
-                        boxFit = BoxFit.cover;
-                        break;
+                    double dataCon1 = snapshot.data[position].con1;
+                    double dataCon2 = snapshot.data[position].con2;
+                    double dataCon3 = snapshot.data[position].con3;
+
+                    if (dataCon1 != null) {
+                      con1 = dataCon1;
+                    }
+
+                    if (dataCon2 != null) {
+                      con2 = dataCon2;
+                    }
+
+                    if (dataCon3 != null) {
+                      con3 = dataCon3;
+                    }
+
+                    if (position == snapshot.data.length - 1) {
+                      con1 = 0.35;
+                      con2 = 0.05;
+                      con3 = 0.2;
+                      boxFit = BoxFit.cover;
                     }
 
                     return Column(

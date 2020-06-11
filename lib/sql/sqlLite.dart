@@ -23,10 +23,14 @@ class SqlLite {
   initDB() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, dbName);
-    return await openDatabase(path, version: 1, onCreate: (db, version) async {
-      await db.execute("CREATE TABLE ${table}(id INTEGER PRIMARY KEY, key TEXT, data TEXT, date TEXT)");
+    return await openDatabase(path, version: 2, onCreate: (db, version) async {
+      await db.execute("CREATE TABLE ${table}(id INTEGER PRIMARY KEY, key TEXT, data TEXT, count INTEGER, date TEXT)");
     }, onOpen: (db) async {
-      await db.execute("CREATE TABLE IF NOT EXISTS ${table}(id INTEGER PRIMARY KEY, key TEXT, data TEXT, date TEXT)");
+      await db.execute("CREATE TABLE IF NOT EXISTS ${table}(id INTEGER PRIMARY KEY, key TEXT, data TEXT, count INTEGER, date TEXT)");
+    }, onUpgrade: (db, oldVersion, newVersion) async {
+      if (oldVersion < 2) {
+        await db.execute("DROP TABLE IF EXISTS ${table}");
+      }
     });
   }
 
@@ -37,12 +41,28 @@ class SqlLite {
       return null;
     }
 
-    return ArtiqDb(id: maps[0]['id'], key: maps[0]['key'], data: maps[0]['data'], date: maps[0]['date']);
+    return ArtiqDb(id: maps[0]['id'], key: maps[0]['key'], data: maps[0]['data'], count: maps[0]['count'], date: maps[0]['date']);
   }
 
-  upsert(ArtiqDb artiqDb) async {
+  getLikeMax(String key) async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.rawQuery("SELECT key, MAX(count) as 'count' FROM " + table + " WHERE key LIKE ?", ['%$key%']);
+    if (maps.length == 0) {
+      return null;
+    }
+
+    return ArtiqDb(key: maps[0]['key'], count: maps[0]['count']);
+  }
+
+  insert(ArtiqDb artiqDb) async {
     final db = await database;
     var res = await db.insert(table, artiqDb.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+    return res;
+  }
+
+  update(ArtiqDb artiqDb) async {
+    final db = await database;
+    var res = await db.update(table, artiqDb.toMap(), where: "id = ?", whereArgs: [artiqDb.id]);
     return res;
   }
 

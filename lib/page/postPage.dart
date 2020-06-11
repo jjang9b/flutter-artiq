@@ -5,10 +5,11 @@ import 'dart:ui';
 import 'package:artiq/data.dart';
 import 'package:artiq/func/func.dart';
 import 'package:artiq/page/morePage.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:easy_localization/easy_localization.dart';
 
 class PostPage extends StatefulWidget {
   static const routeName = '/post';
@@ -93,10 +94,10 @@ class _PostPageState extends State<PostPage> {
             children: <Widget>[
               Container(
                 margin: EdgeInsets.only(left: 30),
-                height: MediaQuery.of(context).size.height * 0.08,
+                height: MediaQuery.of(context).size.height * 0.055,
                 child: Container(
                   alignment: Alignment.topLeft,
-                  margin: EdgeInsets.only(top: 15),
+                  margin: EdgeInsets.only(top: 5),
                   child: Row(
                     children: <Widget>[
                       Container(
@@ -162,8 +163,8 @@ class _PostPageState extends State<PostPage> {
                 alignment: Alignment.center,
                 children: <Widget>[
                   Container(
-                    margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                    height: MediaQuery.of(context).size.height * 0.77,
+                    margin: EdgeInsets.only(top: 5, left: 20, right: 20),
+                    height: MediaQuery.of(context).size.height * 0.755,
                     child: Container(
                       child: PageView.builder(
                           physics: NeverScrollableScrollPhysics(),
@@ -178,7 +179,7 @@ class _PostPageState extends State<PostPage> {
                                       child: Column(
                                         children: <Widget>[
                                           Container(
-                                            height: MediaQuery.of(context).size.height * 0.77,
+                                            height: MediaQuery.of(context).size.height * 0.755,
                                             child: NotificationListener<ScrollNotification>(
                                               onNotification: (scrollNotification) {
                                                 if (scrollNotification is ScrollStartNotification) {
@@ -218,7 +219,7 @@ class _PostPageState extends State<PostPage> {
                   ),
                   Positioned(
                     right: 20,
-                    bottom: 0,
+                    bottom: 20,
                     child: Container(
                         width: 38,
                         child: Column(
@@ -282,11 +283,40 @@ class _PostPageState extends State<PostPage> {
                   ),
                 ],
               ),
+              Container(
+                margin: EdgeInsets.only(top: 5, left: 23, right: 17),
+                height: MediaQuery.of(context).size.height * 0.07,
+                child: FutureBuilder<Ads>(
+                    future: Func.getAds(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return SizedBox(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(5),
+                            child: CachedNetworkImage(
+                              imageUrl: snapshot.data.url,
+                              imageBuilder: (context, imageProvider) => Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                                  image: DecorationImage(
+                                    image: imageProvider,
+                                    fit: BoxFit.fitWidth,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      }
+
+                      return Container();
+                    }),
+              ),
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
                   child: Container(
-                    height: MediaQuery.of(context).size.height * 0.06,
+                    height: MediaQuery.of(context).size.height * 0.055,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,

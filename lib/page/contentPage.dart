@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:artiq/data.dart';
 import 'package:artiq/func/func.dart';
 import 'package:artiq/page/postPage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:conreality_headset/conreality_headset.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +28,43 @@ class _ContentPageState extends State<ContentPage> implements YouTubePlayerListe
   FlutterYoutubeViewController _youtubeController;
   Post cuPost;
   double nowOffset = 0;
+  int playSec = 0;
   bool isMoveBtn = true;
+  bool isHeadsetInit = false;
+
+  String musicGenre;
+
+  void listenHeadset() async {
+    Stream<HeadsetEvent> stream = await Headset.subscribe();
+
+    stream.listen((HeadsetEvent event) {
+      bool isHeadset = event.toString().contains("isConnected: true");
+
+      if (isHeadsetInit) {
+        if (_youtubeController == null) {
+          return;
+        }
+
+        if (!isHeadset) {
+          _youtubeController.pause();
+          return;
+        }
+
+        return;
+      }
+
+      if (isHeadset) {
+        isHeadsetInit = true;
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    listenHeadset();
+  }
 
   @override
   void onReady() {}
@@ -35,6 +73,19 @@ class _ContentPageState extends State<ContentPage> implements YouTubePlayerListe
   void onStateChange(String state) {
     switch (state) {
       case "PLAYING":
+        if (ArtiqData.playLikeTimer == null) {
+          ArtiqData.playLikeTimer = Timer.periodic(Duration(milliseconds: 5000), (timer) {
+            playSec += 5;
+
+            if (playSec >= 60) {
+              Func.setPlayCount(musicGenre);
+
+              ArtiqData.playLikeTimer = null;
+              timer.cancel();
+            }
+          });
+        }
+
         setState(() {
           isMoveBtn = true;
         });
@@ -131,6 +182,8 @@ class _ContentPageState extends State<ContentPage> implements YouTubePlayerListe
           );
           break;
         case "youtube":
+          musicGenre = post.genre;
+
           return Container(
             height: MediaQuery.of(context).size.height * 0.55,
             margin: EdgeInsets.only(top: 20, bottom: 40),
@@ -196,7 +249,7 @@ class _ContentPageState extends State<ContentPage> implements YouTubePlayerListe
                               children: <Widget>[
                                 Container(
                                   width: MediaQuery.of(context).size.width,
-                                  height: MediaQuery.of(context).size.height * 0.35,
+                                  height: MediaQuery.of(context).size.height * 0.25,
                                   decoration: BoxDecoration(
                                       image: DecorationImage(image: CachedNetworkImageProvider(widget.post.imageUrl), fit: BoxFit.cover)),
                                   child: Column(
@@ -217,6 +270,26 @@ class _ContentPageState extends State<ContentPage> implements YouTubePlayerListe
                                   ),
                                 ),
                               ],
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(top: 3),
+                              height: MediaQuery.of(context).size.height * 0.066,
+                              width: MediaQuery.of(context).size.width * 0.97,
+                              child: FutureBuilder<Ads>(
+                                  future: Func.getAds(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasData) {
+                                      return ClipRRect(
+                                        borderRadius: BorderRadius.all(Radius.circular(5)),
+                                        child: CachedNetworkImage(
+                                          imageUrl: snapshot.data.url,
+                                          fit: BoxFit.fitWidth,
+                                        ),
+                                      );
+                                    }
+
+                                    return Container();
+                                  }),
                             ),
                             Container(
                               margin: const EdgeInsets.fromLTRB(30, 20, 30, 0),

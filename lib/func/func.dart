@@ -4,7 +4,10 @@ import 'dart:math';
 import 'package:artiq/data.dart';
 import 'package:artiq/page/contentPage.dart';
 import 'package:artiq/page/postPage.dart';
+import 'package:artiq/sql/artiqDb.dart';
+import 'package:artiq/sql/sqlLite.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -13,14 +16,35 @@ import 'package:google_fonts/google_fonts.dart';
 class Func {
   static Fetch fetch = new Fetch();
   static Future<List<Guide>> futureGuideList = fetch.fetchGuide();
-  static Future<List<Post>> futureData = fetch.fetchPost('music');
+  static Future<Ads> futureAds = fetch.fetchAds('music');
+  static Future<List<Post>> futureData;
   static double _categoryPage = 0;
+
+  static Future<List<Post>> fetchPost(String category) async {
+    String maxGenre = await getMaxGenre();
+
+    if (maxGenre != null) {
+      ArtiqData.likeGenre = maxGenre.replaceAll("music-", "");
+    }
+
+    futureData = fetch.fetchPost(category);
+
+    return futureData;
+  }
 
   static Future<List<Guide>> getGuideList() {
     return futureGuideList;
   }
 
+  static Future<Ads> getAds() {
+    return futureAds;
+  }
+
   static Future<List<Post>> getPostList() {
+    if (futureData == null) {
+      return fetchPost("music");
+    }
+
     return futureData;
   }
 
@@ -38,7 +62,7 @@ class Func {
     ArtiqData.refreshSec = ArtiqData.refreshPerSec;
 
     ArtiqData.emptyFutureMap(ArtiqData.category);
-    Func.futureData = fetch.fetchPost(ArtiqData.category);
+    Func.futureData = fetchPost(ArtiqData.category);
 
     _pageController.jumpToPage(0);
   }
@@ -83,10 +107,16 @@ class Func {
     return postList[next];
   }
 
+  static void refreshAds(String category) {
+    Func.futureAds = fetch.fetchAds(category);
+  }
+
   static void setData(String category, int categoryIdx) {
     ArtiqData.category = category;
     ArtiqData.categoryIdx = categoryIdx;
-    Func.futureData = fetch.fetchPost(category);
+    Func.futureData = fetchPost(category);
+
+    refreshAds(category);
   }
 
   static void setCategoryPage(double categoryPage) {
@@ -112,6 +142,8 @@ class Func {
 
   static void goContentPage(BuildContext context, Post post) {
     Func.refreshInit();
+
+    refreshAds(ArtiqData.category);
 
     Navigator.push(
         context,
@@ -146,7 +178,7 @@ class Func {
         categoryTab(_categoryController, category, idx);
       },
       child: Container(
-        margin: EdgeInsets.only(top: 15, left: 20, right: 20),
+        margin: EdgeInsets.only(top: 10, left: 20, right: 20),
         child: Column(
           children: <Widget>[
             Text(
@@ -158,7 +190,7 @@ class Func {
               child: Container(
                 width: 20,
                 height: 5,
-                margin: EdgeInsets.only(top: 10),
+                margin: EdgeInsets.only(top: 5),
                 decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(3)), color: Color(0xff26A69A), shape: BoxShape.rectangle),
               ),
             ),
@@ -178,38 +210,79 @@ class Func {
       child: Stack(
         children: <Widget>[
           Container(
-            height: MediaQuery.of(context).size.height * 0.13,
-            margin: EdgeInsets.only(top: 5, left: 5, bottom: 20),
+            height: (ArtiqData.likeGenre != "" && post.genre == ArtiqData.likeGenre)
+                ? MediaQuery.of(context).size.height * 0.15
+                : MediaQuery.of(context).size.height * 0.13,
+            margin: EdgeInsets.only(top: 5, left: 5, bottom: 15),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(color: Color(0xffefefef)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.1),
+                  spreadRadius: 1,
+                  blurRadius: 2,
+                  offset: Offset(0, 1), // changes position of shadow
+                ),
+              ],
+              borderRadius: BorderRadius.all(Radius.circular(5)),
+            ),
             child: Row(
               children: <Widget>[
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.23,
-                  child: CachedNetworkImage(
-                    imageUrl: post.imageUrl,
-                    imageBuilder: (context, imageProvider) => Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black87),
-                        borderRadius: BorderRadius.all(Radius.circular(5)),
-                        image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+                Stack(
+                  children: <Widget>[
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.22,
+                      child: CachedNetworkImage(
+                        imageUrl: post.imageUrl,
+                        imageBuilder: (context, imageProvider) => Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey, width: 0),
+                            borderRadius: BorderRadius.all(Radius.circular(5)),
+                            image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
                 Container(
+                  width: MediaQuery.of(context).size.width * 0.65,
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
+                      Visibility(
+                        visible: (ArtiqData.likeGenre != "" && post.genre == ArtiqData.likeGenre),
+                        child: Container(
+                          width: 49,
+                          height: 17,
+                          margin: EdgeInsets.only(top: 5, left: 20),
+                          decoration: BoxDecoration(
+                            color: Color(0xff26A69A),
+                            borderRadius: BorderRadius.all(Radius.circular(5)),
+                          ),
+                          child: Container(
+                            margin: EdgeInsets.only(top: 3, left: 5),
+                            child: Text("post.musicRecommend",
+                                    overflow: TextOverflow.visible, style: TextStyle(color: Colors.white, fontSize: 12, fontFamily: 'UTOIMAGE'))
+                                .tr(),
+                          ),
+                        ),
+                      ),
                       Container(
                         alignment: Alignment.topLeft,
-                        width: MediaQuery.of(context).size.width * 0.57,
-                        margin: EdgeInsets.only(top: 6, left: 20, right: 15),
+                        margin: EdgeInsets.only(top: 10, left: 20, right: 15),
                         child: Text(post.imageText,
                             overflow: TextOverflow.visible, style: TextStyle(color: Colors.black, height: 1.2, fontSize: 15, fontFamily: 'UTOIMAGE')),
                       ),
                       Container(
                         alignment: Alignment.topLeft,
-                        width: MediaQuery.of(context).size.width * 0.57,
-                        margin: EdgeInsets.only(top: 20, left: 20, right: 15),
-                        child: Text(post.origin, style: GoogleFonts.notoSans(textStyle: TextStyle(color: Colors.black, height: 1.3, fontSize: 15))),
+                        margin: EdgeInsets.only(top: 12, left: 20, right: 15),
+                        child: Container(
+                          alignment: Alignment.centerLeft,
+                          margin: EdgeInsets.only(right: 8),
+                          child: Text(post.origin, style: GoogleFonts.notoSans(textStyle: TextStyle(color: Colors.black, height: 1.3, fontSize: 15))),
+                        ),
                       )
                     ],
                   ),
@@ -220,5 +293,31 @@ class Func {
         ],
       ),
     );
+  }
+
+  static Future<String> getMaxGenre() async {
+    var key = "music-";
+
+    ArtiqDb artiqDb = await SqlLite().getLikeMax(key);
+    if (artiqDb == null) {
+      return null;
+    }
+
+    return artiqDb.key;
+  }
+
+  static void setPlayCount(String genre) async {
+    var key = "music-" + genre;
+    var data = 0;
+
+    ArtiqDb artiqDb = await SqlLite().get(key);
+    if (artiqDb != null) {
+      artiqDb.count += 1;
+
+      await SqlLite().update(artiqDb);
+      return;
+    }
+
+    await SqlLite().insert(ArtiqDb(key: key, data: data.toString(), date: null));
   }
 }
