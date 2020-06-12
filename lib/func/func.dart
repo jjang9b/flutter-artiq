@@ -213,7 +213,7 @@ class Func {
             height: (ArtiqData.likeGenre != "" && post.genre == ArtiqData.likeGenre)
                 ? MediaQuery.of(context).size.height * 0.15
                 : MediaQuery.of(context).size.height * 0.13,
-            margin: EdgeInsets.only(top: 5, left: 5, bottom: 15),
+            margin: EdgeInsets.only(top: 5, left: 5, bottom: 12),
             decoration: BoxDecoration(
               color: Colors.white,
               border: Border.all(color: Color(0xffefefef)),
@@ -308,16 +308,20 @@ class Func {
 
   static void setPlayCount(String genre) async {
     var key = "music-" + genre;
-    var data = 0;
 
     ArtiqDb artiqDb = await SqlLite().get(key);
-    if (artiqDb != null) {
-      artiqDb.count += 1;
+    if (artiqDb == null) {
+      await SqlLite().insert(ArtiqDb(key: key, count: 0));
+      return;
+    }
 
+    if (artiqDb.count == null) {
+      artiqDb.count = 1;
       await SqlLite().update(artiqDb);
       return;
     }
 
-    await SqlLite().insert(ArtiqDb(key: key, data: data.toString(), date: null));
+    artiqDb.count += 1;
+    await SqlLite().update(artiqDb);
   }
 }

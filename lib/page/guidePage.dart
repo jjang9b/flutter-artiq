@@ -19,6 +19,7 @@ class GuidePage extends StatefulWidget {
 class _GuidePageState extends State<GuidePage> {
   PageController _guideController = new PageController();
   double idx = 0;
+  int length = 0;
 
   @override
   void initState() {
@@ -51,11 +52,13 @@ class _GuidePageState extends State<GuidePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-          child: FutureBuilder<List<Guide>>(
-        future: Func.getGuideList(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return NotificationListener<ScrollNotification>(
+        child: FutureBuilder<List<Guide>>(
+          future: Func.getGuideList(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              length = snapshot.data.length;
+
+              return NotificationListener<ScrollNotification>(
                 onNotification: (scrollNotification) {
                   setState(() {
                     idx = _guideController.page;
@@ -63,138 +66,114 @@ class _GuidePageState extends State<GuidePage> {
 
                   return true;
                 },
-                child: PageView.builder(
-                  controller: _guideController,
-                  itemBuilder: (context, position) {
-                    double con1 = 0.55;
-                    double con2 = 0.05;
-                    double con3 = 0.09;
-                    BoxFit boxFit = BoxFit.cover;
-
-                    double dataCon1 = snapshot.data[position].con1;
-                    double dataCon2 = snapshot.data[position].con2;
-                    double dataCon3 = snapshot.data[position].con3;
-
-                    if (dataCon1 != null) {
-                      con1 = dataCon1;
-                    }
-
-                    if (dataCon2 != null) {
-                      con2 = dataCon2;
-                    }
-
-                    if (dataCon3 != null) {
-                      con3 = dataCon3;
-                    }
-
-                    if (position == snapshot.data.length - 1) {
-                      con1 = 0.35;
-                      con2 = 0.05;
-                      con3 = 0.2;
-                      boxFit = BoxFit.cover;
-                    }
-
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Container(
-                          height: MediaQuery.of(context).size.height * con1,
-                          margin: EdgeInsets.fromLTRB(30, 20, 30, 10),
-                          child: CachedNetworkImage(
-                            imageUrl: snapshot.data[position].image,
-                            imageBuilder: (context, imageProvider) => Container(
-                              decoration: BoxDecoration(
-                                image: DecorationImage(image: imageProvider, fit: boxFit),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          height: MediaQuery.of(context).size.height * con2,
-                          margin: EdgeInsets.fromLTRB(30, 20, 30, 10),
-                          alignment: Alignment.topCenter,
-                          child: Text(
-                            snapshot.data[position].title,
-                            style: GoogleFonts.notoSans(textStyle: TextStyle(fontSize: 20)),
-                          ),
-                        ),
-                        Container(
-                          height: MediaQuery.of(context).size.height * con3,
-                          margin: EdgeInsets.fromLTRB(30, 10, 30, 10),
-                          alignment: Alignment.topCenter,
-                          child: Text(
-                            snapshot.data[position].text,
-                            style: GoogleFonts.notoSans(textStyle: TextStyle(fontSize: 16, height: 1.5)),
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.fromLTRB(30, 0, 30, 10),
-                          alignment: Alignment.topCenter,
-                          child: DotsIndicator(
-                            dotsCount: snapshot.data.length,
-                            position: idx.abs(),
-                            decorator: DotsDecorator(
-                              activeSize: Size.fromRadius(5),
-                              activeShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-                              color: Colors.black26,
-                              activeColor: Colors.red,
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Container(),
-                        ),
-                        Visibility(
-                          visible: (position == snapshot.data.length - 1),
-                          child: InkWell(
-                            onTap: () {
-                              insertToday();
-                            },
-                            child: Container(
-                              width: MediaQuery.of(context).size.width,
-                              height: MediaQuery.of(context).size.height * 0.09,
-                              child: Container(
-                                margin: EdgeInsets.fromLTRB(50, 20, 50, 20),
+                child: Column(
+                  children: [
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.82,
+                      child: PageView.builder(
+                        controller: _guideController,
+                        itemBuilder: (context, position) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Container(
+                                margin: EdgeInsets.fromLTRB(50, 50, 50, 10),
                                 alignment: Alignment.center,
-                                decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.all(Radius.circular(30))),
-                                child: Text("guide.today", style: GoogleFonts.notoSans(textStyle: TextStyle(color: Colors.white, fontSize: 16))).tr(),
+                                child: Text(
+                                  snapshot.data[position].title,
+                                  style: GoogleFonts.notoSans(textStyle: TextStyle(fontSize: 23), fontWeight: FontWeight.bold),
+                                ),
                               ),
-                            ),
+                              Container(
+                                margin: EdgeInsets.fromLTRB(50, 10, 50, 10),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  snapshot.data[position].text,
+                                  style: GoogleFonts.notoSans(textStyle: TextStyle(fontSize: 15, height: 1.5)),
+                                ),
+                              ),
+                              Expanded(
+                                child: Container(
+                                  margin: EdgeInsets.fromLTRB(50, 20, 50, 10),
+                                  child: CachedNetworkImage(
+                                    imageUrl: snapshot.data[position].image,
+                                    imageBuilder: (context, imageProvider) => Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                                        image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Visibility(
+                                visible: (position == snapshot.data.length - 1),
+                                child: InkWell(
+                                  onTap: () {
+                                    insertToday();
+                                  },
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    height: MediaQuery.of(context).size.height * 0.05,
+                                    margin: EdgeInsets.fromLTRB(100, 10, 100, 10),
+                                    decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.all(Radius.circular(5))),
+                                    child: Text("guide.today", style: GoogleFonts.notoSans(textStyle: TextStyle(color: Colors.white, fontSize: 16)))
+                                        .tr(),
+                                  ),
+                                ),
+                              ),
+                              Visibility(
+                                visible: (position == snapshot.data.length - 1),
+                                child: InkWell(
+                                  onTap: () {
+                                    Func.goPostPage(context);
+                                  },
+                                  child: Container(
+                                      alignment: Alignment.center,
+                                      height: MediaQuery.of(context).size.height * 0.05,
+                                      margin: EdgeInsets.fromLTRB(100, 10, 100, 10),
+                                      decoration: BoxDecoration(color: Color(0xff26A69A), borderRadius: BorderRadius.all(Radius.circular(5))),
+                                      child: Text("guide.skip", style: GoogleFonts.notoSans(textStyle: TextStyle(color: Colors.white, fontSize: 16)))
+                                          .tr()),
+                                ),
+                              )
+                            ],
+                          );
+                        },
+                        itemCount: snapshot.data.length,
+                      ),
+                    ),
+                    Visibility(
+                      visible: (idx.abs() != snapshot.data.length - 1),
+                      child: Container(
+                        margin: EdgeInsets.fromLTRB(30, 20, 30, 10),
+                        alignment: Alignment.topCenter,
+                        child: DotsIndicator(
+                          dotsCount: length,
+                          position: idx.abs(),
+                          decorator: DotsDecorator(
+                            activeSize: Size.fromRadius(5),
+                            activeShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                            color: Colors.black12,
+                            activeColor: Color(0xff26A69A),
                           ),
                         ),
-                        Visibility(
-                          visible: (position == snapshot.data.length - 1),
-                          child: InkWell(
-                            onTap: () {
-                              Func.goPostPage(context);
-                            },
-                            child: Container(
-                              width: MediaQuery.of(context).size.width,
-                              height: MediaQuery.of(context).size.height * 0.09,
-                              child: Container(
-                                  margin: EdgeInsets.fromLTRB(50, 0, 50, 40),
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(color: Colors.black87, borderRadius: BorderRadius.all(Radius.circular(30))),
-                                  child:
-                                      Text("guide.skip", style: GoogleFonts.notoSans(textStyle: TextStyle(color: Colors.white, fontSize: 16))).tr()),
-                            ),
-                          ),
-                        )
-                      ],
-                    );
-                  },
-                  itemCount: snapshot.data.length,
-                ));
-          }
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
 
-          return Center(
-            child: CircularProgressIndicator(
-              backgroundColor: Colors.black,
-              valueColor: new AlwaysStoppedAnimation<Color>(Colors.white),
-            ),
-          );
-        },
-      )),
+            return Center(
+              child: CircularProgressIndicator(
+                backgroundColor: Colors.black,
+                valueColor: new AlwaysStoppedAnimation<Color>(Colors.white),
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
 }
