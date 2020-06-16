@@ -91,17 +91,27 @@ class _ContentPageState extends State<ContentPage> implements YouTubePlayerListe
         });
         break;
       case "ENDED":
-        switch (ArtiqData.musicNextState) {
-          case "shuffle":
-            return goRandomContent();
-            break;
-          case "auto":
-            return goNextContent();
-            break;
-          default:
-            _youtubeController.play();
-            break;
+        if (_youtubeController != null) {
+          _youtubeController.seekTo(-5);
+          _youtubeController.play();
+          _youtubeController.pause();
         }
+
+        Timer.periodic(Duration(milliseconds: 1000), (timer) {
+          timer.cancel();
+
+          switch (ArtiqData.musicNextState) {
+            case "shuffle":
+              return goRandomContent();
+              break;
+            case "auto":
+              return goNextContent();
+              break;
+            default:
+              _youtubeController.play();
+              break;
+          }
+        });
         break;
       default:
         break;
@@ -187,7 +197,7 @@ class _ContentPageState extends State<ContentPage> implements YouTubePlayerListe
           return Container(
             height: MediaQuery.of(context).size.height * 0.55,
             margin: EdgeInsets.only(top: 20, bottom: 40),
-            child: new FlutterYoutubeView(
+            child: FlutterYoutubeView(
                 onViewCreated: (controller) {
                   setState(() {
                     _youtubeController = controller;
@@ -205,7 +215,7 @@ class _ContentPageState extends State<ContentPage> implements YouTubePlayerListe
           return Container(
             margin: EdgeInsets.only(bottom: 20),
             alignment: Alignment.topLeft,
-            child: Text(content.data, style: GoogleFonts.notoSans(textStyle: TextStyle(color: Color(0xff313131), height: 1.5, fontSize: 17))),
+            child: Text(content.data, style: GoogleFonts.notoSans(textStyle: TextStyle(color: Colors.black, height: 1.5, fontSize: 16))),
           );
           break;
       }
@@ -294,8 +304,11 @@ class _ContentPageState extends State<ContentPage> implements YouTubePlayerListe
                             Container(
                               margin: const EdgeInsets.fromLTRB(30, 20, 30, 0),
                               alignment: Alignment.topCenter,
-                              child: Text(widget.post.imageText,
-                                  style: TextStyle(color: Colors.black, height: 1.3, fontSize: 22, fontFamily: 'UTOIMAGE')),
+                              child: Text(
+                                widget.post.imageText,
+                                style: GoogleFonts.nanumGothic(
+                                    textStyle: TextStyle(color: Colors.black, height: 1.5, fontSize: 18.5, fontWeight: FontWeight.bold)),
+                              ),
                             ),
                             Container(
                               margin: const EdgeInsets.fromLTRB(30, 10, 30, 0),

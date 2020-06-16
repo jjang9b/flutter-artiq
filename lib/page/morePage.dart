@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:artiq/data.dart';
 import 'package:artiq/func/func.dart';
 import 'package:artiq/page/postPage.dart';
@@ -16,6 +18,8 @@ class MorePage extends StatefulWidget {
 
 class _MorePageState extends State<MorePage> {
   EdgeInsets moreMargin = const EdgeInsets.only(left: 30, right: 15);
+  bool isMessage = false;
+  String message = "more.settingDefault";
 
   @override
   Widget build(BuildContext context) {
@@ -47,11 +51,14 @@ class _MorePageState extends State<MorePage> {
                               ),
                             ),
                             Container(
-                              height: MediaQuery.of(context).size.height * 0.09,
+                              height: MediaQuery.of(context).size.height * 0.075,
                               child: Container(
-                                margin: EdgeInsets.fromLTRB(30, 20, 0, 0),
+                                margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
                                 alignment: Alignment.topCenter,
-                                child: Text("more.title", style: TextStyle(fontSize: 18, fontFamily: "UTOIMAGE")).tr(),
+                                child: Text("more.title",
+                                        style: GoogleFonts.notoSans(
+                                            textStyle: TextStyle(color: Color(0xff313131), height: 1.5, fontSize: 16, fontWeight: FontWeight.bold)))
+                                    .tr(),
                               ),
                             ),
                           ],
@@ -62,8 +69,11 @@ class _MorePageState extends State<MorePage> {
                             children: <Widget>[
                               Container(
                                 alignment: Alignment.centerLeft,
-                                margin: EdgeInsets.fromLTRB(30, 10, 30, 5),
-                                child: Text("more.version", style: TextStyle(fontSize: 16, fontFamily: "UTOIMAGE")).tr(),
+                                margin: EdgeInsets.fromLTRB(30, 5, 30, 5),
+                                child: Text("more.version",
+                                        style: GoogleFonts.notoSans(
+                                            textStyle: TextStyle(color: Color(0xff313131), height: 1.5, fontSize: 16, fontWeight: FontWeight.bold)))
+                                    .tr(),
                               ),
                               Container(
                                 margin: EdgeInsets.fromLTRB(30, 5, 30, 10),
@@ -79,12 +89,66 @@ class _MorePageState extends State<MorePage> {
                               ),
                               Container(
                                 alignment: Alignment.centerLeft,
-                                margin: EdgeInsets.fromLTRB(30, 10, 30, 5),
-                                child: Text("more.mailTitle", style: TextStyle(fontSize: 16, fontFamily: "UTOIMAGE")).tr(),
+                                margin: EdgeInsets.fromLTRB(30, 5, 30, 5),
+                                child: Text("more.setting",
+                                        style: GoogleFonts.notoSans(
+                                            textStyle: TextStyle(color: Color(0xff313131), height: 1.5, fontSize: 16, fontWeight: FontWeight.bold)))
+                                    .tr(),
                               ),
                               Container(
                                 height: 40,
-                                margin: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                                margin: const EdgeInsets.fromLTRB(30, 5, 30, 10),
+                                child: Row(
+                                  children: <Widget>[
+                                    Container(
+                                        child:
+                                            Text("more.settingFriendlyInit", style: GoogleFonts.notoSans(textStyle: TextStyle(fontSize: 16))).tr()),
+                                    Expanded(
+                                      child: Container(),
+                                    ),
+                                    Container(
+                                      child: InkWell(
+                                        highlightColor: Colors.transparent,
+                                        splashColor: Colors.transparent,
+                                        onTap: () {
+                                          Func.initGenre();
+
+                                          message = "more.settingSuccess";
+                                          isMessage = true;
+                                          ArtiqData.likeGenre = "";
+                                          setState(() {});
+
+                                          Timer.periodic(Duration(milliseconds: 2000), (timer) {
+                                            timer.cancel();
+
+                                            isMessage = false;
+                                            setState(() {});
+                                          });
+                                        },
+                                        child: Icon(
+                                          Icons.cached,
+                                          size: 26,
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              Divider(
+                                indent: 30,
+                                endIndent: 30,
+                              ),
+                              Container(
+                                alignment: Alignment.centerLeft,
+                                margin: EdgeInsets.fromLTRB(30, 5, 30, 5),
+                                child: Text("more.mailTitle",
+                                        style: GoogleFonts.notoSans(
+                                            textStyle: TextStyle(color: Color(0xff313131), height: 1.5, fontSize: 16, fontWeight: FontWeight.bold)))
+                                    .tr(),
+                              ),
+                              Container(
+                                height: 40,
+                                margin: const EdgeInsets.fromLTRB(30, 5, 30, 10),
                                 child: Row(
                                   children: <Widget>[
                                     Container(child: Text("more.mailSend", style: GoogleFonts.notoSans(textStyle: TextStyle(fontSize: 16))).tr()),
@@ -93,6 +157,8 @@ class _MorePageState extends State<MorePage> {
                                     ),
                                     Container(
                                       child: InkWell(
+                                        highlightColor: Colors.transparent,
+                                        splashColor: Colors.transparent,
                                         onTap: () {
                                           Email email = Email(
                                             subject: "more.mailSubject".tr(),
@@ -118,6 +184,26 @@ class _MorePageState extends State<MorePage> {
                     );
                   },
                   itemCount: 1),
+            ),
+            Positioned.fill(
+              bottom: 20,
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: AnimatedOpacity(
+                  opacity: isMessage ? 1.0 : 0.0,
+                  duration: Duration(milliseconds: 500),
+                  child: Container(
+                    width: 250,
+                    height: 35,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.black87,
+                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                    ),
+                    child: Text(message, style: GoogleFonts.notoSans(textStyle: TextStyle(color: Colors.white, fontSize: 13))).tr(),
+                  ),
+                ),
+              ),
             ),
           ],
         ),

@@ -1,7 +1,7 @@
 {
   "post": {
-    "musicRecommend": "user-friendly music",
-    "exit": "Press the Back button one more time to exit."
+    "musicFriendly": "user-friendly music",
+    "exit": "Press the Back button one more time to exit"
   },
   "guide": {
     "today": "Don't see me today",
@@ -10,6 +10,10 @@
   "more": {
     "title": "Details",
     "version": "Version",
+    "setting": "Settings",
+    "settingDefault": "",
+    "settingSuccess": "Settings changed successfully",
+    "settingFriendlyInit": "Initializing user-friendly music",
     "mailTitle": "Contact",
     "mailSubject": "[ArtiQ] Inquiries",
     "mailSend": "Send mail"

@@ -201,6 +201,8 @@ class Func {
   }
 
   static InkWell getContent(BuildContext context, int length, int position, Post post) {
+    double imageTextTop = (ArtiqData.likeGenre != "" && post.genre == ArtiqData.likeGenre) ? 3 : 12;
+
     return InkWell(
       highlightColor: Colors.transparent,
       splashColor: Colors.transparent,
@@ -247,41 +249,45 @@ class Func {
                   ],
                 ),
                 Container(
-                  width: MediaQuery.of(context).size.width * 0.65,
+                  width: MediaQuery.of(context).size.width * 0.66,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Visibility(
                         visible: (ArtiqData.likeGenre != "" && post.genre == ArtiqData.likeGenre),
                         child: Container(
-                          width: 49,
+                          width: 54,
                           height: 17,
-                          margin: EdgeInsets.only(top: 5, left: 20),
+                          margin: EdgeInsets.only(top: 9, left: 20),
                           decoration: BoxDecoration(
                             color: Color(0xff26A69A),
                             borderRadius: BorderRadius.all(Radius.circular(5)),
                           ),
                           child: Container(
                             margin: EdgeInsets.only(top: 3, left: 5),
-                            child: Text("post.musicRecommend",
-                                    overflow: TextOverflow.visible, style: TextStyle(color: Colors.white, fontSize: 12, fontFamily: 'UTOIMAGE'))
+                            child: Text("post.musicFriendly",
+                                    overflow: TextOverflow.visible,
+                                    style: GoogleFonts.nanumGothic(
+                                        textStyle: TextStyle(color: Colors.white, height: 1, fontSize: 11, fontWeight: FontWeight.bold)))
                                 .tr(),
                           ),
                         ),
                       ),
                       Container(
                         alignment: Alignment.topLeft,
-                        margin: EdgeInsets.only(top: 10, left: 20, right: 15),
+                        margin: EdgeInsets.only(top: imageTextTop, left: 20, right: 15),
                         child: Text(post.imageText,
-                            overflow: TextOverflow.visible, style: TextStyle(color: Colors.black, height: 1.2, fontSize: 15, fontFamily: 'UTOIMAGE')),
+                            overflow: TextOverflow.visible,
+                            style: GoogleFonts.nanumGothic(
+                                textStyle: TextStyle(color: Colors.black, height: 1.5, fontSize: 13, fontWeight: FontWeight.bold))),
                       ),
                       Container(
                         alignment: Alignment.topLeft,
-                        margin: EdgeInsets.only(top: 12, left: 20, right: 15),
+                        margin: EdgeInsets.only(top: 10, left: 20, right: 15),
                         child: Container(
                           alignment: Alignment.centerLeft,
                           margin: EdgeInsets.only(right: 8),
-                          child: Text(post.origin, style: GoogleFonts.notoSans(textStyle: TextStyle(color: Colors.black, height: 1.3, fontSize: 15))),
+                          child: Text(post.origin, style: GoogleFonts.notoSans(textStyle: TextStyle(color: Colors.black, height: 1.3, fontSize: 13))),
                         ),
                       )
                     ],
@@ -323,5 +329,9 @@ class Func {
 
     artiqDb.count += 1;
     await SqlLite().update(artiqDb);
+  }
+
+  static void initGenre() async {
+    await SqlLite().deleteLike("music-");
   }
 }

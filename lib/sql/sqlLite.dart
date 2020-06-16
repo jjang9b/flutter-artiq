@@ -75,4 +75,14 @@ class SqlLite {
       whereArgs: [key],
     );
   }
+
+  Future<void> deleteLike(String key) async {
+    final db = await database;
+
+    await db.delete(
+      table,
+      where: "key LIKE ?",
+      whereArgs: ['%$key%'],
+    );
+  }
 }
