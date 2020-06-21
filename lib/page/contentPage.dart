@@ -11,6 +11,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_youtube_view/flutter_youtube_view.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:move_to_background/move_to_background.dart';
 
 class ContentPage extends StatefulWidget {
   static const routeName = '/content';
@@ -22,17 +23,146 @@ class ContentPage extends StatefulWidget {
   _ContentPageState createState() => _ContentPageState();
 }
 
-class _ContentPageState extends State<ContentPage> implements YouTubePlayerListener {
+class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver implements YouTubePlayerListener {
   FirebaseAnalytics analytics = FirebaseAnalytics();
   ScrollController _contentScrollController = new ScrollController();
   FlutterYoutubeViewController _youtubeController;
-  Post cuPost;
+  Post currentPost;
   double nowOffset = 0;
   int playSec = 0;
+  String playMode = "PAUSED";
+  String musicGenre;
   bool isMoveBtn = true;
   bool isHeadsetInit = false;
+  bool isBackground = false;
+  bool isPlayEnd = false;
 
-  String musicGenre;
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addObserver(this);
+    listenHeadset();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    WidgetsBinding.instance.removeObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    switch (state) {
+      case AppLifecycleState.inactive:
+        isBackground = true;
+
+        if (_youtubeController != null) {
+          if (playMode != "PAUSED") {
+            _youtubeController.play();
+          }
+        }
+
+        MoveToBackground.moveTaskToBack();
+        break;
+      case AppLifecycleState.resumed:
+        isBackground = false;
+        break;
+      default:
+        break;
+    }
+  }
+
+  @override
+  void onReady() {}
+
+  @override
+  void onStateChange(String state) {
+    switch (state) {
+      case "PAUSED":
+      case "UNSTARTED":
+        if (isBackground) {
+          if (_youtubeController != null) {
+            if (!isPlayEnd) {
+              _youtubeController.play();
+            }
+          }
+        }
+
+        playMode = "PAUSED";
+        break;
+      case "PLAYING":
+        playMode = "PLAYING";
+
+        if (ArtiqData.playLikeTimer == null) {
+          ArtiqData.playLikeTimer = Timer.periodic(Duration(milliseconds: 5000), (timer) {
+            playSec += 5;
+
+            if (playSec >= 60) {
+              Func.setPlayCount(musicGenre);
+
+              ArtiqData.playLikeTimer = null;
+              timer.cancel();
+            }
+          });
+        }
+
+        setState(() {
+          isMoveBtn = true;
+        });
+        break;
+      case "ENDED":
+        isPlayEnd = true;
+
+        if (_youtubeController != null) {
+          _youtubeController.seekTo(-5);
+          _youtubeController.play();
+          _youtubeController.pause();
+        }
+
+        Timer.periodic(Duration(milliseconds: 1000), (timer) {
+          timer.cancel();
+          isPlayEnd = false;
+
+          switch (ArtiqData.musicNextState) {
+            case "shuffle":
+              if (isBackground) {
+                loadRandomYoutube();
+                return;
+              }
+
+              return goRandomContent();
+              break;
+            case "auto":
+              if (isBackground) {
+                loadNextYoutube();
+                return;
+              }
+
+              return goNextContent();
+              break;
+            default:
+              _youtubeController.play();
+              break;
+          }
+        });
+        break;
+      default:
+        break;
+    }
+  }
+
+  @override
+  void onError(String error) {}
+
+  @override
+  void onVideoDuration(double duration) {}
+
+  @override
+  void onCurrentSecond(double second) {}
 
   void listenHeadset() async {
     Stream<HeadsetEvent> stream = await Headset.subscribe();
@@ -59,102 +189,79 @@ class _ContentPageState extends State<ContentPage> implements YouTubePlayerListe
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
-
-    listenHeadset();
-  }
-
-  @override
-  void onReady() {}
-
-  @override
-  void onStateChange(String state) {
-    switch (state) {
-      case "PLAYING":
-        if (ArtiqData.playLikeTimer == null) {
-          ArtiqData.playLikeTimer = Timer.periodic(Duration(milliseconds: 5000), (timer) {
-            playSec += 5;
-
-            if (playSec >= 60) {
-              Func.setPlayCount(musicGenre);
-
-              ArtiqData.playLikeTimer = null;
-              timer.cancel();
-            }
-          });
-        }
-
-        setState(() {
-          isMoveBtn = true;
-        });
-        break;
-      case "ENDED":
-        if (_youtubeController != null) {
-          _youtubeController.seekTo(-5);
-          _youtubeController.play();
-          _youtubeController.pause();
-        }
-
-        Timer.periodic(Duration(milliseconds: 1000), (timer) {
-          timer.cancel();
-
-          switch (ArtiqData.musicNextState) {
-            case "shuffle":
-              return goRandomContent();
-              break;
-            case "auto":
-              return goNextContent();
-              break;
-            default:
-              _youtubeController.play();
-              break;
-          }
-        });
-        break;
-      default:
-        break;
-    }
-  }
-
-  @override
-  void onError(String error) {}
-
-  @override
-  void onVideoDuration(double duration) {}
-
-  @override
-  void onCurrentSecond(double second) {}
-
-  void goBeforeContent() {
+  void youtubePause() {
     if (_youtubeController != null) {
       _youtubeController.pause();
     }
+  }
 
-    Post befPost = Func.getBeforePost(ArtiqData.category, cuPost);
+  void setCurrentPost(Post nextPost) {
+    Func.futurePost = new Future<Post>.value(nextPost);
+    setState(() {});
+  }
 
-    Func.goContentPage(context, befPost);
+  Future<Post> getFuturePost() {
+    return Func.futurePost;
+  }
+
+  void loadOnIdYoutube(Post post) {
+    List<Content> contentList = post.content;
+
+    if (contentList == null) {
+      loadNextYoutube();
+      return;
+    }
+
+    String id = contentList[0].data;
+    _youtubeController.loadOrCueVideo(id, 0);
+  }
+
+  void loadNextYoutube() {
+    Func.futurePost.then((post) {
+      Post nextPost = Func.getNextPost(ArtiqData.category, post);
+
+      setCurrentPost(nextPost);
+      loadOnIdYoutube(nextPost);
+    });
+  }
+
+  void loadRandomYoutube() {
+    Func.futurePost.then((post) {
+      Post nextPost = Func.getRandomPost(ArtiqData.category, post);
+
+      setCurrentPost(nextPost);
+      loadOnIdYoutube(nextPost);
+    });
+  }
+
+  void goBeforeContent() {
+    youtubePause();
+
+    Func.futurePost.then((post) {
+      Post nextPost = Func.getBeforePost(ArtiqData.category, post);
+
+      Func.goContentPage(context, nextPost);
+    });
   }
 
   void goRandomContent() {
-    if (_youtubeController != null) {
-      _youtubeController.pause();
-    }
+    youtubePause();
 
-    Post nextPost = Func.getRandomPost(ArtiqData.category, cuPost);
+    Func.futurePost.then((post) {
+      Post nextPost = Func.getRandomPost(ArtiqData.category, post);
 
-    Func.goContentPage(context, nextPost);
+      Func.goContentPage(context, nextPost);
+    });
   }
 
   void goNextContent() {
-    if (_youtubeController != null) {
-      _youtubeController.pause();
-    }
+    youtubePause();
 
-    Post nextPost = Func.getNextPost(ArtiqData.category, cuPost);
+    Func.futurePost.then((post) {
+      Post nextPost = Func.getNextPost(ArtiqData.category, post);
 
-    Func.goContentPage(context, nextPost);
+      Func.goContentPage(context, nextPost);
+    });
   }
 
   void sendAnalyticsEvent(Post post) async {
@@ -163,7 +270,6 @@ class _ContentPageState extends State<ContentPage> implements YouTubePlayerListe
 
   Column getContentList(BuildContext context, Post post) {
     sendAnalyticsEvent(post);
-    cuPost = post;
 
     List<Content> contentList = post.content;
     List<Widget> conContentList = contentList.map((content) {
@@ -253,87 +359,104 @@ class _ContentPageState extends State<ContentPage> implements YouTubePlayerListe
                   child: ListView.builder(
                       controller: _contentScrollController,
                       itemBuilder: (context, position) {
-                        return Column(
-                          children: <Widget>[
-                            Stack(
-                              children: <Widget>[
-                                Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  height: MediaQuery.of(context).size.height * 0.25,
-                                  decoration: BoxDecoration(
-                                      image: DecorationImage(image: CachedNetworkImageProvider(widget.post.imageUrl), fit: BoxFit.cover)),
-                                  child: Column(
-                                    children: <Widget>[
-                                      Container(
-                                        alignment: Alignment.topLeft,
-                                        margin: const EdgeInsets.only(top: 15, left: 10),
-                                        child: InkWell(
-                                          highlightColor: Colors.transparent,
-                                          splashColor: Colors.transparent,
-                                          onTap: () {
-                                            return Navigator.pop(context, true);
-                                          },
-                                          child: Icon(Icons.arrow_back, color: (widget.post.backBtnType == 'w') ? Colors.white : Colors.black),
+                        return FutureBuilder<Post>(
+                          future: getFuturePost(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return SizedBox(
+                                child: Column(
+                                  children: <Widget>[
+                                    Stack(
+                                      children: <Widget>[
+                                        Container(
+                                          width: MediaQuery.of(context).size.width,
+                                          height: MediaQuery.of(context).size.height * 0.25,
+                                          decoration: BoxDecoration(
+                                              image: DecorationImage(image: CachedNetworkImageProvider(snapshot.data.imageUrl), fit: BoxFit.cover)),
+                                          child: Column(
+                                            children: <Widget>[
+                                              Container(
+                                                alignment: Alignment.topLeft,
+                                                margin: const EdgeInsets.only(top: 15, left: 10),
+                                                child: InkWell(
+                                                  highlightColor: Colors.transparent,
+                                                  splashColor: Colors.transparent,
+                                                  onTap: () {
+                                                    return Navigator.pop(context, true);
+                                                  },
+                                                  child:
+                                                      Icon(Icons.arrow_back, color: (snapshot.data.backBtnType == 'w') ? Colors.white : Colors.black),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(top: 3),
-                              height: MediaQuery.of(context).size.height * 0.066,
-                              width: MediaQuery.of(context).size.width * 0.97,
-                              child: FutureBuilder<Ads>(
-                                  future: Func.getAds(),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.hasData) {
-                                      return ClipRRect(
-                                        borderRadius: BorderRadius.all(Radius.circular(5)),
-                                        child: CachedNetworkImage(
-                                          imageUrl: snapshot.data.url,
-                                          fit: BoxFit.fitWidth,
-                                        ),
-                                      );
-                                    }
+                                      ],
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(top: 3),
+                                      height: MediaQuery.of(context).size.height * 0.066,
+                                      width: MediaQuery.of(context).size.width * 0.97,
+                                      child: FutureBuilder<Ads>(
+                                          future: Func.getAds(),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.hasData) {
+                                              return ClipRRect(
+                                                borderRadius: BorderRadius.all(Radius.circular(5)),
+                                                child: CachedNetworkImage(
+                                                  imageUrl: snapshot.data.url,
+                                                  fit: BoxFit.fitWidth,
+                                                ),
+                                              );
+                                            }
 
-                                    return Container();
-                                  }),
-                            ),
-                            Container(
-                              margin: const EdgeInsets.fromLTRB(30, 20, 30, 0),
-                              alignment: Alignment.topCenter,
-                              child: Text(
-                                widget.post.imageText,
-                                style: GoogleFonts.nanumGothic(
-                                    textStyle: TextStyle(color: Colors.black, height: 1.5, fontSize: 18.5, fontWeight: FontWeight.bold)),
+                                            return Container();
+                                          }),
+                                    ),
+                                    Container(
+                                      margin: const EdgeInsets.fromLTRB(30, 20, 30, 0),
+                                      alignment: Alignment.topCenter,
+                                      child: Text(
+                                        snapshot.data.imageText,
+                                        style: GoogleFonts.nanumGothic(
+                                            textStyle: TextStyle(color: Colors.black, height: 1.5, fontSize: 18.5, fontWeight: FontWeight.bold)),
+                                      ),
+                                    ),
+                                    Container(
+                                      margin: const EdgeInsets.fromLTRB(30, 10, 30, 0),
+                                      alignment: Alignment.topCenter,
+                                      child: Text(snapshot.data.origin,
+                                          style: GoogleFonts.notoSans(textStyle: TextStyle(color: Colors.black, height: 1.5, fontSize: 15))),
+                                    ),
+                                    Container(
+                                      margin: const EdgeInsets.fromLTRB(30, 30, 30, 10),
+                                      alignment: Alignment.topLeft,
+                                      child: getContentList(context, snapshot.data),
+                                    ),
+                                    Container(
+                                      margin: const EdgeInsets.fromLTRB(30, 0, 30, 30),
+                                      alignment: Alignment.topLeft,
+                                      height: 40,
+                                      child: Row(
+                                        children: <Widget>[
+                                          Text(snapshot.data.date,
+                                              style: GoogleFonts.notoSans(
+                                                  textStyle: TextStyle(color: Colors.black, height: 1, fontSize: 17, fontWeight: FontWeight.bold)))
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+
+                            return Center(
+                              child: CircularProgressIndicator(
+                                backgroundColor: Colors.black,
+                                valueColor: new AlwaysStoppedAnimation<Color>(Colors.white),
                               ),
-                            ),
-                            Container(
-                              margin: const EdgeInsets.fromLTRB(30, 10, 30, 0),
-                              alignment: Alignment.topCenter,
-                              child: Text(widget.post.origin,
-                                  style: GoogleFonts.notoSans(textStyle: TextStyle(color: Colors.black, height: 1.5, fontSize: 15))),
-                            ),
-                            Container(
-                              margin: const EdgeInsets.fromLTRB(30, 30, 30, 10),
-                              alignment: Alignment.topLeft,
-                              child: getContentList(context, widget.post),
-                            ),
-                            Container(
-                              margin: const EdgeInsets.fromLTRB(30, 0, 30, 30),
-                              alignment: Alignment.topLeft,
-                              height: 40,
-                              child: Row(
-                                children: <Widget>[
-                                  Text(widget.post.date,
-                                      style: GoogleFonts.notoSans(
-                                          textStyle: TextStyle(color: Colors.black, height: 1, fontSize: 17, fontWeight: FontWeight.bold)))
-                                ],
-                              ),
-                            ),
-                          ],
+                            );
+                          },
                         );
                       },
                       itemCount: 1),

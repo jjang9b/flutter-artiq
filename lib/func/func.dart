@@ -17,7 +17,8 @@ class Func {
   static Fetch fetch = new Fetch();
   static Future<List<Guide>> futureGuideList = fetch.fetchGuide();
   static Future<Ads> futureAds = fetch.fetchAds('music');
-  static Future<List<Post>> futureData;
+  static Future<List<Post>> futurePostList;
+  static Future<Post> futurePost;
   static double _categoryPage = 0;
 
   static Future<List<Post>> fetchPost(String category) async {
@@ -27,9 +28,9 @@ class Func {
       ArtiqData.likeGenre = maxGenre.replaceAll("music-", "");
     }
 
-    futureData = fetch.fetchPost(category);
+    futurePostList = fetch.fetchPost(category);
 
-    return futureData;
+    return futurePostList;
   }
 
   static Future<List<Guide>> getGuideList() {
@@ -41,11 +42,11 @@ class Func {
   }
 
   static Future<List<Post>> getPostList() {
-    if (futureData == null) {
+    if (futurePostList == null) {
       return fetchPost("music");
     }
 
-    return futureData;
+    return futurePostList;
   }
 
   static void refreshInit() {
@@ -62,7 +63,7 @@ class Func {
     ArtiqData.refreshSec = ArtiqData.refreshPerSec;
 
     ArtiqData.emptyFutureMap(ArtiqData.category);
-    Func.futureData = fetchPost(ArtiqData.category);
+    Func.futurePostList = fetchPost(ArtiqData.category);
 
     _pageController.jumpToPage(0);
   }
@@ -114,7 +115,7 @@ class Func {
   static void setData(String category, int categoryIdx) {
     ArtiqData.category = category;
     ArtiqData.categoryIdx = categoryIdx;
-    Func.futureData = fetchPost(category);
+    Func.futurePostList = fetchPost(category);
 
     refreshAds(category);
   }
@@ -141,6 +142,7 @@ class Func {
   }
 
   static void goContentPage(BuildContext context, Post post) {
+    Func.futurePost = new Future<Post>.value(post);
     Func.refreshInit();
 
     refreshAds(ArtiqData.category);
