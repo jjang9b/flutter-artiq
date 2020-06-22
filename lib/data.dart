@@ -17,7 +17,7 @@ class ArtiqData {
   static String musicNextState = musicNextStateArr[0];
   static bool isOnload = false;
   static bool isPostScrolling = false;
-  static String version = "1.1.0";
+  static String version = "1.1.1";
 
   static String likeGenre = "";
 

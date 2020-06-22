@@ -34,6 +34,7 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
   String musicGenre;
   bool isMoveBtn = true;
   bool isHeadsetInit = false;
+  bool isHeadsetStop = false;
   bool isBackground = false;
   bool isPlayEnd = false;
 
@@ -86,7 +87,9 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
       case "UNSTARTED":
         if (isBackground) {
           if (_youtubeController != null) {
-            if (!isPlayEnd) {
+            print("isPlayEnd : ${isPlayEnd}, isHeadsetStop : ${isHeadsetStop}");
+
+            if (!isPlayEnd && !isHeadsetStop) {
               _youtubeController.play();
             }
           }
@@ -96,6 +99,7 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
         break;
       case "PLAYING":
         playMode = "PLAYING";
+        isHeadsetStop = false;
 
         if (ArtiqData.playLikeTimer == null) {
           ArtiqData.playLikeTimer = Timer.periodic(Duration(milliseconds: 5000), (timer) {
@@ -116,6 +120,7 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
         break;
       case "ENDED":
         isPlayEnd = true;
+        isHeadsetStop = false;
 
         if (_youtubeController != null) {
           _youtubeController.seekTo(-5);
@@ -177,6 +182,7 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
 
         if (!isHeadset) {
           _youtubeController.pause();
+          isHeadsetStop = true;
           return;
         }
 
