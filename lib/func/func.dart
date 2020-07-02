@@ -49,6 +49,20 @@ class Func {
     return futurePostList;
   }
 
+  static void insertIsFavorite(bool isFavorite) async {
+    await SqlLite().delete("isFavorite");
+
+    await SqlLite().insert(ArtiqDb(key: "isFavorite", data: isFavorite.toString()));
+  }
+
+  static void setIsFavorite() async {
+    ArtiqDb artiqDb = await SqlLite().get("isFavorite");
+
+    if (artiqDb != null) {
+      ArtiqData.isFavoriteMusic = (artiqDb.data == "true");
+    }
+  }
+
   static void refreshInit() {
     if (ArtiqData.refreshTimer != null) {
       ArtiqData.refreshTimer.cancel();

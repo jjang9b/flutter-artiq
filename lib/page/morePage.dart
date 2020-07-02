@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:artiq/data.dart';
 import 'package:artiq/func/func.dart';
 import 'package:artiq/page/postPage.dart';
+import 'package:artiq/sql/artiqDb.dart';
+import 'package:artiq/sql/sqlLite.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +39,7 @@ class _MorePageState extends State<MorePage> {
                         Stack(
                           children: <Widget>[
                             Container(
-                              margin: EdgeInsets.fromLTRB(25, 15, 30, 5),
+                              margin: const EdgeInsets.fromLTRB(25, 15, 30, 5),
                               child: InkWell(
                                 highlightColor: Colors.transparent,
                                 splashColor: Colors.transparent,
@@ -53,7 +55,7 @@ class _MorePageState extends State<MorePage> {
                             Container(
                               height: MediaQuery.of(context).size.height * 0.075,
                               child: Container(
-                                margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                margin: const EdgeInsets.fromLTRB(0, 10, 0, 0),
                                 alignment: Alignment.topCenter,
                                 child: Text("more.title",
                                         style: GoogleFonts.notoSans(
@@ -69,14 +71,14 @@ class _MorePageState extends State<MorePage> {
                             children: <Widget>[
                               Container(
                                 alignment: Alignment.centerLeft,
-                                margin: EdgeInsets.fromLTRB(30, 5, 30, 5),
+                                margin: const EdgeInsets.fromLTRB(30, 5, 30, 5),
                                 child: Text("more.version",
                                         style: GoogleFonts.notoSans(
                                             textStyle: TextStyle(color: Color(0xff313131), height: 1.5, fontSize: 16, fontWeight: FontWeight.bold)))
                                     .tr(),
                               ),
                               Container(
-                                margin: EdgeInsets.fromLTRB(30, 5, 30, 10),
+                                margin: const EdgeInsets.fromLTRB(30, 5, 30, 10),
                                 child: Row(
                                   children: <Widget>[
                                     Container(child: Text("v ${ArtiqData.version}", style: GoogleFonts.notoSans(textStyle: TextStyle(fontSize: 16)))),
@@ -89,7 +91,7 @@ class _MorePageState extends State<MorePage> {
                               ),
                               Container(
                                 alignment: Alignment.centerLeft,
-                                margin: EdgeInsets.fromLTRB(30, 5, 30, 5),
+                                margin: const EdgeInsets.fromLTRB(30, 5, 30, 5),
                                 child: Text("more.setting",
                                         style: GoogleFonts.notoSans(
                                             textStyle: TextStyle(color: Color(0xff313131), height: 1.5, fontSize: 16, fontWeight: FontWeight.bold)))
@@ -97,16 +99,60 @@ class _MorePageState extends State<MorePage> {
                               ),
                               Container(
                                 height: 40,
-                                margin: const EdgeInsets.fromLTRB(30, 5, 30, 10),
+                                margin: const EdgeInsets.fromLTRB(30, 5, 20, 5),
                                 child: Row(
                                   children: <Widget>[
                                     Container(
-                                        child:
-                                            Text("more.settingFriendlyInit", style: GoogleFonts.notoSans(textStyle: TextStyle(fontSize: 16))).tr()),
+                                        child: Text("more.settingIsFavorite", style: GoogleFonts.notoSans(textStyle: TextStyle(fontSize: 16))).tr()),
                                     Expanded(
                                       child: Container(),
                                     ),
                                     Container(
+                                      width: 60,
+                                      child: InkWell(
+                                        highlightColor: Colors.transparent,
+                                        splashColor: Colors.transparent,
+                                        child: Switch(
+                                          value: ArtiqData.isFavoriteMusic,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              ArtiqData.isFavoriteMusic = value;
+
+                                              Func.insertIsFavorite(value);
+                                            });
+
+                                            message = "more.settingSuccess";
+                                            isMessage = true;
+
+                                            Timer.periodic(Duration(milliseconds: 2000), (timer) {
+                                              timer.cancel();
+
+                                              isMessage = false;
+                                              setState(() {});
+                                            });
+                                          },
+                                          inactiveTrackColor: Colors.black12,
+                                          activeColor: Colors.red,
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                height: 40,
+                                margin: const EdgeInsets.fromLTRB(30, 5, 30, 5),
+                                child: Row(
+                                  children: <Widget>[
+                                    Container(
+                                        child:
+                                            Text("more.settingFavoriteInit", style: GoogleFonts.notoSans(textStyle: TextStyle(fontSize: 16))).tr()),
+                                    Expanded(
+                                      child: Container(),
+                                    ),
+                                    Container(
+                                      width: 35,
+                                      height: 35,
                                       child: InkWell(
                                         highlightColor: Colors.transparent,
                                         splashColor: Colors.transparent,
@@ -140,7 +186,7 @@ class _MorePageState extends State<MorePage> {
                               ),
                               Container(
                                 alignment: Alignment.centerLeft,
-                                margin: EdgeInsets.fromLTRB(30, 5, 30, 5),
+                                margin: const EdgeInsets.fromLTRB(30, 5, 30, 5),
                                 child: Text("more.mailTitle",
                                         style: GoogleFonts.notoSans(
                                             textStyle: TextStyle(color: Color(0xff313131), height: 1.5, fontSize: 16, fontWeight: FontWeight.bold)))
@@ -156,6 +202,8 @@ class _MorePageState extends State<MorePage> {
                                       child: Container(),
                                     ),
                                     Container(
+                                      width: 35,
+                                      height: 35,
                                       child: InkWell(
                                         highlightColor: Colors.transparent,
                                         splashColor: Colors.transparent,
@@ -191,14 +239,14 @@ class _MorePageState extends State<MorePage> {
                 alignment: Alignment.bottomCenter,
                 child: AnimatedOpacity(
                   opacity: isMessage ? 1.0 : 0.0,
-                  duration: Duration(milliseconds: 500),
+                  duration: const Duration(milliseconds: 500),
                   child: Container(
                     width: 250,
                     height: 35,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       color: Colors.black87,
-                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                      borderRadius: const BorderRadius.all(Radius.circular(5)),
                     ),
                     child: Text(message, style: GoogleFonts.notoSans(textStyle: TextStyle(color: Colors.white, fontSize: 13))).tr(),
                   ),

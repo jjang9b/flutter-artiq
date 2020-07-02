@@ -30,13 +30,13 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
   Post currentPost;
   double nowOffset = 0;
   int playSec = 0;
-  String playMode = "PAUSED";
   String musicGenre;
+  String currentYoutubeId;
   bool isMoveBtn = true;
-  bool isHeadsetInit = false;
-  bool isHeadsetStop = false;
+  bool isHeadset = false;
   bool isBackground = false;
-  bool isPlayEnd = false;
+  bool isNeedPause = false;
+  bool isEndBuffer = false;
 
   @override
   void initState() {
@@ -60,14 +60,11 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
     switch (state) {
       case AppLifecycleState.inactive:
         isBackground = true;
-
-        if (_youtubeController != null) {
-          if (playMode != "PAUSED") {
-            _youtubeController.play();
-          }
-        }
-
         MoveToBackground.moveTaskToBack();
+
+        if (_youtubeController == null) {
+          _youtubeController.play();
+        }
         break;
       case AppLifecycleState.resumed:
         isBackground = false;
@@ -84,43 +81,49 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
   void onStateChange(String state) {
     switch (state) {
       case "PAUSED":
+      case "BUFFERING":
       case "UNSTARTED":
-        if (isBackground) {
-          if (_youtubeController != null) {
-            print("isPlayEnd : ${isPlayEnd}, isHeadsetStop : ${isHeadsetStop}");
-
-            if (!isPlayEnd && !isHeadsetStop) {
-              _youtubeController.play();
-            }
-          }
+      case "VIDEO_CUED":
+        if (_youtubeController == null) {
+          return;
         }
 
-        playMode = "PAUSED";
+        if (isEndBuffer || isNeedPause || !isBackground) {
+          return;
+        }
+
+        Timer.periodic(Duration(milliseconds: 500), (timer) {
+          timer.cancel();
+          _youtubeController.play();
+        });
         break;
       case "PLAYING":
-        playMode = "PLAYING";
-        isHeadsetStop = false;
-
-        if (ArtiqData.playLikeTimer == null) {
-          ArtiqData.playLikeTimer = Timer.periodic(Duration(milliseconds: 5000), (timer) {
-            playSec += 5;
-
-            if (playSec >= 60) {
-              Func.setPlayCount(musicGenre);
-
-              ArtiqData.playLikeTimer = null;
-              timer.cancel();
-            }
-          });
-        }
-
         setState(() {
           isMoveBtn = true;
+          isNeedPause = false;
+        });
+
+        if (!ArtiqData.isFavoriteMusic) {
+          return;
+        }
+
+        if (ArtiqData.playLikeTimer != null) {
+          return;
+        }
+
+        ArtiqData.playLikeTimer = Timer.periodic(Duration(milliseconds: 5000), (timer) {
+          playSec += 5;
+
+          if (playSec >= 60) {
+            Func.setPlayCount(musicGenre);
+
+            ArtiqData.playLikeTimer = null;
+            timer.cancel();
+          }
         });
         break;
       case "ENDED":
-        isPlayEnd = true;
-        isHeadsetStop = false;
+        isEndBuffer = true;
 
         if (_youtubeController != null) {
           _youtubeController.seekTo(-5);
@@ -130,7 +133,7 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
 
         Timer.periodic(Duration(milliseconds: 1000), (timer) {
           timer.cancel();
-          isPlayEnd = false;
+          isEndBuffer = false;
 
           switch (ArtiqData.musicNextState) {
             case "shuffle":
@@ -161,7 +164,10 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
   }
 
   @override
-  void onError(String error) {}
+  void onError(String error) {
+    _youtubeController.initialization();
+    _youtubeController.loadOrCueVideo(currentYoutubeId, 0);
+  }
 
   @override
   void onVideoDuration(double duration) {}
@@ -173,32 +179,28 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
     Stream<HeadsetEvent> stream = await Headset.subscribe();
 
     stream.listen((HeadsetEvent event) {
-      bool isHeadset = event.toString().contains("isConnected: true");
+      isHeadset = event.toString().contains("isConnected: true");
 
-      if (isHeadsetInit) {
+      if (!isHeadset) {
+        if (isBackground) {
+          isNeedPause = true;
+        }
+
         if (_youtubeController == null) {
           return;
         }
 
-        if (!isHeadset) {
-          _youtubeController.pause();
-          isHeadsetStop = true;
-          return;
-        }
-
-        return;
-      }
-
-      if (isHeadset) {
-        isHeadsetInit = true;
+        _youtubeController.pause();
       }
     });
   }
 
   void youtubePause() {
-    if (_youtubeController != null) {
-      _youtubeController.pause();
+    if (_youtubeController == null) {
+      return;
     }
+
+    _youtubeController.pause();
   }
 
   void setCurrentPost(Post nextPost) {
@@ -219,6 +221,8 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
     }
 
     String id = contentList[0].data;
+    currentYoutubeId = id;
+    _youtubeController.initialization();
     _youtubeController.loadOrCueVideo(id, 0);
   }
 
@@ -282,7 +286,7 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
       switch (content.type) {
         case "text-title":
           return Container(
-              margin: EdgeInsets.only(top: 30, bottom: 10),
+              margin: const EdgeInsets.only(top: 30, bottom: 10),
               alignment: Alignment.topLeft,
               child: Text(
                 content.data,
@@ -291,7 +295,7 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
           break;
         case "image":
           return Container(
-            margin: EdgeInsets.only(top: 20, bottom: 40),
+            margin: const EdgeInsets.only(top: 20, bottom: 40),
             child: Column(
               children: <Widget>[
                 CachedNetworkImage(
@@ -308,7 +312,7 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
 
           return Container(
             height: MediaQuery.of(context).size.height * 0.55,
-            margin: EdgeInsets.only(top: 20, bottom: 40),
+            margin: const EdgeInsets.only(top: 20, bottom: 40),
             child: FlutterYoutubeView(
                 onViewCreated: (controller) {
                   setState(() {
@@ -325,7 +329,7 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
           break;
         default:
           return Container(
-            margin: EdgeInsets.only(bottom: 20),
+            margin: const EdgeInsets.only(bottom: 20),
             alignment: Alignment.topLeft,
             child: Text(content.data, style: GoogleFonts.notoSans(textStyle: TextStyle(color: Colors.black, height: 1.5, fontSize: 16))),
           );
@@ -353,7 +357,7 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
           child: Stack(
             children: <Widget>[
               ConstrainedBox(
-                constraints: BoxConstraints(minHeight: 56.0),
+                constraints: const BoxConstraints(minHeight: 56.0),
                 child: NotificationListener<ScrollNotification>(
                   onNotification: (scrollNotification) {
                     setState(() {
@@ -400,7 +404,7 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
                                       ],
                                     ),
                                     Container(
-                                      margin: EdgeInsets.only(top: 3),
+                                      margin: const EdgeInsets.only(top: 3),
                                       height: MediaQuery.of(context).size.height * 0.066,
                                       width: MediaQuery.of(context).size.width * 0.97,
                                       child: FutureBuilder<Ads>(
@@ -459,7 +463,7 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
                             return Center(
                               child: CircularProgressIndicator(
                                 backgroundColor: Colors.black,
-                                valueColor: new AlwaysStoppedAnimation<Color>(Colors.white),
+                                valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
                               ),
                             );
                           },

@@ -13,7 +13,8 @@
     "setting": "Settings",
     "settingDefault": "",
     "settingSuccess": "Settings changed successfully",
-    "settingFriendlyInit": "Initializing user-friendly music",
+    "settingIsFavorite": "Use your favorite music",
+    "settingFavoriteInit": "Initializing your favorite music",
     "mailTitle": "Contact",
     "mailSubject": "[ArtiQ] Inquiries",
     "mailSend": "Send mail"

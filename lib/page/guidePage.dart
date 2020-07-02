@@ -77,29 +77,29 @@ class _GuidePageState extends State<GuidePage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Container(
-                                margin: EdgeInsets.fromLTRB(50, 50, 50, 10),
+                                margin: const EdgeInsets.fromLTRB(50, 50, 50, 10),
                                 alignment: Alignment.center,
                                 child: Text(
                                   snapshot.data[position].title,
-                                  style: GoogleFonts.notoSans(textStyle: TextStyle(fontSize: 23), fontWeight: FontWeight.bold),
+                                  style: GoogleFonts.notoSans(textStyle: const TextStyle(fontSize: 23), fontWeight: FontWeight.bold),
                                 ),
                               ),
                               Container(
-                                margin: EdgeInsets.fromLTRB(50, 10, 50, 10),
+                                margin: const EdgeInsets.fromLTRB(50, 10, 50, 10),
                                 alignment: Alignment.center,
                                 child: Text(
                                   snapshot.data[position].text,
-                                  style: GoogleFonts.notoSans(textStyle: TextStyle(fontSize: 15, height: 1.5)),
+                                  style: GoogleFonts.notoSans(textStyle: const TextStyle(fontSize: 15, height: 1.5)),
                                 ),
                               ),
                               Expanded(
                                 child: Container(
-                                  margin: EdgeInsets.fromLTRB(50, 20, 50, 10),
+                                  margin: const EdgeInsets.fromLTRB(50, 20, 50, 10),
                                   child: CachedNetworkImage(
                                     imageUrl: snapshot.data[position].image,
                                     imageBuilder: (context, imageProvider) => Container(
                                       decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                                        borderRadius: const BorderRadius.all(Radius.circular(8)),
                                         image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
                                       ),
                                     ),
@@ -115,9 +115,10 @@ class _GuidePageState extends State<GuidePage> {
                                   child: Container(
                                     alignment: Alignment.center,
                                     height: MediaQuery.of(context).size.height * 0.05,
-                                    margin: EdgeInsets.fromLTRB(100, 10, 100, 10),
-                                    decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.all(Radius.circular(5))),
-                                    child: Text("guide.today", style: GoogleFonts.notoSans(textStyle: TextStyle(color: Colors.white, fontSize: 16)))
+                                    margin: const EdgeInsets.fromLTRB(100, 10, 100, 10),
+                                    decoration: BoxDecoration(color: Colors.black, borderRadius: const BorderRadius.all(Radius.circular(5))),
+                                    child: Text("guide.today",
+                                            style: GoogleFonts.notoSans(textStyle: const TextStyle(color: Colors.white, fontSize: 16)))
                                         .tr(),
                                   ),
                                 ),
@@ -131,9 +132,11 @@ class _GuidePageState extends State<GuidePage> {
                                   child: Container(
                                       alignment: Alignment.center,
                                       height: MediaQuery.of(context).size.height * 0.05,
-                                      margin: EdgeInsets.fromLTRB(100, 10, 100, 10),
-                                      decoration: BoxDecoration(color: Color(0xff26A69A), borderRadius: BorderRadius.all(Radius.circular(5))),
-                                      child: Text("guide.skip", style: GoogleFonts.notoSans(textStyle: TextStyle(color: Colors.white, fontSize: 16)))
+                                      margin: const EdgeInsets.fromLTRB(100, 10, 100, 10),
+                                      decoration:
+                                          BoxDecoration(color: const Color(0xff26A69A), borderRadius: const BorderRadius.all(Radius.circular(5))),
+                                      child: Text("guide.skip",
+                                              style: GoogleFonts.notoSans(textStyle: const TextStyle(color: Colors.white, fontSize: 16)))
                                           .tr()),
                                 ),
                               )
@@ -146,7 +149,7 @@ class _GuidePageState extends State<GuidePage> {
                     Visibility(
                       visible: (idx.abs() != snapshot.data.length - 1),
                       child: Container(
-                        margin: EdgeInsets.fromLTRB(30, 20, 30, 10),
+                        margin: const EdgeInsets.fromLTRB(30, 20, 30, 10),
                         alignment: Alignment.topCenter,
                         child: DotsIndicator(
                           dotsCount: length,
@@ -168,7 +171,7 @@ class _GuidePageState extends State<GuidePage> {
             return Center(
               child: CircularProgressIndicator(
                 backgroundColor: Colors.black,
-                valueColor: new AlwaysStoppedAnimation<Color>(Colors.white),
+                valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
               ),
             );
           },

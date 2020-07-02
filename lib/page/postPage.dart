@@ -60,6 +60,8 @@ class _PostPageState extends State<PostPage> {
   void initState() {
     super.initState();
 
+    Func.setIsFavorite();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (ArtiqData.isOnload) {
         Func.categoryTab(_categoryController, ArtiqData.category, ArtiqData.categoryIdx);
@@ -93,11 +95,11 @@ class _PostPageState extends State<PostPage> {
           child: Column(
             children: <Widget>[
               Container(
-                margin: EdgeInsets.only(left: 30),
+                margin: const EdgeInsets.only(left: 30),
                 height: MediaQuery.of(context).size.height * 0.055,
                 child: Container(
                   alignment: Alignment.topLeft,
-                  margin: EdgeInsets.only(top: 5),
+                  margin: const EdgeInsets.only(top: 5),
                   child: Row(
                     children: <Widget>[
                       Container(
@@ -106,23 +108,23 @@ class _PostPageState extends State<PostPage> {
                           children: <Widget>[
                             Text(
                               "A",
-                              style: TextStyle(color: Color(0xff26A69A), fontSize: 28, fontWeight: FontWeight.bold, fontFamily: 'UTOIMAGE'),
+                              style: const TextStyle(color: Color(0xff26A69A), fontSize: 28, fontWeight: FontWeight.bold, fontFamily: 'UTOIMAGE'),
                             ),
                             Text(
                               "r",
-                              style: TextStyle(color: Color(0xffffdd40), fontSize: 28, fontWeight: FontWeight.bold, fontFamily: 'UTOIMAGE'),
+                              style: const TextStyle(color: Color(0xffffdd40), fontSize: 28, fontWeight: FontWeight.bold, fontFamily: 'UTOIMAGE'),
                             ),
                             Text(
                               "t",
-                              style: TextStyle(color: Color(0xff039be5), fontSize: 28, fontWeight: FontWeight.bold, fontFamily: 'UTOIMAGE'),
+                              style: const TextStyle(color: Color(0xff039be5), fontSize: 28, fontWeight: FontWeight.bold, fontFamily: 'UTOIMAGE'),
                             ),
                             Text(
                               "i",
-                              style: TextStyle(color: Color(0xffef0078), fontSize: 28, fontWeight: FontWeight.bold, fontFamily: 'UTOIMAGE'),
+                              style: const TextStyle(color: Color(0xffef0078), fontSize: 28, fontWeight: FontWeight.bold, fontFamily: 'UTOIMAGE'),
                             ),
                             Text(
                               "Q",
-                              style: TextStyle(color: Colors.red, fontSize: 28, fontWeight: FontWeight.bold, fontFamily: 'UTOIMAGE'),
+                              style: const TextStyle(color: Colors.red, fontSize: 28, fontWeight: FontWeight.bold, fontFamily: 'UTOIMAGE'),
                             ),
                           ],
                         ),
@@ -131,7 +133,7 @@ class _PostPageState extends State<PostPage> {
                         child: Container(),
                       ),
                       Container(
-                        margin: EdgeInsets.only(top: 5, right: 20),
+                        margin: const EdgeInsets.only(top: 5, right: 20),
                         child: InkWell(
                           highlightColor: Colors.transparent,
                           splashColor: Colors.transparent,
@@ -163,7 +165,7 @@ class _PostPageState extends State<PostPage> {
                 alignment: Alignment.center,
                 children: <Widget>[
                   Container(
-                    margin: EdgeInsets.only(top: 5, left: 20, right: 20),
+                    margin: const EdgeInsets.only(top: 5, left: 20, right: 20),
                     height: MediaQuery.of(context).size.height * 0.755,
                     child: Container(
                       child: PageView.builder(
@@ -207,7 +209,7 @@ class _PostPageState extends State<PostPage> {
                                   return Center(
                                     child: CircularProgressIndicator(
                                       backgroundColor: Colors.black,
-                                      valueColor: new AlwaysStoppedAnimation<Color>(Colors.white),
+                                      valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
                                     ),
                                   );
                                 },
@@ -268,14 +270,14 @@ class _PostPageState extends State<PostPage> {
                     bottom: 0,
                     child: AnimatedOpacity(
                       opacity: isExit ? 1.0 : 0.0,
-                      duration: Duration(milliseconds: 500),
+                      duration: const Duration(milliseconds: 500),
                       child: Container(
                         width: 250,
                         height: 35,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
                           color: Colors.black87,
-                          borderRadius: BorderRadius.all(Radius.circular(5)),
+                          borderRadius: const BorderRadius.all(Radius.circular(5)),
                         ),
                         child: Text("post.exit", style: GoogleFonts.notoSans(textStyle: TextStyle(color: Colors.white, fontSize: 13))).tr(),
                       ),
@@ -284,7 +286,7 @@ class _PostPageState extends State<PostPage> {
                 ],
               ),
               Container(
-                margin: EdgeInsets.only(top: 5, left: 23, right: 17),
+                margin: const EdgeInsets.only(top: 5, left: 23, right: 17),
                 height: MediaQuery.of(context).size.height * 0.07,
                 child: FutureBuilder<Ads>(
                     future: Func.getAds(),

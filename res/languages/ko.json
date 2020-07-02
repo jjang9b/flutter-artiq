@@ -13,7 +13,8 @@
     "setting": "설정",
     "settingDefault": "",
     "settingSuccess": "설정 변경에 성공했습니다",
-    "settingFriendlyInit": "취향 음악 초기화",
+    "settingIsFavorite": "취향 음악 사용 하기",
+    "settingFavoriteInit": "취향 음악 초기화",
     "mailTitle": "문의",
     "mailSubject": "[ArtiQ] 문의",
     "mailSend": "메일 보내기"
