@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'dart:ui';
 
-import 'package:artiq/data.dart';
+import 'package:artiq/data/artiqData.dart';
+import 'package:artiq/data/httpData.dart';
 import 'package:artiq/func/func.dart';
 import 'package:artiq/page/postPage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -290,7 +291,7 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
               alignment: Alignment.topLeft,
               child: Text(
                 content.data,
-                style: GoogleFonts.notoSans(textStyle: TextStyle(color: Color(0xff313131), height: 1.5, fontSize: 18, fontWeight: FontWeight.bold)),
+                style: GoogleFonts.notoSans(textStyle: TextStyle(color: Color(0xffffffff), height: 1.5, fontSize: 18, fontWeight: FontWeight.bold)),
               ));
           break;
         case "image":
@@ -302,7 +303,7 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
                   imageUrl: content.data,
                   fit: BoxFit.cover,
                 ),
-                Text(content.desc, style: GoogleFonts.notoSans(textStyle: TextStyle(color: Color(0xff313131), height: 1.5, fontSize: 13)))
+                Text(content.desc, style: GoogleFonts.notoSans(textStyle: TextStyle(color: ArtiqData.greyPinkColor, height: 1.5, fontSize: 13)))
               ],
             ),
           );
@@ -331,7 +332,7 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
           return Container(
             margin: const EdgeInsets.only(bottom: 20),
             alignment: Alignment.topLeft,
-            child: Text(content.data, style: GoogleFonts.notoSans(textStyle: TextStyle(color: Colors.black, height: 1.5, fontSize: 16))),
+            child: Text(content.data, style: GoogleFonts.notoSans(textStyle: TextStyle(color: Color(0xffffffff), height: 1.5, fontSize: 16))),
           );
           break;
       }
@@ -352,7 +353,7 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
         return;
       },
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Color(0xff2B2B2B),
         body: SafeArea(
           child: Stack(
             children: <Widget>[
@@ -380,22 +381,27 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
                                       children: <Widget>[
                                         Container(
                                           width: MediaQuery.of(context).size.width,
-                                          height: MediaQuery.of(context).size.height * 0.25,
+                                          height: MediaQuery.of(context).size.height * 0.26,
                                           decoration: BoxDecoration(
-                                              image: DecorationImage(image: CachedNetworkImageProvider(snapshot.data.imageUrl), fit: BoxFit.cover)),
+                                            image: DecorationImage(image: CachedNetworkImageProvider(snapshot.data.imageUrl), fit: BoxFit.cover),
+                                            borderRadius: BorderRadius.only(
+                                              bottomLeft: Radius.circular(50),
+                                              bottomRight: Radius.circular(50),
+                                            ),
+                                          ),
                                           child: Column(
                                             children: <Widget>[
                                               Container(
                                                 alignment: Alignment.topLeft,
-                                                margin: const EdgeInsets.only(top: 15, left: 10),
+                                                margin: const EdgeInsets.only(top: 15, left: 15),
                                                 child: InkWell(
                                                   highlightColor: Colors.transparent,
                                                   splashColor: Colors.transparent,
                                                   onTap: () {
                                                     return Navigator.pop(context, true);
                                                   },
-                                                  child:
-                                                      Icon(Icons.arrow_back, color: (snapshot.data.backBtnType == 'w') ? Colors.white : Colors.black),
+                                                  child: Icon(Icons.arrow_back,
+                                                      size: 35, color: (snapshot.data.backBtnType == 'w') ? Colors.white : Colors.black),
                                                 ),
                                               ),
                                             ],
@@ -404,42 +410,23 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
                                       ],
                                     ),
                                     Container(
-                                      margin: const EdgeInsets.only(top: 3),
-                                      height: MediaQuery.of(context).size.height * 0.066,
-                                      width: MediaQuery.of(context).size.width * 0.97,
-                                      child: FutureBuilder<Ads>(
-                                          future: Func.getAds(),
-                                          builder: (context, snapshot) {
-                                            if (snapshot.hasData) {
-                                              return ClipRRect(
-                                                borderRadius: BorderRadius.all(Radius.circular(5)),
-                                                child: CachedNetworkImage(
-                                                  imageUrl: snapshot.data.url,
-                                                  fit: BoxFit.fitWidth,
-                                                ),
-                                              );
-                                            }
-
-                                            return Container();
-                                          }),
-                                    ),
-                                    Container(
                                       margin: const EdgeInsets.fromLTRB(30, 20, 30, 0),
                                       alignment: Alignment.topCenter,
                                       child: Text(
                                         snapshot.data.imageText,
                                         style: GoogleFonts.nanumGothic(
-                                            textStyle: TextStyle(color: Colors.black, height: 1.5, fontSize: 18.5, fontWeight: FontWeight.bold)),
+                                            textStyle: TextStyle(color: Color(0xffFFFFFF), height: 1.5, fontSize: 17, fontWeight: FontWeight.bold)),
                                       ),
                                     ),
                                     Container(
                                       margin: const EdgeInsets.fromLTRB(30, 10, 30, 0),
                                       alignment: Alignment.topCenter,
                                       child: Text(snapshot.data.origin,
-                                          style: GoogleFonts.notoSans(textStyle: TextStyle(color: Colors.black, height: 1.5, fontSize: 15))),
+                                          style:
+                                              GoogleFonts.notoSans(textStyle: TextStyle(color: ArtiqData.darkGreyColor, height: 1.5, fontSize: 15))),
                                     ),
                                     Container(
-                                      margin: const EdgeInsets.fromLTRB(30, 30, 30, 10),
+                                      margin: const EdgeInsets.fromLTRB(30, 10, 30, 0),
                                       alignment: Alignment.topLeft,
                                       child: getContentList(context, snapshot.data),
                                     ),
@@ -450,8 +437,8 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
                                       child: Row(
                                         children: <Widget>[
                                           Text(snapshot.data.date,
-                                              style: GoogleFonts.notoSans(
-                                                  textStyle: TextStyle(color: Colors.black, height: 1, fontSize: 17, fontWeight: FontWeight.bold)))
+                                              style:
+                                                  GoogleFonts.notoSans(textStyle: TextStyle(color: ArtiqData.darkGreyColor, height: 1, fontSize: 16)))
                                         ],
                                       ),
                                     ),
@@ -480,7 +467,7 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
                   child: FloatingActionButton(
                     mini: true,
                     heroTag: null,
-                    backgroundColor: Colors.red,
+                    backgroundColor: ArtiqData.fluorescenceColor,
                     onPressed: () {
                       setState(() {
                         if (ArtiqData.musicNextStateIdx + 1 >= ArtiqData.musicNextStateArr.length) {
@@ -495,7 +482,7 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
                     child: Container(
                       child: Icon(
                         ArtiqData.musicNextStateIcon[ArtiqData.musicNextStateIdx],
-                        color: Colors.white,
+                        color: Colors.black,
                       ),
                     ),
                   ),
@@ -508,7 +495,7 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
                   child: FloatingActionButton(
                     mini: true,
                     heroTag: null,
-                    backgroundColor: Colors.black,
+                    backgroundColor: ArtiqData.darkGreyColor,
                     onPressed: () {
                       Func.goPageRemove(context, PostPage.routeName);
                     },
@@ -529,7 +516,7 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
                   child: FloatingActionButton(
                     mini: true,
                     heroTag: null,
-                    backgroundColor: Colors.black,
+                    backgroundColor: ArtiqData.darkGreyColor,
                     onPressed: () {
                       goNextContent();
                     },
@@ -550,7 +537,7 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
                   child: FloatingActionButton(
                     mini: true,
                     heroTag: null,
-                    backgroundColor: Colors.black,
+                    backgroundColor: ArtiqData.darkGreyColor,
                     onPressed: () {
                       goBeforeContent();
                     },
@@ -571,7 +558,7 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
                   child: FloatingActionButton(
                     mini: true,
                     heroTag: null,
-                    backgroundColor: Colors.black,
+                    backgroundColor: ArtiqData.darkGreyColor,
                     onPressed: () {
                       _contentScrollController.animateTo(0.0, duration: Duration(milliseconds: 300), curve: Curves.ease);
                     },

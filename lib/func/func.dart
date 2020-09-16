@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:artiq/data.dart';
+import 'package:artiq/data/artiqData.dart';
+import 'package:artiq/data/httpData.dart';
 import 'package:artiq/page/contentPage.dart';
 import 'package:artiq/page/postPage.dart';
 import 'package:artiq/sql/artiqDb.dart';
@@ -76,14 +77,14 @@ class Func {
     ArtiqData.refreshColor = Colors.red;
     ArtiqData.refreshSec = ArtiqData.refreshPerSec;
 
-    ArtiqData.emptyFutureMap(ArtiqData.category);
+    Post.emptyFutureMap(ArtiqData.category);
     Func.futurePostList = fetchPost(ArtiqData.category);
 
     _pageController.jumpToPage(0);
   }
 
   static Post getRandomPost(String category, Post post) {
-    List<Post> postList = ArtiqData.getPostList(category);
+    List<Post> postList = Post.getPostList(category);
 
     var random = new Random();
     var ran = random.nextInt(postList.length);
@@ -101,7 +102,7 @@ class Func {
   }
 
   static Post getBeforePost(String category, Post post) {
-    List<Post> postList = ArtiqData.getPostList(category);
+    List<Post> postList = Post.getPostList(category);
 
     int bef = postList.indexOf(post) - 1;
     if (bef < 0) {
@@ -112,7 +113,7 @@ class Func {
   }
 
   static Post getNextPost(String category, Post post) {
-    List<Post> postList = ArtiqData.getPostList(category);
+    List<Post> postList = Post.getPostList(category);
 
     int next = postList.indexOf(post) + 1;
     if (next >= postList.length) {
@@ -194,12 +195,12 @@ class Func {
         categoryTab(_categoryController, category, idx);
       },
       child: Container(
-        margin: EdgeInsets.only(top: 10, left: 20, right: 20),
+        margin: EdgeInsets.only(top: 15, left: 20, right: 20, bottom: 5),
         child: Column(
           children: <Widget>[
             Text(
               title,
-              style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'UTOIMAGE'),
+              style: TextStyle(color: ArtiqData.backgroundColor, fontSize: 15, fontFamily: 'UTOIMAGE', fontWeight: FontWeight.bold),
             ),
             Visibility(
               visible: (_categoryPage == idx),
@@ -207,7 +208,7 @@ class Func {
                 width: 20,
                 height: 5,
                 margin: EdgeInsets.only(top: 5),
-                decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(3)), color: Color(0xff26A69A), shape: BoxShape.rectangle),
+                decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(3)), color: Color(0xff2B2B2B), shape: BoxShape.rectangle),
               ),
             ),
           ],
@@ -217,8 +218,6 @@ class Func {
   }
 
   static InkWell getContent(BuildContext context, int length, int position, Post post) {
-    double imageTextTop = (ArtiqData.likeGenre != "" && post.genre == ArtiqData.likeGenre) ? 3 : 12;
-
     return InkWell(
       highlightColor: Colors.transparent,
       splashColor: Colors.transparent,
@@ -227,89 +226,91 @@ class Func {
       },
       child: Stack(
         children: <Widget>[
-          Container(
-            height: (ArtiqData.likeGenre != "" && post.genre == ArtiqData.likeGenre)
-                ? MediaQuery.of(context).size.height * 0.15
-                : MediaQuery.of(context).size.height * 0.13,
-            margin: EdgeInsets.only(top: 5, left: 5, bottom: 12),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(color: Color(0xffefefef)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.1),
-                  spreadRadius: 1,
-                  blurRadius: 2,
-                  offset: Offset(0, 1), // changes position of shadow
-                ),
-              ],
-              borderRadius: BorderRadius.all(Radius.circular(5)),
+          ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height * 0.105,
             ),
-            child: Row(
-              children: <Widget>[
-                Stack(
-                  children: <Widget>[
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.22,
-                      child: CachedNetworkImage(
-                        imageUrl: post.imageUrl,
-                        imageBuilder: (context, imageProvider) => Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey, width: 0),
-                            borderRadius: BorderRadius.all(Radius.circular(5)),
-                            image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+            child: Container(
+              margin: EdgeInsets.only(top: 5, right: 10, bottom: 10),
+              decoration: BoxDecoration(
+                border: Border.all(color: Color(0xff55545D), width: 0),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(5),
                 ),
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.66,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+              ),
+              child: Row(
+                children: <Widget>[
+                  Stack(
                     children: <Widget>[
-                      Visibility(
-                        visible: (ArtiqData.likeGenre != "" && post.genre == ArtiqData.likeGenre),
-                        child: Container(
-                          width: 54,
-                          height: 17,
-                          margin: EdgeInsets.only(top: 9, left: 20),
-                          decoration: BoxDecoration(
-                            color: Color(0xff26A69A),
-                            borderRadius: BorderRadius.all(Radius.circular(5)),
-                          ),
-                          child: Container(
-                            margin: EdgeInsets.only(top: 3, left: 5),
-                            child: Text("post.musicFriendly",
-                                    overflow: TextOverflow.visible,
-                                    style: GoogleFonts.nanumGothic(
-                                        textStyle: TextStyle(color: Colors.white, height: 1, fontSize: 11, fontWeight: FontWeight.bold)))
-                                .tr(),
+                      Container(
+                        width: MediaQuery.of(context).size.width * 0.12,
+                        height: MediaQuery.of(context).size.width * 0.12,
+                        margin: EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 10),
+                        child: CachedNetworkImage(
+                          imageUrl: post.imageUrl,
+                          imageBuilder: (context, imageProvider) => Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey, width: 0),
+                              borderRadius: BorderRadius.all(Radius.circular(5)),
+                              image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+                            ),
                           ),
                         ),
                       ),
-                      Container(
-                        alignment: Alignment.topLeft,
-                        margin: EdgeInsets.only(top: imageTextTop, left: 20, right: 15),
-                        child: Text(post.imageText,
-                            overflow: TextOverflow.visible,
-                            style: GoogleFonts.nanumGothic(
-                                textStyle: TextStyle(color: Colors.black, height: 1.5, fontSize: 13, fontWeight: FontWeight.bold))),
-                      ),
-                      Container(
-                        alignment: Alignment.topLeft,
-                        margin: EdgeInsets.only(top: 10, left: 20, right: 15),
-                        child: Container(
-                          alignment: Alignment.centerLeft,
-                          margin: EdgeInsets.only(right: 8),
-                          child: Text(post.origin, style: GoogleFonts.notoSans(textStyle: TextStyle(color: Colors.black, height: 1.3, fontSize: 13))),
-                        ),
-                      )
                     ],
                   ),
-                ),
-              ],
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.72,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          alignment: Alignment.topLeft,
+                          margin: EdgeInsets.only(top: 5, left: 15, right: 15),
+                          child: Text(post.imageText,
+                              overflow: TextOverflow.visible,
+                              style: GoogleFonts.nanumGothic(
+                                  textStyle: TextStyle(color: Color(0xffffffff), height: 1.5, fontSize: 12.5, fontWeight: FontWeight.bold))),
+                        ),
+                        Container(
+                          alignment: Alignment.topLeft,
+                          margin: EdgeInsets.only(top: 7, left: 15, right: 15, bottom: 10),
+                          child: Container(
+                            alignment: Alignment.centerLeft,
+                            margin: EdgeInsets.only(right: 8),
+                            child: Row(
+                              children: <Widget>[
+                                Text(post.origin,
+                                    style: GoogleFonts.notoSans(textStyle: TextStyle(color: ArtiqData.darkGreyColor, height: 1.3, fontSize: 13))),
+                                Visibility(
+                                  visible: (ArtiqData.likeGenre != "" && post.genre == ArtiqData.likeGenre),
+                                  child: Container(
+                                    width: 54,
+                                    height: 17,
+                                    margin: EdgeInsets.only(left: 10),
+                                    decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                                    ),
+                                    child: Container(
+                                      margin: EdgeInsets.only(top: 3, left: 5),
+                                      child: Text("post.musicFriendly",
+                                              overflow: TextOverflow.visible,
+                                              style: GoogleFonts.nanumGothic(
+                                                  textStyle: TextStyle(color: Colors.white, height: 1, fontSize: 11, fontWeight: FontWeight.bold)))
+                                          .tr(),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],

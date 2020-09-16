@@ -1,41 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
+import 'package:artiq/data/artiqData.dart';
 import 'package:http/http.dart' as http;
 
 Map<String, List<Post>> futureMap = new Map<String, List<Post>>();
-
-class ArtiqData {
-  static String categoryMusic = "music";
-  static String categoryArt = "art";
-  static String category = categoryMusic;
-  static int categoryIdx = 0;
-  static var musicNextStateIcon = [Icons.repeat_one, Icons.repeat, Icons.shuffle];
-  static var musicNextStateArr = ["repeat", "auto", "shuffle"];
-  static int musicNextStateIdx = 0;
-  static String musicNextState = musicNextStateArr[0];
-  static bool isOnload = false;
-  static bool isPostScrolling = false;
-  static bool isFavoriteMusic = true;
-  static String version = "1.1.2";
-
-  static String likeGenre = "";
-
-  static Timer refreshTimer;
-  static Timer playLikeTimer;
-  static int refreshPerSec = 20;
-  static int refreshSec = 0;
-  static Color refreshColor;
-
-  static List<Post> getPostList(String type) {
-    return futureMap[type];
-  }
-
-  static void emptyFutureMap(String category) {
-    futureMap[category] = null;
-  }
-}
 
 class Fetch {
   Future<List<Guide>> fetchGuide() async {
@@ -133,6 +102,14 @@ class Post {
       origin: json['origin'],
       date: json['date'],
     );
+  }
+
+  static List<Post> getPostList(String type) {
+    return futureMap[type];
+  }
+
+  static void emptyFutureMap(String category) {
+    futureMap[category] = null;
   }
 }
 

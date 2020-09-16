@@ -1,4 +1,4 @@
-import 'package:artiq/func/AssetLoader.dart';
+import 'package:artiq/func/assetLoader.dart';
 import 'package:artiq/page/guidePage.dart';
 import 'package:artiq/page/morePage.dart';
 import 'package:artiq/page/postPage.dart';
@@ -12,10 +12,10 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-    systemNavigationBarColor: Colors.white,
-    statusBarColor: Colors.white,
-    systemNavigationBarIconBrightness: Brightness.dark,
-    statusBarIconBrightness: Brightness.dark,
+    systemNavigationBarColor: Color(0xff2B2B2B),
+    statusBarColor: Color(0xff2B2B2B),
+    systemNavigationBarIconBrightness: Brightness.light,
+    statusBarIconBrightness: Brightness.light,
     statusBarBrightness: Brightness.light,
   ));
 

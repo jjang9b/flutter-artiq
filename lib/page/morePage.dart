@@ -1,10 +1,8 @@
 import 'dart:async';
 
-import 'package:artiq/data.dart';
+import 'package:artiq/data/artiqData.dart';
 import 'package:artiq/func/func.dart';
 import 'package:artiq/page/postPage.dart';
-import 'package:artiq/sql/artiqDb.dart';
-import 'package:artiq/sql/sqlLite.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +24,7 @@ class _MorePageState extends State<MorePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xff2B2B2B),
       body: SafeArea(
         child: Stack(
           children: <Widget>[
@@ -39,7 +37,8 @@ class _MorePageState extends State<MorePage> {
                         Stack(
                           children: <Widget>[
                             Container(
-                              margin: const EdgeInsets.fromLTRB(25, 15, 30, 5),
+                              width: MediaQuery.of(context).size.width * 0.09,
+                              margin: const EdgeInsets.fromLTRB(22, 10, 30, 5),
                               child: InkWell(
                                 highlightColor: Colors.transparent,
                                 splashColor: Colors.transparent,
@@ -48,7 +47,8 @@ class _MorePageState extends State<MorePage> {
                                 },
                                 child: Icon(
                                   Icons.arrow_back,
-                                  color: Colors.black,
+                                  color: Color(0xffffffff),
+                                  size: 30,
                                 ),
                               ),
                             ),
@@ -59,7 +59,7 @@ class _MorePageState extends State<MorePage> {
                                 alignment: Alignment.topCenter,
                                 child: Text("more.title",
                                         style: GoogleFonts.notoSans(
-                                            textStyle: TextStyle(color: Color(0xff313131), height: 1.5, fontSize: 16, fontWeight: FontWeight.bold)))
+                                            textStyle: TextStyle(color: Color(0xffffffff), height: 1.5, fontSize: 16, fontWeight: FontWeight.bold)))
                                     .tr(),
                               ),
                             ),
@@ -74,14 +74,20 @@ class _MorePageState extends State<MorePage> {
                                 margin: const EdgeInsets.fromLTRB(30, 5, 30, 5),
                                 child: Text("more.version",
                                         style: GoogleFonts.notoSans(
-                                            textStyle: TextStyle(color: Color(0xff313131), height: 1.5, fontSize: 16, fontWeight: FontWeight.bold)))
+                                            textStyle: TextStyle(color: Color(0xffffffff), height: 1.5, fontSize: 16, fontWeight: FontWeight.bold)))
                                     .tr(),
                               ),
                               Container(
                                 margin: const EdgeInsets.fromLTRB(30, 5, 30, 10),
                                 child: Row(
                                   children: <Widget>[
-                                    Container(child: Text("v ${ArtiqData.version}", style: GoogleFonts.notoSans(textStyle: TextStyle(fontSize: 16)))),
+                                    Container(
+                                        child: Text("v ${ArtiqData.version}",
+                                            style: GoogleFonts.notoSans(
+                                                textStyle: TextStyle(
+                                              fontSize: 16,
+                                              color: ArtiqData.greyPinkColor,
+                                            )))),
                                   ],
                                 ),
                               ),
@@ -94,7 +100,7 @@ class _MorePageState extends State<MorePage> {
                                 margin: const EdgeInsets.fromLTRB(30, 5, 30, 5),
                                 child: Text("more.setting",
                                         style: GoogleFonts.notoSans(
-                                            textStyle: TextStyle(color: Color(0xff313131), height: 1.5, fontSize: 16, fontWeight: FontWeight.bold)))
+                                            textStyle: TextStyle(color: Color(0xffffffff), height: 1.5, fontSize: 16, fontWeight: FontWeight.bold)))
                                     .tr(),
                               ),
                               Container(
@@ -103,7 +109,12 @@ class _MorePageState extends State<MorePage> {
                                 child: Row(
                                   children: <Widget>[
                                     Container(
-                                        child: Text("more.settingIsFavorite", style: GoogleFonts.notoSans(textStyle: TextStyle(fontSize: 16))).tr()),
+                                        child: Text("more.settingIsFavorite",
+                                            style: GoogleFonts.notoSans(
+                                                textStyle: TextStyle(
+                                              fontSize: 16,
+                                              color: ArtiqData.greyPinkColor,
+                                            ))).tr()),
                                     Expanded(
                                       child: Container(),
                                     ),
@@ -131,7 +142,7 @@ class _MorePageState extends State<MorePage> {
                                               setState(() {});
                                             });
                                           },
-                                          inactiveTrackColor: Colors.black12,
+                                          inactiveTrackColor: Color(0xffffffff),
                                           activeColor: Colors.red,
                                         ),
                                       ),
@@ -145,8 +156,12 @@ class _MorePageState extends State<MorePage> {
                                 child: Row(
                                   children: <Widget>[
                                     Container(
-                                        child:
-                                            Text("more.settingFavoriteInit", style: GoogleFonts.notoSans(textStyle: TextStyle(fontSize: 16))).tr()),
+                                        child: Text("more.settingFavoriteInit",
+                                            style: GoogleFonts.notoSans(
+                                                textStyle: TextStyle(
+                                              fontSize: 16,
+                                              color: ArtiqData.greyPinkColor,
+                                            ))).tr()),
                                     Expanded(
                                       child: Container(),
                                     ),
@@ -174,6 +189,7 @@ class _MorePageState extends State<MorePage> {
                                         child: Icon(
                                           Icons.cached,
                                           size: 26,
+                                          color: ArtiqData.greyPinkColor,
                                         ),
                                       ),
                                     )
@@ -189,7 +205,7 @@ class _MorePageState extends State<MorePage> {
                                 margin: const EdgeInsets.fromLTRB(30, 5, 30, 5),
                                 child: Text("more.mailTitle",
                                         style: GoogleFonts.notoSans(
-                                            textStyle: TextStyle(color: Color(0xff313131), height: 1.5, fontSize: 16, fontWeight: FontWeight.bold)))
+                                            textStyle: TextStyle(color: Color(0xffffffff), height: 1.5, fontSize: 16, fontWeight: FontWeight.bold)))
                                     .tr(),
                               ),
                               Container(
@@ -197,7 +213,13 @@ class _MorePageState extends State<MorePage> {
                                 margin: const EdgeInsets.fromLTRB(30, 5, 30, 10),
                                 child: Row(
                                   children: <Widget>[
-                                    Container(child: Text("more.mailSend", style: GoogleFonts.notoSans(textStyle: TextStyle(fontSize: 16))).tr()),
+                                    Container(
+                                        child: Text("more.mailSend",
+                                            style: GoogleFonts.notoSans(
+                                                textStyle: TextStyle(
+                                              fontSize: 16,
+                                              color: ArtiqData.greyPinkColor,
+                                            ))).tr()),
                                     Expanded(
                                       child: Container(),
                                     ),
@@ -219,6 +241,7 @@ class _MorePageState extends State<MorePage> {
                                         child: Icon(
                                           Icons.mail_outline,
                                           size: 26,
+                                          color: ArtiqData.greyPinkColor,
                                         ),
                                       ),
                                     )
@@ -245,7 +268,7 @@ class _MorePageState extends State<MorePage> {
                     height: 35,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: Colors.black87,
+                      color: Colors.red,
                       borderRadius: const BorderRadius.all(Radius.circular(5)),
                     ),
                     child: Text(message, style: GoogleFonts.notoSans(textStyle: TextStyle(color: Colors.white, fontSize: 13))).tr(),

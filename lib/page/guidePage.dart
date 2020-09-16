@@ -1,4 +1,5 @@
-import 'package:artiq/data.dart';
+import 'package:artiq/data/artiqData.dart';
+import 'package:artiq/data/httpData.dart';
 import 'package:artiq/func/func.dart';
 import 'package:artiq/sql/artiqDb.dart';
 import 'package:artiq/sql/sqlLite.dart';
@@ -50,7 +51,7 @@ class _GuidePageState extends State<GuidePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: ArtiqData.backgroundColor,
       body: SafeArea(
         child: FutureBuilder<List<Guide>>(
           future: Func.getGuideList(),
@@ -81,7 +82,8 @@ class _GuidePageState extends State<GuidePage> {
                                 alignment: Alignment.center,
                                 child: Text(
                                   snapshot.data[position].title,
-                                  style: GoogleFonts.notoSans(textStyle: const TextStyle(fontSize: 23), fontWeight: FontWeight.bold),
+                                  style: GoogleFonts.notoSans(
+                                      textStyle: const TextStyle(color: Colors.white, fontSize: 23), fontWeight: FontWeight.bold),
                                 ),
                               ),
                               Container(
@@ -89,7 +91,7 @@ class _GuidePageState extends State<GuidePage> {
                                 alignment: Alignment.center,
                                 child: Text(
                                   snapshot.data[position].text,
-                                  style: GoogleFonts.notoSans(textStyle: const TextStyle(fontSize: 15, height: 1.5)),
+                                  style: GoogleFonts.notoSans(textStyle: TextStyle(color: ArtiqData.darkGreyColor, fontSize: 15, height: 1.5)),
                                 ),
                               ),
                               Expanded(
@@ -134,9 +136,9 @@ class _GuidePageState extends State<GuidePage> {
                                       height: MediaQuery.of(context).size.height * 0.05,
                                       margin: const EdgeInsets.fromLTRB(100, 10, 100, 10),
                                       decoration:
-                                          BoxDecoration(color: const Color(0xff26A69A), borderRadius: const BorderRadius.all(Radius.circular(5))),
+                                          BoxDecoration(color: ArtiqData.fluorescenceColor, borderRadius: const BorderRadius.all(Radius.circular(5))),
                                       child: Text("guide.skip",
-                                              style: GoogleFonts.notoSans(textStyle: const TextStyle(color: Colors.white, fontSize: 16)))
+                                              style: GoogleFonts.notoSans(textStyle: TextStyle(color: ArtiqData.backgroundColor, fontSize: 16)))
                                           .tr()),
                                 ),
                               )
@@ -157,8 +159,8 @@ class _GuidePageState extends State<GuidePage> {
                           decorator: DotsDecorator(
                             activeSize: Size.fromRadius(5),
                             activeShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-                            color: Colors.black12,
-                            activeColor: Color(0xff26A69A),
+                            color: Colors.white54,
+                            activeColor: ArtiqData.fluorescenceColor,
                           ),
                         ),
                       ),
