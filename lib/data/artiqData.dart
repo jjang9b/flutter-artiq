@@ -13,7 +13,7 @@ class ArtiqData {
   static bool isOnload = false;
   static bool isPostScrolling = false;
   static bool isFavoriteMusic = true;
-  static String version = "1.1.3";
+  static String version = "1.1.4";
 
   static String likeGenre = "";
 

@@ -12,7 +12,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_youtube_view/flutter_youtube_view.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:move_to_background/move_to_background.dart';
 
 class ContentPage extends StatefulWidget {
   static const routeName = '/content';
@@ -35,44 +34,13 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
   String currentYoutubeId;
   bool isMoveBtn = true;
   bool isHeadset = false;
-  bool isBackground = false;
-  bool isNeedPause = false;
   bool isEndBuffer = false;
 
   @override
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addObserver(this);
     listenHeadset();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-
-    WidgetsBinding.instance.removeObserver(this);
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    super.didChangeAppLifecycleState(state);
-
-    switch (state) {
-      case AppLifecycleState.inactive:
-        isBackground = true;
-        MoveToBackground.moveTaskToBack();
-
-        if (_youtubeController == null) {
-          _youtubeController.play();
-        }
-        break;
-      case AppLifecycleState.resumed:
-        isBackground = false;
-        break;
-      default:
-        break;
-    }
   }
 
   @override
@@ -81,27 +49,9 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
   @override
   void onStateChange(String state) {
     switch (state) {
-      case "PAUSED":
-      case "BUFFERING":
-      case "UNSTARTED":
-      case "VIDEO_CUED":
-        if (_youtubeController == null) {
-          return;
-        }
-
-        if (isEndBuffer || isNeedPause || !isBackground) {
-          return;
-        }
-
-        Timer.periodic(Duration(milliseconds: 500), (timer) {
-          timer.cancel();
-          _youtubeController.play();
-        });
-        break;
       case "PLAYING":
         setState(() {
           isMoveBtn = true;
-          isNeedPause = false;
         });
 
         if (!ArtiqData.isFavoriteMusic) {
@@ -138,19 +88,9 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
 
           switch (ArtiqData.musicNextState) {
             case "shuffle":
-              if (isBackground) {
-                loadRandomYoutube();
-                return;
-              }
-
               return goRandomContent();
               break;
             case "auto":
-              if (isBackground) {
-                loadNextYoutube();
-                return;
-              }
-
               return goNextContent();
               break;
             default:
@@ -183,10 +123,6 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
       isHeadset = event.toString().contains("isConnected: true");
 
       if (!isHeadset) {
-        if (isBackground) {
-          isNeedPause = true;
-        }
-
         if (_youtubeController == null) {
           return;
         }
@@ -211,38 +147,6 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
 
   Future<Post> getFuturePost() {
     return Func.futurePost;
-  }
-
-  void loadOnIdYoutube(Post post) {
-    List<Content> contentList = post.content;
-
-    if (contentList == null) {
-      loadNextYoutube();
-      return;
-    }
-
-    String id = contentList[0].data;
-    currentYoutubeId = id;
-    _youtubeController.initialization();
-    _youtubeController.loadOrCueVideo(id, 0);
-  }
-
-  void loadNextYoutube() {
-    Func.futurePost.then((post) {
-      Post nextPost = Func.getNextPost(ArtiqData.category, post);
-
-      setCurrentPost(nextPost);
-      loadOnIdYoutube(nextPost);
-    });
-  }
-
-  void loadRandomYoutube() {
-    Func.futurePost.then((post) {
-      Post nextPost = Func.getRandomPost(ArtiqData.category, post);
-
-      setCurrentPost(nextPost);
-      loadOnIdYoutube(nextPost);
-    });
   }
 
   void goBeforeContent() {
