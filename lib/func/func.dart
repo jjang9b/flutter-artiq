@@ -334,7 +334,7 @@ class Func {
 
     ArtiqDb artiqDb = await SqlLite().get(key);
     if (artiqDb == null) {
-      await SqlLite().insert(ArtiqDb(key: key, count: 0));
+      await SqlLite().insert(ArtiqDb(key: key, count: 1));
       return;
     }
 
@@ -345,6 +345,7 @@ class Func {
     }
 
     artiqDb.count += 1;
+
     await SqlLite().update(artiqDb);
   }
 

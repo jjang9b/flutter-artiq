@@ -111,6 +111,8 @@ class _GuidePageState extends State<GuidePage> {
                               Visibility(
                                 visible: (position == snapshot.data.length - 1),
                                 child: InkWell(
+                                  highlightColor: Colors.transparent,
+                                  splashColor: Colors.transparent,
                                   onTap: () {
                                     insertToday();
                                   },
@@ -128,6 +130,8 @@ class _GuidePageState extends State<GuidePage> {
                               Visibility(
                                 visible: (position == snapshot.data.length - 1),
                                 child: InkWell(
+                                  highlightColor: Colors.transparent,
+                                  splashColor: Colors.transparent,
                                   onTap: () {
                                     Func.goPostPage(context);
                                   },

@@ -82,7 +82,7 @@ class _MorePageState extends State<MorePage> {
                                 child: Row(
                                   children: <Widget>[
                                     Container(
-                                        child: Text("v ${ArtiqData.version}",
+                                        child: Text("${ArtiqData.version}",
                                             style: GoogleFonts.notoSans(
                                                 textStyle: TextStyle(
                                               fontSize: 16,

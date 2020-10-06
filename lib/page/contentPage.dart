@@ -59,7 +59,7 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
         }
 
         if (ArtiqData.playLikeTimer != null) {
-          return;
+          ArtiqData.playLikeTimer.cancel();
         }
 
         ArtiqData.playLikeTimer = Timer.periodic(Duration(milliseconds: 5000), (timer) {
@@ -74,6 +74,8 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
         });
         break;
       case "ENDED":
+        ArtiqData.playLikeTimer = null;
+        playSec = 0;
         isEndBuffer = true;
 
         if (_youtubeController != null) {
