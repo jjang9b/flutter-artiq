@@ -35,9 +35,12 @@ class Fetch {
 
     final response = await http.get(uri);
 
-    if (response.statusCode == 200) {
-      return Ads.fromJson(json.decode(response.body));
-    } else {
+    try {
+      if (response.statusCode == 200) {
+        return Ads.fromJson(json.decode(response.body));
+      }
+      return null;
+    } catch(e) {
       return null;
     }
   }

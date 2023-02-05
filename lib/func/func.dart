@@ -183,7 +183,7 @@ class Func {
     Navigator.pushNamedAndRemoveUntil(context, routeName, (_) => false);
   }
 
-  static InkWell getCategory(PageController _categoryController, String category, String title, int idx) {
+  static InkWell getCategory(PageController _categoryController, String category, IconData icons, int idx) {
     return InkWell(
       highlightColor: Colors.transparent,
       splashColor: Colors.transparent,
@@ -198,9 +198,10 @@ class Func {
         margin: EdgeInsets.only(top: 15, left: 20, right: 20, bottom: 5),
         child: Column(
           children: <Widget>[
-            Text(
-              title,
-              style: TextStyle(color: ArtiqData.backgroundColor, fontSize: 15, fontFamily: 'UTOIMAGE', fontWeight: FontWeight.bold),
+            Icon(
+              icons,
+              color: Colors.black,
+              size: 25.0,
             ),
             Visibility(
               visible: (_categoryPage == idx),
@@ -255,6 +256,14 @@ class Func {
                               image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
                             ),
                           ),
+                          errorWidget: (context, url, error) {
+                            return Center(
+                              child: Text(
+                                'X',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ],

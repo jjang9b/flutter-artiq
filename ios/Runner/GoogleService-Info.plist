@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>516823003488-qavk7lop6l2t0p6f7hph830vsd282oaq.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.516823003488-qavk7lop6l2t0p6f7hph830vsd282oaq</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>516823003488-3te4nlfiep6lhe6hcuoo23edt1oe9gci.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyA_4EGFI8ZkSUdT4_1t0Z8PwsiysbfAYBI</string>
+	<key>GCM_SENDER_ID</key>
+	<string>516823003488</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.bbplayworld.artiq</string>
+	<key>PROJECT_ID</key>
+	<string>artiq-api-7d81d</string>
+	<key>STORAGE_BUCKET</key>
+	<string>artiq-api-7d81d.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:516823003488:ios:2e0195a4f4ddb4fdbd2e05</string>
+	<key>DATABASE_URL</key>
+	<string>https://artiq-api-7d81d.firebaseio.com</string>
+</dict>
+</plist>

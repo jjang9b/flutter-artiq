@@ -143,7 +143,7 @@ class _MorePageState extends State<MorePage> {
                                             });
                                           },
                                           inactiveTrackColor: Color(0xffffffff),
-                                          activeColor: Colors.red,
+                                          activeColor: ArtiqData.fluorescenceColor,
                                         ),
                                       ),
                                     )
@@ -268,10 +268,10 @@ class _MorePageState extends State<MorePage> {
                     height: 35,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: Colors.red,
+                      color: ArtiqData.fluorescenceColor,
                       borderRadius: const BorderRadius.all(Radius.circular(5)),
                     ),
-                    child: Text(message, style: GoogleFonts.notoSans(textStyle: TextStyle(color: Colors.white, fontSize: 13))).tr(),
+                    child: Text(message, style: GoogleFonts.notoSans(textStyle: TextStyle(color: Colors.black, fontSize: 13))).tr(),
                   ),
                 ),
               ),

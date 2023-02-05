@@ -38,11 +38,14 @@ class MyApp extends StatelessWidget {
     FirebaseAnalytics analytics = FirebaseAnalytics();
 
     return MaterialApp(
-      localizationsDelegates: [GlobalMaterialLocalizations.delegate, GlobalWidgetsLocalizations.delegate, EasyLocalization.of(context).delegate],
+      localizationsDelegates: [GlobalMaterialLocalizations.delegate, GlobalWidgetsLocalizations.delegate, GlobalCupertinoLocalizations.delegate],
       navigatorObservers: [
         FirebaseAnalyticsObserver(analytics: analytics),
       ],
-      supportedLocales: EasyLocalization.of(context).supportedLocales,
+      supportedLocales: [
+        const Locale('en'),
+        const Locale('ko'),
+      ],
       locale: EasyLocalization.of(context).locale,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: 'UTOIMAGE'),

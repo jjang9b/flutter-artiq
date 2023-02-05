@@ -6,8 +6,8 @@ class ArtiqData {
   static String categoryArt = "art";
   static String category = categoryMusic;
   static int categoryIdx = 0;
-  static var musicNextStateIcon = [Icons.repeat_one, Icons.repeat, Icons.shuffle];
-  static var musicNextStateArr = ["repeat", "auto", "shuffle"];
+  static var musicNextStateIcon = [Icons.repeat, Icons.repeat_one, Icons.shuffle];
+  static var musicNextStateArr = ["auto", "repeat", "shuffle"];
   static int musicNextStateIdx = 0;
   static String musicNextState = musicNextStateArr[0];
   static bool isOnload = false;

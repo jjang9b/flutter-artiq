@@ -39,7 +39,6 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
   @override
   void initState() {
     super.initState();
-
     listenHeadset();
   }
 
@@ -102,6 +101,7 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
         });
         break;
       default:
+        isMoveBtn = false;
         break;
     }
   }
@@ -116,7 +116,8 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
   void onVideoDuration(double duration) {}
 
   @override
-  void onCurrentSecond(double second) {}
+  void onCurrentSecond(double second) {
+  }
 
   void listenHeadset() async {
     Stream<HeadsetEvent> stream = await Headset.subscribe();
@@ -218,13 +219,12 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
           musicGenre = post.genre;
 
           return Container(
-            height: MediaQuery.of(context).size.height * 0.55,
+            height: MediaQuery.of(context).size.height * 0.3,
             margin: const EdgeInsets.only(top: 20, bottom: 40),
             child: FlutterYoutubeView(
                 onViewCreated: (controller) {
                   setState(() {
                     _youtubeController = controller;
-                    isMoveBtn = false;
                   });
                 },
                 listener: this,
@@ -260,225 +260,224 @@ class _ContentPageState extends State<ContentPage> with WidgetsBindingObserver i
       },
       child: Scaffold(
         backgroundColor: Color(0xff2B2B2B),
-        body: SafeArea(
-          child: Stack(
-            children: <Widget>[
-              ConstrainedBox(
-                constraints: const BoxConstraints(minHeight: 56.0),
-                child: NotificationListener<ScrollNotification>(
-                  onNotification: (scrollNotification) {
-                    setState(() {
-                      nowOffset = _contentScrollController.offset;
-                    });
+        body: Stack(
+          children: <Widget>[
+            ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 56.0),
+              child: NotificationListener<ScrollNotification>(
+                onNotification: (scrollNotification) {
+                  setState(() {
+                    nowOffset = _contentScrollController.offset;
+                  });
 
-                    return true;
-                  },
-                  child: ListView.builder(
-                      controller: _contentScrollController,
-                      itemBuilder: (context, position) {
-                        return FutureBuilder<Post>(
-                          future: getFuturePost(),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              return SizedBox(
-                                child: Column(
-                                  children: <Widget>[
-                                    Stack(
-                                      children: <Widget>[
-                                        Container(
-                                          width: MediaQuery.of(context).size.width,
-                                          height: MediaQuery.of(context).size.height * 0.26,
-                                          decoration: BoxDecoration(
-                                            image: DecorationImage(image: CachedNetworkImageProvider(snapshot.data.imageUrl), fit: BoxFit.cover),
-                                            borderRadius: BorderRadius.only(
-                                              bottomLeft: Radius.circular(50),
-                                              bottomRight: Radius.circular(50),
-                                            ),
-                                          ),
-                                          child: Column(
-                                            children: <Widget>[
-                                              Container(
-                                                alignment: Alignment.topLeft,
-                                                margin: const EdgeInsets.only(top: 15, left: 15),
-                                                child: InkWell(
-                                                  highlightColor: Colors.transparent,
-                                                  splashColor: Colors.transparent,
-                                                  onTap: () {
-                                                    return Navigator.pop(context, true);
-                                                  },
-                                                  child: Icon(Icons.arrow_back,
-                                                      size: 35, color: (snapshot.data.backBtnType == 'w') ? Colors.white : Colors.black),
-                                                ),
-                                              ),
-                                            ],
+                  return true;
+                },
+                child: ListView.builder(
+                    padding: EdgeInsets.zero,
+                    controller: _contentScrollController,
+                    itemBuilder: (context, position) {
+                      return FutureBuilder<Post>(
+                        future: getFuturePost(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return SizedBox(
+                              child: Column(
+                                children: <Widget>[
+                                  Stack(
+                                    children: <Widget>[
+                                      Container(
+                                        width: MediaQuery.of(context).size.width,
+                                        height: MediaQuery.of(context).size.height * 0.3,
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(image: CachedNetworkImageProvider(snapshot.data.imageUrl), fit: BoxFit.cover),
+                                          borderRadius: BorderRadius.only(
+                                            bottomLeft: Radius.circular(50),
+                                            bottomRight: Radius.circular(50),
                                           ),
                                         ),
+                                        child: Column(
+                                          children: <Widget>[
+                                            Container(
+                                              alignment: Alignment.topLeft,
+                                              margin: const EdgeInsets.only(top: 40, left: 15),
+                                              child: InkWell(
+                                                highlightColor: Colors.transparent,
+                                                splashColor: Colors.transparent,
+                                                onTap: () {
+                                                  return Navigator.pop(context, true);
+                                                },
+                                                child: Icon(Icons.arrow_back,
+                                                    size: 35, color: (snapshot.data.backBtnType == 'w') ? Colors.white : Colors.black),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Container(
+                                    margin: const EdgeInsets.fromLTRB(30, 20, 30, 0),
+                                    alignment: Alignment.topCenter,
+                                    child: Text(
+                                      snapshot.data.imageText,
+                                      style: GoogleFonts.nanumGothic(
+                                          textStyle: TextStyle(color: Color(0xffFFFFFF), height: 1.5, fontSize: 17, fontWeight: FontWeight.bold)),
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: const EdgeInsets.fromLTRB(30, 10, 30, 0),
+                                    alignment: Alignment.topCenter,
+                                    child: Text(snapshot.data.origin,
+                                        style:
+                                        GoogleFonts.notoSans(textStyle: TextStyle(color: ArtiqData.darkGreyColor, height: 1.5, fontSize: 15))),
+                                  ),
+                                  Container(
+                                    margin: const EdgeInsets.fromLTRB(30, 10, 30, 0),
+                                    alignment: Alignment.topLeft,
+                                    child: getContentList(context, snapshot.data),
+                                  ),
+                                  Container(
+                                    margin: const EdgeInsets.fromLTRB(30, 0, 30, 30),
+                                    alignment: Alignment.topLeft,
+                                    height: 40,
+                                    child: Row(
+                                      children: <Widget>[
+                                        Text(snapshot.data.date,
+                                            style:
+                                            GoogleFonts.notoSans(textStyle: TextStyle(color: ArtiqData.darkGreyColor, height: 1, fontSize: 16)))
                                       ],
                                     ),
-                                    Container(
-                                      margin: const EdgeInsets.fromLTRB(30, 20, 30, 0),
-                                      alignment: Alignment.topCenter,
-                                      child: Text(
-                                        snapshot.data.imageText,
-                                        style: GoogleFonts.nanumGothic(
-                                            textStyle: TextStyle(color: Color(0xffFFFFFF), height: 1.5, fontSize: 17, fontWeight: FontWeight.bold)),
-                                      ),
-                                    ),
-                                    Container(
-                                      margin: const EdgeInsets.fromLTRB(30, 10, 30, 0),
-                                      alignment: Alignment.topCenter,
-                                      child: Text(snapshot.data.origin,
-                                          style:
-                                              GoogleFonts.notoSans(textStyle: TextStyle(color: ArtiqData.darkGreyColor, height: 1.5, fontSize: 15))),
-                                    ),
-                                    Container(
-                                      margin: const EdgeInsets.fromLTRB(30, 10, 30, 0),
-                                      alignment: Alignment.topLeft,
-                                      child: getContentList(context, snapshot.data),
-                                    ),
-                                    Container(
-                                      margin: const EdgeInsets.fromLTRB(30, 0, 30, 30),
-                                      alignment: Alignment.topLeft,
-                                      height: 40,
-                                      child: Row(
-                                        children: <Widget>[
-                                          Text(snapshot.data.date,
-                                              style:
-                                                  GoogleFonts.notoSans(textStyle: TextStyle(color: ArtiqData.darkGreyColor, height: 1, fontSize: 16)))
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }
-
-                            return Center(
-                              child: CircularProgressIndicator(
-                                backgroundColor: Colors.black,
-                                valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                                  ),
+                                ],
                               ),
                             );
-                          },
-                        );
-                      },
-                      itemCount: 1),
-                ),
-              ),
-              Positioned(
-                bottom: 70,
-                right: 70,
-                child: Visibility(
-                  visible: (ArtiqData.category == ArtiqData.categoryMusic && isMoveBtn),
-                  child: FloatingActionButton(
-                    mini: true,
-                    heroTag: null,
-                    backgroundColor: ArtiqData.fluorescenceColor,
-                    onPressed: () {
-                      setState(() {
-                        if (ArtiqData.musicNextStateIdx + 1 >= ArtiqData.musicNextStateArr.length) {
-                          ArtiqData.musicNextStateIdx = 0;
-                        } else {
-                          ArtiqData.musicNextStateIdx += 1;
-                        }
+                          }
 
-                        return ArtiqData.musicNextState = ArtiqData.musicNextStateArr[ArtiqData.musicNextStateIdx];
-                      });
+                          return Center(
+                            child: CircularProgressIndicator(
+                              backgroundColor: Colors.black,
+                              valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          );
+                        },
+                      );
                     },
-                    child: Container(
-                      child: Icon(
-                        ArtiqData.musicNextStateIcon[ArtiqData.musicNextStateIdx],
-                        color: Colors.black,
-                      ),
+                    itemCount: 1),
+              ),
+            ),
+            Positioned(
+              bottom: 70,
+              right: 70,
+              child: Visibility(
+                visible: (ArtiqData.category == ArtiqData.categoryMusic && isMoveBtn),
+                child: FloatingActionButton(
+                  mini: true,
+                  heroTag: null,
+                  backgroundColor: ArtiqData.fluorescenceColor,
+                  onPressed: () {
+                    setState(() {
+                      if (ArtiqData.musicNextStateIdx + 1 >= ArtiqData.musicNextStateArr.length) {
+                        ArtiqData.musicNextStateIdx = 0;
+                      } else {
+                        ArtiqData.musicNextStateIdx += 1;
+                      }
+
+                      return ArtiqData.musicNextState = ArtiqData.musicNextStateArr[ArtiqData.musicNextStateIdx];
+                    });
+                  },
+                  child: Container(
+                    child: Icon(
+                      ArtiqData.musicNextStateIcon[ArtiqData.musicNextStateIdx],
+                      color: Colors.black,
                     ),
                   ),
                 ),
               ),
-              Positioned(
-                bottom: 70,
-                right: 20,
-                child: Visibility(
-                  child: FloatingActionButton(
-                    mini: true,
-                    heroTag: null,
-                    backgroundColor: ArtiqData.darkGreyColor,
-                    onPressed: () {
-                      Func.goPageRemove(context, PostPage.routeName);
-                    },
-                    child: Container(
-                      child: Icon(
-                        Icons.home,
-                        color: Colors.white,
-                      ),
+            ),
+            Positioned(
+              bottom: 70,
+              right: 20,
+              child: Visibility(
+                child: FloatingActionButton(
+                  mini: true,
+                  heroTag: null,
+                  backgroundColor: ArtiqData.darkGreyColor,
+                  onPressed: () {
+                    Func.goPageRemove(context, PostPage.routeName);
+                  },
+                  child: Container(
+                    child: Icon(
+                      Icons.home,
+                      color: Colors.white,
                     ),
                   ),
                 ),
               ),
-              Positioned(
-                bottom: 20,
-                right: 20,
-                child: Visibility(
-                  visible: isMoveBtn,
-                  child: FloatingActionButton(
-                    mini: true,
-                    heroTag: null,
-                    backgroundColor: ArtiqData.darkGreyColor,
-                    onPressed: () {
-                      goNextContent();
-                    },
-                    child: Container(
-                      child: Icon(
-                        Icons.navigate_next,
-                        color: Colors.white,
-                      ),
+            ),
+            Positioned(
+              bottom: 20,
+              right: 20,
+              child: Visibility(
+                visible: isMoveBtn,
+                child: FloatingActionButton(
+                  mini: true,
+                  heroTag: null,
+                  backgroundColor: ArtiqData.darkGreyColor,
+                  onPressed: () {
+                    goNextContent();
+                  },
+                  child: Container(
+                    child: Icon(
+                      Icons.navigate_next,
+                      color: Colors.white,
                     ),
                   ),
                 ),
               ),
-              Positioned(
-                bottom: 20,
-                right: 70,
-                child: Visibility(
-                  visible: isMoveBtn,
-                  child: FloatingActionButton(
-                    mini: true,
-                    heroTag: null,
-                    backgroundColor: ArtiqData.darkGreyColor,
-                    onPressed: () {
-                      goBeforeContent();
-                    },
-                    child: Container(
-                      child: Icon(
-                        Icons.navigate_before,
-                        color: Colors.white,
-                      ),
+            ),
+            Positioned(
+              bottom: 20,
+              right: 70,
+              child: Visibility(
+                visible: isMoveBtn,
+                child: FloatingActionButton(
+                  mini: true,
+                  heroTag: null,
+                  backgroundColor: ArtiqData.darkGreyColor,
+                  onPressed: () {
+                    goBeforeContent();
+                  },
+                  child: Container(
+                    child: Icon(
+                      Icons.navigate_before,
+                      color: Colors.white,
                     ),
                   ),
                 ),
               ),
-              Positioned(
-                bottom: 20,
-                right: 120,
-                child: Visibility(
-                  visible: (nowOffset > 100),
-                  child: FloatingActionButton(
-                    mini: true,
-                    heroTag: null,
-                    backgroundColor: ArtiqData.darkGreyColor,
-                    onPressed: () {
-                      _contentScrollController.animateTo(0.0, duration: Duration(milliseconds: 300), curve: Curves.ease);
-                    },
-                    child: Container(
-                      child: Icon(
-                        Icons.keyboard_arrow_up,
-                        color: Colors.white,
-                      ),
+            ),
+            Positioned(
+              bottom: 20,
+              right: 120,
+              child: Visibility(
+                visible: (nowOffset > 100),
+                child: FloatingActionButton(
+                  mini: true,
+                  heroTag: null,
+                  backgroundColor: ArtiqData.darkGreyColor,
+                  onPressed: () {
+                    _contentScrollController.animateTo(0.0, duration: Duration(milliseconds: 300), curve: Curves.ease);
+                  },
+                  child: Container(
+                    child: Icon(
+                      Icons.keyboard_arrow_up,
+                      color: Colors.white,
                     ),
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

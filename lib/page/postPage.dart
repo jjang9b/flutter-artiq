@@ -47,7 +47,8 @@ class _PostPageState extends State<PostPage> with TickerProviderStateMixin {
   }
 
   void refreshTimer() {
-    ArtiqData.refreshTimer = Timer.periodic(Duration(milliseconds: 5000), (timer) {
+    ArtiqData.refreshTimer =
+        Timer.periodic(Duration(milliseconds: 5000), (timer) {
       setState(() {
         ArtiqData.refreshSec -= 5;
       });
@@ -60,7 +61,9 @@ class _PostPageState extends State<PostPage> with TickerProviderStateMixin {
   }
 
   void scrollPost() {
-    if (_pageController.position.pixels <= 0 && _pageController.position.userScrollDirection == ScrollDirection.forward) {
+    if (_pageController.position.pixels <= 0 &&
+        _pageController.position.userScrollDirection ==
+            ScrollDirection.forward) {
       if (titleScale >= 1) {
         return;
       }
@@ -70,7 +73,9 @@ class _PostPageState extends State<PostPage> with TickerProviderStateMixin {
       });
     }
 
-    if (_pageController.position.pixels > 0 && _pageController.position.userScrollDirection == ScrollDirection.reverse) {
+    if (_pageController.position.pixels > 0 &&
+        _pageController.position.userScrollDirection ==
+            ScrollDirection.reverse) {
       if (titleScale <= 0.2) {
         return;
       }
@@ -89,16 +94,19 @@ class _PostPageState extends State<PostPage> with TickerProviderStateMixin {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (ArtiqData.isOnload) {
-        Func.categoryTab(_categoryController, ArtiqData.category, ArtiqData.categoryIdx);
+        Func.categoryTab(
+            _categoryController, ArtiqData.category, ArtiqData.categoryIdx);
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    double fontSize = (titleScale < 0.4) ? 20 : titleScale * 50;
-    double moreSize = (titleScale < 0.4) ? 30 : titleScale * 50;
-    double scaleHeight = (titleScale < 0.4) ? MediaQuery.of(context).size.height * 0.04 : MediaQuery.of(context).size.height * titleScale * 0.2;
+    double fontSize = (titleScale < 0.4) ? 0 : titleScale * 20;
+    double moreSize = (titleScale < 0.4) ? 0 : titleScale * 30;
+    double scaleHeight = (titleScale < 0.4)
+        ? MediaQuery.of(context).size.height * 0.04
+        : MediaQuery.of(context).size.height * titleScale * 0.04;
 
     _categoryController = new PageController()
       ..addListener(() {
@@ -128,7 +136,7 @@ class _PostPageState extends State<PostPage> with TickerProviderStateMixin {
                 Transform.scale(
                   scale: 1,
                   child: Container(
-                    margin: const EdgeInsets.only(top: 10),
+                    margin: const EdgeInsets.only(top: 10, bottom: 5),
                     height: scaleHeight,
                     child: Container(
                       alignment: Alignment.topLeft,
@@ -138,25 +146,55 @@ class _PostPageState extends State<PostPage> with TickerProviderStateMixin {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: <Widget>[
-                                Text(
-                                  "A",
-                                  style: TextStyle(color: Color(0xff26A69A), fontSize: fontSize, fontWeight: FontWeight.bold, fontFamily: 'UTOIMAGE'),
+                                Container(
+                                  child: Text(
+                                    "A",
+                                    style: TextStyle(
+                                        color: Color(0xff26A69A),
+                                        fontSize: fontSize,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'UTOIMAGE'),
+                                  ),
                                 ),
-                                Text(
-                                  "r",
-                                  style: TextStyle(color: Color(0xffffdd40), fontSize: fontSize, fontWeight: FontWeight.bold, fontFamily: 'UTOIMAGE'),
+                                Container(
+                                  child: Text(
+                                    "r",
+                                    style: TextStyle(
+                                        color: Color(0xffffdd40),
+                                        fontSize: fontSize,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'UTOIMAGE'),
+                                  ),
                                 ),
-                                Text(
-                                  "t",
-                                  style: TextStyle(color: Color(0xff039be5), fontSize: fontSize, fontWeight: FontWeight.bold, fontFamily: 'UTOIMAGE'),
+                                Container(
+                                  child: Text(
+                                    "t",
+                                    style: TextStyle(
+                                        color: Color(0xff039be5),
+                                        fontSize: fontSize,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'UTOIMAGE'),
+                                  ),
                                 ),
-                                Text(
-                                  "i",
-                                  style: TextStyle(color: Color(0xffF5F5F5), fontSize: fontSize, fontWeight: FontWeight.bold, fontFamily: 'UTOIMAGE'),
+                                Container(
+                                  child: Text(
+                                    "i",
+                                    style: TextStyle(
+                                        color: Color(0xffF5F5F5),
+                                        fontSize: fontSize,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'UTOIMAGE'),
+                                  ),
                                 ),
-                                Text(
-                                  "Q",
-                                  style: TextStyle(color: Colors.red, fontSize: fontSize, fontWeight: FontWeight.bold, fontFamily: 'UTOIMAGE'),
+                                Container(
+                                  child: Text(
+                                    "Q",
+                                    style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: fontSize,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'UTOIMAGE'),
+                                  ),
                                 ),
                               ],
                             ),
@@ -165,7 +203,7 @@ class _PostPageState extends State<PostPage> with TickerProviderStateMixin {
                             child: Container(),
                           ),
                           Container(
-                            margin: EdgeInsets.only(top: 0, right: 20),
+                            margin: EdgeInsets.only(top: 0, right: 0),
                             child: InkWell(
                               highlightColor: Colors.transparent,
                               splashColor: Colors.transparent,
@@ -207,15 +245,24 @@ class _PostPageState extends State<PostPage> with TickerProviderStateMixin {
                                     builder: (context, snapshot) {
                                       if (snapshot.hasData) {
                                         return Container(
-                                          height: MediaQuery.of(context).size.height * 0.66,
-                                          child: NotificationListener<ScrollNotification>(
-                                            onNotification: (scrollNotification) {
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.66,
+                                          child: NotificationListener<
+                                              ScrollNotification>(
+                                            onNotification:
+                                                (scrollNotification) {
                                               scrollPost();
 
-                                              if (scrollNotification is ScrollStartNotification) {
-                                                ArtiqData.isPostScrolling = true;
-                                              } else if (scrollNotification is ScrollEndNotification) {
-                                                ArtiqData.isPostScrolling = false;
+                                              if (scrollNotification
+                                                  is ScrollStartNotification) {
+                                                ArtiqData.isPostScrolling =
+                                                    true;
+                                              } else if (scrollNotification
+                                                  is ScrollEndNotification) {
+                                                ArtiqData.isPostScrolling =
+                                                    false;
                                               }
 
                                               return true;
@@ -223,7 +270,11 @@ class _PostPageState extends State<PostPage> with TickerProviderStateMixin {
                                             child: ListView.builder(
                                               controller: _pageController,
                                               itemBuilder: (context, position) {
-                                                return Func.getContent(context, snapshot.data.length, position, snapshot.data[position]);
+                                                return Func.getContent(
+                                                    context,
+                                                    snapshot.data.length,
+                                                    position,
+                                                    snapshot.data[position]);
                                               },
                                               itemCount: snapshot.data.length,
                                             ),
@@ -234,7 +285,9 @@ class _PostPageState extends State<PostPage> with TickerProviderStateMixin {
                                       return Center(
                                         child: CircularProgressIndicator(
                                           backgroundColor: Colors.black,
-                                          valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                                          valueColor:
+                                              const AlwaysStoppedAnimation<
+                                                  Color>(Colors.white),
                                         ),
                                       );
                                     },
@@ -256,7 +309,9 @@ class _PostPageState extends State<PostPage> with TickerProviderStateMixin {
                                   child: FloatingActionButton(
                                     mini: true,
                                     heroTag: null,
-                                    backgroundColor: (ArtiqData.refreshSec > 0) ? Colors.red : Colors.white,
+                                    backgroundColor: (ArtiqData.refreshSec > 0)
+                                        ? Colors.red
+                                        : Colors.white,
                                     onPressed: () {
                                       if (ArtiqData.isPostScrolling) {
                                         return;
@@ -267,13 +322,16 @@ class _PostPageState extends State<PostPage> with TickerProviderStateMixin {
                                       }
 
                                       refreshTimer();
-                                      Func.refreshPost(context, _pageController);
+                                      Func.refreshPost(
+                                          context, _pageController);
                                       setState(() {});
                                     },
                                     child: Container(
                                       child: Icon(
                                         Icons.cached,
-                                        color: (ArtiqData.refreshSec > 0) ? Colors.white : Colors.black,
+                                        color: (ArtiqData.refreshSec > 0)
+                                            ? Colors.white
+                                            : Colors.black,
                                       ),
                                     ),
                                   ),
@@ -284,7 +342,11 @@ class _PostPageState extends State<PostPage> with TickerProviderStateMixin {
                                     child: Text(
                                       "${ArtiqData.refreshSec} sec",
                                       style: GoogleFonts.notoSans(
-                                          textStyle: TextStyle(color: Colors.white, height: 0.9, fontWeight: FontWeight.bold, fontSize: 11)),
+                                          textStyle: TextStyle(
+                                              color: Colors.white,
+                                              height: 0.9,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 11)),
                                     ),
                                   ),
                                 ),
@@ -302,9 +364,14 @@ class _PostPageState extends State<PostPage> with TickerProviderStateMixin {
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
                               color: Colors.black87,
-                              borderRadius: const BorderRadius.all(Radius.circular(5)),
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(5)),
                             ),
-                            child: Text("post.exit", style: GoogleFonts.notoSans(textStyle: TextStyle(color: Colors.white, fontSize: 13))).tr(),
+                            child: Text("post.exit",
+                                    style: GoogleFonts.notoSans(
+                                        textStyle: TextStyle(
+                                            color: Colors.white, fontSize: 13)))
+                                .tr(),
                           ),
                         ),
                       ),
@@ -328,8 +395,10 @@ class _PostPageState extends State<PostPage> with TickerProviderStateMixin {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
-                          Func.getCategory(_categoryController, 'music', 'MUSIC', 0),
-                          Func.getCategory(_categoryController, 'art', 'ART', 1),
+                          Func.getCategory(_categoryController, 'music',
+                              Icons.play_circle_outlined, 0),
+                          Func.getCategory(_categoryController, 'art',
+                              Icons.wallpaper_rounded, 1),
                         ],
                       ),
                     ),
